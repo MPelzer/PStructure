@@ -5,6 +5,7 @@
     /// </summary>
     public interface IItemManager
     {
+        
         /// <summary>
         /// Prüft, ob der Primärschlüssel valide ist. 
         /// </summary>

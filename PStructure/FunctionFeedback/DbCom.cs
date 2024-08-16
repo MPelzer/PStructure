@@ -8,7 +8,7 @@ namespace PStructure.Interfaces
     /// <summary>
     /// Kapselt dieverse Informationen, die für die Datenbanktransaktion benötigt werden.
     /// </summary>
-    public class DbCom
+    public class DbCom : IFunctionFeedback
     {
         /// <summary>
         /// Datenbankverbindung. 
@@ -18,7 +18,7 @@ namespace PStructure.Interfaces
         /// <summary>
         /// Optionale Transaktion.
         /// </summary>
-        public Option<Transaction> _transaction;
+        public Option<TransactionScope> _transaction;
 
         /// <summary>
         /// Antwort darüber, ob der gewünschte Proess erfolgreich verlief.
