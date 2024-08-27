@@ -18,8 +18,13 @@ namespace PStructure.Interfaces
         /// <summary>
         /// Optionale Transaktion.
         /// </summary>
-        public Option<TransactionScope> _transaction;
+        public Option<IDbTransaction> _transaction;
 
+        /// <summary>
+        /// Ein optionaler SQL als String, der entweder vin der Crud automatisch, oder vom Nutzer manuell gefüllt werden kann.
+        /// </summary>
+        public Option<string> injectedSql;
+        
         /// <summary>
         /// Antwort darüber, ob der gewünschte Proess erfolgreich verlief.
         /// </summary>
