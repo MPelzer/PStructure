@@ -5,14 +5,13 @@ namespace PStructure.Models
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class ColumnAttribute : Attribute
     {
-        public string Name { get; }
+        public string ColumnName { get; }
 
-        public ColumnAttribute(string name)
+        public ColumnAttribute(string columnName)
         {
-            Name = name;
+            ColumnName = columnName;
         }
     }
-
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class TypeHandlerAttribute : Attribute
     {
@@ -22,5 +21,13 @@ namespace PStructure.Models
         {
             HandlerType = handlerType;
         }
+    }
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+    public class PrimaryKeyAttribute : Attribute
+    {
+    }
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+    public class ToStringForTestAttribute : Attribute
+    {
     }
 }
