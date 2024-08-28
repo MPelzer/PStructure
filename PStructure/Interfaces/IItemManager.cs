@@ -3,9 +3,8 @@
     /// <summary>
     /// Kümmert sich um die Koordination aller Module, die sich um die Instanzen oder den Datensätzen zu tun haben.
     /// </summary>
-    public interface IItemManager
+    public interface IItemManager<T>
     {
-        
         /// <summary>
         /// Prüft, ob der Primärschlüssel valide ist. 
         /// </summary>
@@ -13,6 +12,7 @@
         bool IsPrimaryKeyValid();
 
         string ToStringForTest();
-        
+
+        bool ValidatePdo();
     }
 }
