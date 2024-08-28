@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PStructure", "PStructure\PStructure.csproj", "{91527B4A-865C-484D-A6C6-2696BB97A767}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PStructure.Test", "PStructure.Test\PStructure.Test.csproj", "{54A4BDA8-919B-45E0-AD4D-E263A572BDFB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{91527B4A-865C-484D-A6C6-2696BB97A767}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{91527B4A-865C-484D-A6C6-2696BB97A767}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{91527B4A-865C-484D-A6C6-2696BB97A767}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54A4BDA8-919B-45E0-AD4D-E263A572BDFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54A4BDA8-919B-45E0-AD4D-E263A572BDFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54A4BDA8-919B-45E0-AD4D-E263A572BDFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54A4BDA8-919B-45E0-AD4D-E263A572BDFB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

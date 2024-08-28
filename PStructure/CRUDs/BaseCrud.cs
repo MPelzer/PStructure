@@ -17,7 +17,7 @@ namespace PStructure.CRUDs
         protected readonly ITableLocation _tableLocation;
         private readonly ILogger<BaseCrud<T>> _logger;
 
-        internal BaseCrud(
+        public BaseCrud(
             ISqlGenerator sqlGenerator,
             IMapperPdoQuery<T> mapperPdoQuery,
             ITableLocation tableLocation,
