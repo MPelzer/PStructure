@@ -19,7 +19,7 @@
         /// Ein Item zu JSON
         /// </summary>
         /// <returns></returns>
-        string ToJson();
+        string ToJson(T item);
 
         /// <summary>
         /// Ein Item von JSON

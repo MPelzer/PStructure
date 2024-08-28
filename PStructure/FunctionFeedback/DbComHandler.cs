@@ -25,7 +25,7 @@ namespace PStructure.FunctionFeedback
     ///                                                                     * öffnen
     ///                                                                     * offen lassen
     ///                             # Connection wurde offen mitgegeben:
-    ///                                                                     * nichts tun
+    ///                                                                     * 
     /// </summary>
     public static class DbComHandler
     {
@@ -47,8 +47,9 @@ namespace PStructure.FunctionFeedback
                 if (transactionStartedHere && commitCondition(ref dbCom))
                 {
                     dbCom._transaction.ValueOrDefault()?.Commit();
+                    dbCom._dbConnection.Close();
                 }
-                SetAnswerValid(dbCom);
+                SetDbComAnswerValid(dbCom);
             }
             catch (Exception exception)
             {
@@ -64,8 +65,8 @@ namespace PStructure.FunctionFeedback
                 onFinally?.Invoke();
             }
         }
-
-        private static void SetAnswerValid(DbCom dbCom)
+        
+        private static void SetDbComAnswerValid(DbCom dbCom)
         {
             dbCom.requestAnswer = true;
         }
@@ -83,13 +84,13 @@ namespace PStructure.FunctionFeedback
             return true;
         }
 
-        public static void SetException(DbCom dbCom, Exception exception)
+        private static void SetException(DbCom dbCom, Exception exception)
         {
             dbCom.requestAnswer = false;
             dbCom.requestException = Option.Some(exception);
         }
-        
-        public static void RollbackTransaction(DbCom dbCom)
+
+        private static void RollbackTransaction(DbCom dbCom)
         {
             dbCom._transaction.Match(
                 some: transaction => transaction.Rollback(),

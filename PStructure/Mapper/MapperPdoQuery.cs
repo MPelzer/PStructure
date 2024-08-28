@@ -65,7 +65,7 @@ namespace PStructure
                 }
 
                 var value = reader[columnName];
-                if (value == DBNull.Value) continue;
+                if (value == DBNull.Value) continue; //Wenn DB-Null, dann ignorieren. (Es bleibt der Factory-Wert)
 
                 var handlerAttr = prop.GetCustomAttribute<TypeHandlerAttribute>();
                 if (handlerAttr != null)
