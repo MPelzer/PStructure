@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using PStructure.CRUDs;
+using PStructure.FunctionFeedback;
 
 namespace PStructure.Interfaces
 {

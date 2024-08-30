@@ -6,9 +6,16 @@ using PStructure.Models;
 
 namespace PStructure.SqlGenerator
 {
+    /// <summary>
+    /// Generiert für Items die Standard CRUD SQL-Befehle
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class BaseSqlGenerator<T> : ISqlGenerator
     {
-        private readonly KeyValuePair<Type, string> _insertByInstanceSqls = new KeyValuePair<Type, string>();
+        /// <summary>
+        /// Minicache, sollte das gleiche Item hintereinander angefragt werden.
+        /// </summary>
+        private readonly KeyValuePair<Type, string> _insertByInstanceSql = new KeyValuePair<Type, string>();
         private readonly KeyValuePair<Type, string> _updateByInstanceSql = new KeyValuePair<Type, string>();
         private readonly KeyValuePair<Type, string> _readByPrimaryKeySql = new KeyValuePair<Type, string>();
         private readonly KeyValuePair<Type, string> _deleteByPrimaryKeySql = new KeyValuePair<Type, string>();
@@ -17,11 +24,17 @@ namespace PStructure.SqlGenerator
         {
             
         }
+        /// <summary>
+        /// Generiert den Einfüge Befehl für ein PDO
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="tableLocation"></param>
+        /// <returns></returns>
         public string GetInsertSql(Type type, string tableLocation)
         {
-            if (type == _insertByInstanceSqls.Key)
+            if (type == _insertByInstanceSql.Key)
             {
-                return _insertByInstanceSqls.Value;
+                return _insertByInstanceSql.Value;
             }
             var properties = type.GetProperties()
                 .Where(prop => prop.GetCustomAttribute<ColumnAttribute>() != null)
@@ -36,6 +49,12 @@ namespace PStructure.SqlGenerator
             return $"INSERT INTO {tableLocation} ({columns}) VALUES ({parameters})";
         }
 
+        /// <summary>
+        /// Generiert den Lesebefehl für ein PDO
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="tableLocation"></param>
+        /// <returns></returns>
         public string GetReadSqlByPrimaryKey(Type type, string tableLocation)
         {
             if (type == _readByPrimaryKeySql.Key)
@@ -62,6 +81,12 @@ namespace PStructure.SqlGenerator
             return $"SELECT * FROM {tableLocation} WHERE {whereClause}";
         }
 
+        /// <summary>
+        /// Generiert den Löschbefehl für ein PDO
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="tableLocation"></param>
+        /// <returns></returns>
         public string GetDeleteSqlByPrimaryKey(Type type, string tableLocation)
         {
             if (type == _deleteByPrimaryKeySql.Key)
@@ -88,6 +113,13 @@ namespace PStructure.SqlGenerator
             return $"DELETE FROM {tableLocation} WHERE {whereClause}";
         }
 
+        /// <summary>
+        /// Generiert den Aktualisierungsbefehl für ein PDO
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="tableLocation"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
         public string GetUpdateSqlByPrimaryKey(Type type, string tableLocation)
         {
             if (type == _updateByInstanceSql.Key)
@@ -129,6 +161,11 @@ namespace PStructure.SqlGenerator
             return $"UPDATE {tableLocation} SET {setClause} WHERE {whereClause}";
         }
 
+        /// <summary>
+        /// Liest die gesamte Tabelle für ein PDO-Typ aus.
+        /// </summary>
+        /// <param name="tableLocation"></param>
+        /// <returns></returns>
         public string GetSelectAll(string tableLocation)
         {
             return $"SELECT * FROM {tableLocation}";

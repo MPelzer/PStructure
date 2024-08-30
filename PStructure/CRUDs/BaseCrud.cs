@@ -4,9 +4,12 @@ using System.Data;
 using Dapper;
 using Microsoft.Extensions.Logging;
 using Optional.Unsafe;
+using PStructure.FunctionFeedback;
 using PStructure.Interfaces;
+using PStructure.Mapper;
 using PStructure.Models;
 using PStructure.SqlGenerator;
+using PStructure.TableLocation;
 
 namespace PStructure.CRUDs
 {
@@ -28,7 +31,18 @@ namespace PStructure.CRUDs
             _tableLocation = tableLocation;
             _logger = logger;
         }
-
+        
+        /// <summary>
+        /// Definiert den Grundablauf für Datenbankanfragen. Dazu gehört u.A das Abbilden von Tabellenspalten-Pdo Eigenschaften
+        /// Verbindungen, Logging und 
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <param name="mapParametersFunc"></param>
+        /// <param name="item"></param>
+        /// <param name="dbCom"></param>
+        /// <param name="executeFunc"></param>
+        /// <typeparam name="TResult"></typeparam>
+        /// <returns></returns>
         private TResult ExecuteOperation<TResult>(
             string sql,
             Action<T, DynamicParameters> mapParametersFunc,
@@ -57,7 +71,7 @@ namespace PStructure.CRUDs
 
         public T InsertByInstance(T item, ref DbCom dbCom)
         {
-            var sql = _sqlGenerator.GetInsertSql(typeof(T), _tableLocation.printTableLocation());
+            var sql = _sqlGenerator.GetInsertSql(typeof(T), _tableLocation.PrintTableLocation());
             return ExecuteOperation(
                 sql,
                 (i, parameters) => _mapperPdoQuery.MapPdoToTable(i, parameters),
@@ -68,9 +82,7 @@ namespace PStructure.CRUDs
 
         public IEnumerable<T> ReadByPrimaryKey(T item, ref DbCom dbCom)
         {
-            var sql = _sqlGenerator.GetReadSqlByPrimaryKey(typeof(T), _tableLocation.printTableLocation());
-
-            _logger.LogInformation("Reading items by primary key with SQL: {Sql}", sql);
+            var sql = _sqlGenerator.GetReadSqlByPrimaryKey(typeof(T), _tableLocation.PrintTableLocation());
 
             return ExecuteOperation(
                 sql,
@@ -95,7 +107,7 @@ namespace PStructure.CRUDs
 
         public T UpdateByInstance(T item, ref DbCom dbCom)
         {
-            var sql = _sqlGenerator.GetUpdateSqlByPrimaryKey(typeof(T), _tableLocation.printTableLocation());
+            var sql = _sqlGenerator.GetUpdateSqlByPrimaryKey(typeof(T), _tableLocation.PrintTableLocation());
             return ExecuteOperation(
                 sql,
                 (i, parameters) =>
@@ -110,7 +122,7 @@ namespace PStructure.CRUDs
 
         T IBaseCrud<T>.DeleteByPrimaryKey(T item, ref DbCom dbCom)
         {
-            var sql = _sqlGenerator.GetDeleteSqlByPrimaryKey(typeof(T), _tableLocation.printTableLocation());
+            var sql = _sqlGenerator.GetDeleteSqlByPrimaryKey(typeof(T), _tableLocation.PrintTableLocation());
             return ExecuteOperation(
                 sql,
                 _mapperPdoQuery.MapPrimaryKeysToParameters,
@@ -121,7 +133,7 @@ namespace PStructure.CRUDs
 
         IEnumerable<T> IBaseCrud<T>.ReadAll(ref DbCom dbCom)
         {
-            var sql = _sqlGenerator.GetSelectAll(_tableLocation.printTableLocation());
+            var sql = _sqlGenerator.GetSelectAll(_tableLocation.PrintTableLocation());
 
             _logger.LogInformation("Reading all items with SQL: {Sql}", sql);
 

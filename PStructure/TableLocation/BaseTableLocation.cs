@@ -1,7 +1,10 @@
 ﻿using PStructure.Models;
 
-namespace PStructure
+namespace PStructure.TableLocation
 {
+    /// <summary>
+    /// Kapselt die Informationen, wo sich der zu instantiierende Tabelleneintrag innerhalb der Datenbank befindet.
+    /// </summary>
     public class BaseTableLocation : ITableLocation
     {
         private readonly string _schema;
@@ -12,8 +15,12 @@ namespace PStructure
             _schema = schema;
             _tableName = tableName;
         }
-
-        public string printTableLocation()
+        
+        /// <summary>
+        /// Gibt den Pfad zum Tabelleneintrag aus.
+        /// </summary>
+        /// <returns></returns>
+        public string PrintTableLocation()
         {
             return $"{_schema}.{_tableName}";
         }

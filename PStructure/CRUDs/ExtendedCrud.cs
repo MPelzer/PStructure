@@ -4,9 +4,12 @@ using System.Linq;
 using Dapper;
 using Microsoft.Extensions.Logging;
 using Optional.Unsafe;
+using PStructure.FunctionFeedback;
 using PStructure.Interfaces;
+using PStructure.Mapper;
 using PStructure.Models;
 using PStructure.SqlGenerator;
+using PStructure.TableLocation;
 
 namespace PStructure.CRUDs
 {
@@ -38,7 +41,7 @@ namespace PStructure.CRUDs
             Action<T, DynamicParameters> mapParametersFunc)
         {
             var result = default(T);
-            var tableLocation = _tableLocation.printTableLocation();
+            var tableLocation = _tableLocation.PrintTableLocation();
             var sql = sqlGeneratorFunc(typeof(T), tableLocation);
 
             _logger.LogInformation("Executing batch operation for {EntityType} with SQL: {Sql}", typeof(T).Name, sql);

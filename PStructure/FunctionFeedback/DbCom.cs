@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Data;
-using System.Transactions;
 using Optional;
+using PStructure.Interfaces;
 
-namespace PStructure.Interfaces
+namespace PStructure.FunctionFeedback
 {
     /// <summary>
-    /// Kapselt dieverse Informationen, die für die Datenbanktransaktion benötigt werden.
+    /// Kapselt diverse Informationen, welche einerseits vom Konsumenten an die Datenbank-Abstraktionsebene gegeben wird,
+    /// so wie die Antwort, die man von ihr erhält.
     /// </summary>
     public class DbCom : IFunctionFeedback
     {
@@ -26,7 +27,7 @@ namespace PStructure.Interfaces
         public Option<string> injectedSql;
         
         /// <summary>
-        /// Antwort darüber, ob der gewünschte Proess erfolgreich verlief.
+        /// Antwort darüber, ob der gewünschte Prozess erfolgreich verlief.
         /// </summary>
         public bool requestAnswer;
         

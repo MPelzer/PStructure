@@ -1,7 +1,12 @@
-﻿namespace PStructure.Models
+﻿namespace PStructure.TableLocation
 {
     public interface ITableLocation
     {
-        string printTableLocation();
+        
+        /// <summary>
+        /// Gibt den Pfad zum Tabelleneintrag aus.
+        /// </summary>
+        /// <returns></returns>
+        string PrintTableLocation();
     }
 }

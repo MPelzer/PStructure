@@ -2,11 +2,12 @@
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
-using PStructure.Interfaces;
-// Verwenden von System.Text.Json für JSON-Serialisierung/Deserialisierung
-
 namespace PStructure.root
 {
+    /// <summary>
+    /// Kapselt Methoden rund um das Erstellen von PDO´s
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class ItemFactory<T> : IItemFactory<T> where T : new()
     {
         /// <summary>

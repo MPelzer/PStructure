@@ -2,6 +2,9 @@
 
 namespace PStructure.Models
 {
+    /// <summary>
+    /// Attribut, um den Namen der Tabellenspalte zu hinterlegen.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class ColumnAttribute : Attribute
     {
@@ -12,6 +15,9 @@ namespace PStructure.Models
             ColumnName = columnName;
         }
     }
+    /// <summary>
+    /// Attribut, um eine Transformation von oder zu PDO-Eigenschaften und Datenbank-Tabellenwerten durchzuführen.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class TypeHandlerAttribute : Attribute
     {
@@ -22,12 +28,12 @@ namespace PStructure.Models
             HandlerType = handlerType;
         }
     }
+    /// <summary>
+    /// Signalisiert, dass die PDO_Eigenschaft Teil des Primärschlüssels der Tabellenrepräsentation ist.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class PrimaryKeyAttribute : Attribute
     {
     }
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-    public class ToStringForTestAttribute : Attribute
-    {
-    }
+    
 }

@@ -2,6 +2,9 @@
 
 namespace PStructure.SqlGenerator
 {
+    /// <summary>
+    /// Interface für den SQLGenerator, welcher die grundlegendsten SQLs für übergebene PDOs generiert./>
+    /// </summary>
     public interface ISqlGenerator
     {
         string GetInsertSql(Type type, string tableLocation);

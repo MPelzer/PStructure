@@ -8,6 +8,10 @@ using PStructure.CRUDs;
 using PStructure.Interfaces;
 using PStructure.Models;
 using PStructure.SqlGenerator;
+using NUnit.Framework;
+using PStructure.FunctionFeedback;
+using PStructure.Mapper;
+using PStructure.TableLocation;
 
 namespace PStructure.Test.BaseCrudTests
 {

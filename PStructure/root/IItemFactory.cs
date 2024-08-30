@@ -1,5 +1,9 @@
-﻿namespace PStructure.Interfaces
+﻿namespace PStructure.root
 {
+    /// <summary>
+    /// Kapselt Methoden rund um das Erstellen von PDO´s
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public interface IItemFactory <T>
     {
         /// <summary>
