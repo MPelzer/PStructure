@@ -23,15 +23,15 @@ namespace PStructure.CRUDs
     
     public class ExtendedCrud<T> : BaseCrud<T>, IExtendedCrud<T>
     {
-        private readonly ILogger<ExtendedCrud<T>> _logger;
+        private readonly ILogger<T> _logger;
         public ExtendedCrud(
             ISqlGenerator sqlGenerator, 
             IMapperPdoQuery<T> mapperPdoQuery, 
             ITableLocation tableLocation, 
-            ILogger<ExtendedCrud<T>> logger) 
+            ILogger<T> logger) 
             : base(sqlGenerator, mapperPdoQuery, tableLocation, logger)
         {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _logger = logger;
         }
 
         private T ExecuteBatchOperation(
@@ -44,7 +44,7 @@ namespace PStructure.CRUDs
             var tableLocation = _tableLocation.PrintTableLocation();
             var sql = sqlGeneratorFunc(typeof(T), tableLocation);
 
-            _logger.LogInformation("Executing batch operation for {EntityType} with SQL: {Sql}", typeof(T).Name, sql);
+            _logger?.LogInformation("Executing batch operation for {EntityType} with SQL: {Sql}", typeof(T).Name, sql);
 
             foreach (var item in items)
             {
@@ -53,13 +53,13 @@ namespace PStructure.CRUDs
 
                 try
                 {
-                    _logger.LogDebug("Executing SQL for item: {Item}", item);
-                    dbCom._dbConnection.Execute(sql, parameters, dbCom._transaction.ValueOrDefault());
+                    _logger?.LogDebug("Executing SQL for item: {Item}", item);
+                    dbCom._dbConnection.Execute(sql, parameters, dbCom._transaction);
                     result = item;
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Error executing SQL for item: {Item}", item);
+                    _logger?.LogError(ex, "Error executing SQL for item: {Item}", item);
                     throw;
                 }
             }

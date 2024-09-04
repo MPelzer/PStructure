@@ -1,36 +1,48 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
 using Optional;
 using Optional.Unsafe;
 using PStructure.CRUDs;
 using PStructure.FunctionFeedback;
 using PStructure.Interfaces;
+using PStructure.Mapper;
 using PStructure.Models;
 using PStructure.root;
+using PStructure.SqlGenerator;
+using PStructure.TableLocation;
 
 namespace PStructure
 {
-    public class DefaultItemManager<T> : IItemManager<T>
+    public class DefaultItemManager<T> : IItemManager<T> where T : new()
     {
-        private readonly ExtendedCrud<T> _defaultCrud;
+        private readonly ExtendedCrud<T> _extendedCrud;
 
         private readonly IItemFactory<T> _itemFactory;
 
+        public DefaultItemManager(BaseTableLocation tableLocation, ILogger<T> logger = null)
+        {
+            _itemFactory = new ItemFactory<T>();
+            var mapper = new MapperPdoQuery<T>();
+            var sqlGenerator = new BaseSqlGenerator<T>();
+            _extendedCrud = new ExtendedCrud<T>(sqlGenerator,mapper,tableLocation,logger);
+        }
+        
         /// <summary>
         /// Ist für die komplette Verwaltung einer Datenbankrepräsentation (PDO) zuständig
         /// </summary>
-        /// <param name="defaultCrud"></param>
+        /// <param name="extendedCrud"></param>
         /// <param name="itemFactory"></param>
-        public DefaultItemManager(ExtendedCrud<T> defaultCrud, Option<IItemFactory<T>> itemFactory)
+        public DefaultItemManager(ExtendedCrud<T> extendedCrud, Option<IItemFactory<T>> itemFactory)
         {
-            _defaultCrud = defaultCrud;
+            _extendedCrud = extendedCrud;
             _itemFactory = itemFactory.ValueOrDefault();
         }
         public T InsertByInstance(T item, ref DbCom dbCom)
         {
             DbComHandler.ExecuteWithTransaction(
                 ref dbCom,
-                action: (ref DbCom db) => _defaultCrud.InsertByInstance(item, ref db),
+                action: (ref DbCom db) => _extendedCrud.InsertByInstance(item, ref db),
                 onException: (ref DbCom db, Exception ex) => {
                     //Optionales weiteres Fehlerhandling neben dem Crud-Standardverhalten
                 },
@@ -45,7 +57,7 @@ namespace PStructure
             IEnumerable<T> items = null;
             DbComHandler.ExecuteWithTransaction(
                 ref dbCom,
-                action: (ref DbCom db) => items = _defaultCrud.ReadByPrimaryKey(item, ref db),
+                action: (ref DbCom db) => items = _extendedCrud.ReadByPrimaryKey(item, ref db),
                 onException: (ref DbCom db, Exception ex) => {
                     // Handle exception if necessary
                 },
@@ -60,7 +72,7 @@ namespace PStructure
             DbComHandler.ExecuteWithTransaction(
                 ref dbCom,
                 action: (ref DbCom db) => {
-                    _defaultCrud.InsertByInstances(items, ref db);
+                    _extendedCrud.InsertByInstances(items, ref db);
                 },
                 onException: (ref DbCom db, Exception ex) => {
                     // Handle exception if necessary
@@ -75,7 +87,7 @@ namespace PStructure
         {
             DbComHandler.ExecuteWithTransaction(
                 ref dbCom,
-                action: (ref DbCom db) => _defaultCrud.UpdateByInstance(item, ref db),
+                action: (ref DbCom db) => _extendedCrud.UpdateByInstance(item, ref db),
                 onException: (ref DbCom db, Exception ex) => {
                     // Handle exception if necessary
                 },
@@ -91,7 +103,7 @@ namespace PStructure
                 ref dbCom,
                 action: (ref DbCom db) =>
                 {
-                    _defaultCrud.UpdateByInstances(items, ref db);
+                    _extendedCrud.UpdateByInstances(items, ref db);
                 },
                 onException: (ref DbCom db, Exception ex) => {
                     // Handle exception if necessary

@@ -10,7 +10,7 @@ namespace PStructure.TableLocation
         private readonly string _schema;
         private readonly string _tableName;
 
-        private BaseTableLocation(string schema, string tableName)
+        public BaseTableLocation(string schema, string tableName)
         {
             _schema = schema;
             _tableName = tableName;
@@ -22,7 +22,7 @@ namespace PStructure.TableLocation
         /// <returns></returns>
         public string PrintTableLocation()
         {
-            return $"{_schema}.{_tableName}";
+            return string.IsNullOrEmpty(_schema) ? _tableName : $"{_schema}.{_tableName}";
         }
     }
 }

@@ -1,18 +1,22 @@
 ﻿version: '3.1'
 
 services:
-  db2:
-    image: ibmcom/db2
-    container_name: db2
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
     privileged: true
     ports:
-      - "50000:50000"
+      - "3306:3306"
     environment:
-      - DB2INST1_PASSWORD=db2inst1-pwd
-      - LICENSE=accept
-      - DBNAME=testdb
-    volumes:
-      - db2data:/database
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: testdb
+      MYSQL_USER: testuser
+      MYSQL_PASSWORD: testpassword
 
-volumes:
-  db2data:
+  adminer:
+    image: adminer
+    container_name: adminer
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql

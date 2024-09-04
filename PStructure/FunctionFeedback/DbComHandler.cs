@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Data.Common;
 using Optional;
 using Optional.Unsafe;
 using PStructure.Interfaces;
@@ -49,24 +50,22 @@ namespace PStructure.FunctionFeedback
             var transactionStartedHere = true;
             try
             {
-                OpenConnectionIfNotAlready(dbCom);
-                
-                transactionStartedHere = StartTransactionIfNotAlready(dbCom);
+                OpenConnectionIfNotAlready(ref dbCom);
+                SetDbComAnswerInvalid(ref dbCom);
+                transactionStartedHere = StartTransactionIfNotAlready(ref dbCom);
                 action(ref dbCom);
-
-                if (transactionStartedHere && commitCondition(ref dbCom))
-                {
-                    dbCom._transaction.ValueOrDefault()?.Commit();
-                    dbCom._dbConnection.Close();
-                }
-                SetDbComAnswerValid(dbCom);
+                SetDbComAnswerValid(ref dbCom);
+                if (!transactionStartedHere || !commitCondition(ref dbCom)) return;
+                dbCom._transaction.Commit();
+                dbCom._dbConnection.Close();
+                dbCom._transaction = null;
             }
             catch (Exception exception)
             {
-                SetException(dbCom, exception);
+                SetException(ref dbCom, exception);
                 if (transactionStartedHere)
                 {
-                    RollbackTransaction(dbCom);
+                    RollbackTransaction(ref dbCom);
                 }
                 onException?.Invoke(ref dbCom, exception);
             }
@@ -75,12 +74,17 @@ namespace PStructure.FunctionFeedback
                 onFinally?.Invoke();
             }
         }
-        
+
+        private static void SetDbComAnswerInvalid(ref DbCom dbCom)
+        {
+            dbCom.requestAnswer = false;
+        }
+
         /// <summary>
         /// Markiert die Rückgabe des <see cref="DbCom"/> als positiv  
         /// </summary>
         /// <param name="dbCom"></param>
-        private static void SetDbComAnswerValid(DbCom dbCom)
+        private static void SetDbComAnswerValid(ref DbCom dbCom)
         {
             dbCom.requestAnswer = true;
         }
@@ -90,7 +94,7 @@ namespace PStructure.FunctionFeedback
         /// </summary>
         /// <param name="dbCom"></param>
         /// <returns></returns>
-        private static bool OpenConnectionIfNotAlready(DbCom dbCom)
+        private static bool OpenConnectionIfNotAlready(ref DbCom dbCom)
         {
             if (dbCom._dbConnection.State == ConnectionState.Open) return false;
             dbCom._dbConnection.Open();
@@ -102,10 +106,10 @@ namespace PStructure.FunctionFeedback
         /// </summary>
         /// <param name="dbCom"></param>
         /// <returns></returns>
-        private static bool StartTransactionIfNotAlready(DbCom dbCom)
+        private static bool StartTransactionIfNotAlready(ref DbCom dbCom)
         {
-            if (dbCom._transaction.HasValue) return false;
-            dbCom._transaction = Option.Some(dbCom._dbConnection.BeginTransaction());
+            if (dbCom._transaction != null) return false;
+            dbCom._transaction = dbCom._dbConnection.BeginTransaction();
             return true;
         }
         
@@ -114,22 +118,19 @@ namespace PStructure.FunctionFeedback
         /// </summary>
         /// <param name="dbCom"></param>
         /// <param name="exception"></param>
-        private static void SetException(DbCom dbCom, Exception exception)
+        private static void SetException(ref DbCom dbCom, Exception exception)
         {
             dbCom.requestAnswer = false;
-            dbCom.requestException = Option.Some(exception);
+            dbCom.requestException = exception;
         }
         
         /// <summary>
         /// Invalidiert die Änderungen der Transaktion in der <see cref="DbCom"/>
         /// </summary>
         /// <param name="dbCom"></param>
-        private static void RollbackTransaction(DbCom dbCom)
+        private static void RollbackTransaction(ref DbCom dbCom)
         {
-            dbCom._transaction.Match(
-                some: transaction => transaction.Rollback(),
-                none: () => { }
-            );
+            dbCom._transaction.Rollback();
         }
     }
 }

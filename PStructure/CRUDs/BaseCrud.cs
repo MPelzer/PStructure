@@ -18,13 +18,13 @@ namespace PStructure.CRUDs
         protected readonly ISqlGenerator _sqlGenerator;
         protected readonly IMapperPdoQuery<T> _mapperPdoQuery;
         protected readonly ITableLocation _tableLocation;
-        private readonly ILogger<BaseCrud<T>> _logger;
+        private readonly ILogger<T> _logger;
 
         public BaseCrud(
             ISqlGenerator sqlGenerator,
             IMapperPdoQuery<T> mapperPdoQuery,
             ITableLocation tableLocation,
-            ILogger<BaseCrud<T>> logger)
+            ILogger<T> logger)
         {
             _sqlGenerator = sqlGenerator;
             _mapperPdoQuery = mapperPdoQuery;
@@ -58,7 +58,7 @@ namespace PStructure.CRUDs
             try
             {
                 _logger.LogDebug("Parameters: {Parameters}", parameters);
-                var result = executeFunc(dbCom._dbConnection, sql, parameters, dbCom._transaction.ValueOrDefault());
+                var result = executeFunc(dbCom._dbConnection, sql, parameters, dbCom._transaction);
                 _logger.LogInformation("Operation successful for item: {Item}", item);
                 return result;
             }
@@ -120,7 +120,7 @@ namespace PStructure.CRUDs
                 (conn, sqlQuery, parameters, txn) => { conn.Execute(sqlQuery, parameters, txn); return item; });
         }
 
-        T IBaseCrud<T>.DeleteByPrimaryKey(T item, ref DbCom dbCom)
+        public T DeleteByPrimaryKey(T item, ref DbCom dbCom)
         {
             var sql = _sqlGenerator.GetDeleteSqlByPrimaryKey(typeof(T), _tableLocation.PrintTableLocation());
             return ExecuteOperation(
@@ -131,7 +131,7 @@ namespace PStructure.CRUDs
                 (conn, sqlQuery, parameters, txn) => { conn.Execute(sqlQuery, parameters, txn); return item; });
         }
 
-        IEnumerable<T> IBaseCrud<T>.ReadAll(ref DbCom dbCom)
+        public IEnumerable<T> ReadAll(ref DbCom dbCom)
         {
             var sql = _sqlGenerator.GetSelectAll(_tableLocation.PrintTableLocation());
 
@@ -139,7 +139,7 @@ namespace PStructure.CRUDs
 
             try
             {
-                var result = dbCom._dbConnection.Query<T>(sql, transaction: dbCom._transaction.ValueOrDefault());
+                var result = dbCom._dbConnection.Query<T>(sql, transaction: dbCom._transaction);
                 _logger.LogInformation("Read all items successful.");
                 return result;
             }

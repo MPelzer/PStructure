@@ -15,15 +15,15 @@ namespace PStructure.SqlGenerator
         /// <summary>
         /// Minicache, sollte das gleiche Item hintereinander angefragt werden.
         /// </summary>
-        private readonly KeyValuePair<Type, string> _insertByInstanceSql = new KeyValuePair<Type, string>();
-        private readonly KeyValuePair<Type, string> _updateByInstanceSql = new KeyValuePair<Type, string>();
-        private readonly KeyValuePair<Type, string> _readByPrimaryKeySql = new KeyValuePair<Type, string>();
-        private readonly KeyValuePair<Type, string> _deleteByPrimaryKeySql = new KeyValuePair<Type, string>();
-        
+        private readonly Dictionary<Type, string> _insertByInstanceSqlCache = new Dictionary<Type, string>();
+        private readonly Dictionary<Type, string> _updateByInstanceSqlCache = new Dictionary<Type, string>();
+        private readonly Dictionary<Type, string> _readByPrimaryKeySqlCache = new Dictionary<Type, string>();
+        private readonly Dictionary<Type, string> _deleteByPrimaryKeySqlCache = new Dictionary<Type, string>();
+
         public BaseSqlGenerator()
         {
-            
         }
+
         /// <summary>
         /// Generiert den Einfüge Befehl für ein PDO
         /// </summary>
@@ -32,10 +32,11 @@ namespace PStructure.SqlGenerator
         /// <returns></returns>
         public string GetInsertSql(Type type, string tableLocation)
         {
-            if (type == _insertByInstanceSql.Key)
+            if (_insertByInstanceSqlCache.TryGetValue(type, out var cachedSql))
             {
-                return _insertByInstanceSql.Value;
+                return cachedSql;
             }
+            
             var properties = type.GetProperties()
                 .Where(prop => prop.GetCustomAttribute<ColumnAttribute>() != null)
                 .ToArray();
@@ -46,7 +47,9 @@ namespace PStructure.SqlGenerator
             var columns = string.Join(", ", columnNames);
             var parameters = string.Join(", ", parameterNames);
 
-            return $"INSERT INTO {tableLocation} ({columns}) VALUES ({parameters})";
+            var sql = $"INSERT INTO {tableLocation} ({columns}) VALUES ({parameters})";
+            _insertByInstanceSqlCache[type] = sql;
+            return sql;
         }
 
         /// <summary>
@@ -57,10 +60,11 @@ namespace PStructure.SqlGenerator
         /// <returns></returns>
         public string GetReadSqlByPrimaryKey(Type type, string tableLocation)
         {
-            if (type == _readByPrimaryKeySql.Key)
+            if (_readByPrimaryKeySqlCache.TryGetValue(type, out var cachedSql))
             {
-                return _readByPrimaryKeySql.Value;
+                return cachedSql;
             }
+
             var primaryKeyProps = type.GetProperties()
                 .Where(prop => prop.GetCustomAttribute<PrimaryKeyAttribute>() != null)
                 .ToArray();
@@ -78,7 +82,9 @@ namespace PStructure.SqlGenerator
             });
 
             var whereClause = string.Join(" AND ", whereClauses);
-            return $"SELECT * FROM {tableLocation} WHERE {whereClause}";
+            var sql = $"SELECT * FROM {tableLocation} WHERE {whereClause}";
+            _readByPrimaryKeySqlCache[type] = sql;
+            return sql;
         }
 
         /// <summary>
@@ -89,10 +95,11 @@ namespace PStructure.SqlGenerator
         /// <returns></returns>
         public string GetDeleteSqlByPrimaryKey(Type type, string tableLocation)
         {
-            if (type == _deleteByPrimaryKeySql.Key)
+            if (_deleteByPrimaryKeySqlCache.TryGetValue(type, out var cachedSql))
             {
-                return _deleteByPrimaryKeySql.Value;
+                return cachedSql;
             }
+
             var primaryKeyProps = type.GetProperties()
                 .Where(prop => prop.GetCustomAttribute<PrimaryKeyAttribute>() != null)
                 .ToArray();
@@ -110,7 +117,9 @@ namespace PStructure.SqlGenerator
             });
 
             var whereClause = string.Join(" AND ", whereClauses);
-            return $"DELETE FROM {tableLocation} WHERE {whereClause}";
+            var sql = $"DELETE FROM {tableLocation} WHERE {whereClause}";
+            _deleteByPrimaryKeySqlCache[type] = sql;
+            return sql;
         }
 
         /// <summary>
@@ -122,10 +131,11 @@ namespace PStructure.SqlGenerator
         /// <exception cref="InvalidOperationException"></exception>
         public string GetUpdateSqlByPrimaryKey(Type type, string tableLocation)
         {
-            if (type == _updateByInstanceSql.Key)
+            if (_updateByInstanceSqlCache.TryGetValue(type, out var cachedSql))
             {
-                return _updateByInstanceSql.Value;
+                return cachedSql;
             }
+
             var properties = type.GetProperties()
                 .Where(prop => prop.GetCustomAttribute<ColumnAttribute>() != null)
                 .ToArray();
@@ -158,7 +168,9 @@ namespace PStructure.SqlGenerator
             var setClause = string.Join(", ", setClauses);
             var whereClause = string.Join(" AND ", whereClauses);
 
-            return $"UPDATE {tableLocation} SET {setClause} WHERE {whereClause}";
+            var sql = $"UPDATE {tableLocation} SET {setClause} WHERE {whereClause}";
+            _updateByInstanceSqlCache[type] = sql;
+            return sql;
         }
 
         /// <summary>

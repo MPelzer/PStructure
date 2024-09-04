@@ -19,12 +19,12 @@ namespace PStructure.FunctionFeedback
         /// <summary>
         /// Optionale Transaktion.
         /// </summary>
-        public Option<IDbTransaction> _transaction;
+        public IDbTransaction _transaction;
 
         /// <summary>
         /// Ein optionaler SQL als String, der entweder vin der Crud automatisch, oder vom Nutzer manuell gefüllt werden kann.
         /// </summary>
-        public Option<string> injectedSql;
+        public string injectedSql;
         
         /// <summary>
         /// Antwort darüber, ob der gewünschte Prozess erfolgreich verlief.
@@ -34,7 +34,7 @@ namespace PStructure.FunctionFeedback
         /// <summary>
         /// Optionale Exception.
         /// </summary>
-        public Option<Exception> requestException;
+        public Exception requestException;
 
     }
 }

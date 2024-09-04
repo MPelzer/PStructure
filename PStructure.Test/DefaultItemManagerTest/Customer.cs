@@ -3,17 +3,17 @@ using PStructure.DapperSqlDateTimeMappers;
 using PStructure.Interfaces.DapperSqlDateTimeMappers;
 using PStructure.Models;
 
-public class ExamplePdo
+public class Customer
 {
     [PrimaryKey]
-    [Column("Name_Column")]
+    [Column("Name")]
     public string Name { get; set; }
     
     [PrimaryKey] 
-    [Column("Age_Column")]
+    [Column("Age")]
     public int Age { get; set; }
 
-    [Column("IsActive_Column")]
+    [Column("IsActive")]
     public bool IsActive { get; set; }
 
     [Column("Date_yyyyMMdd"), TypeHandlerAttribute(typeof(CustomDateHandler_yyyyMMdd))]
@@ -34,13 +34,13 @@ public class ExamplePdo
     [Column("Date_cyyMMdd"), TypeHandlerAttribute(typeof(CustomDateHandler_cyyMMdd))]
     public DateTime DateIn_cyyMMdd { get; set; }
 
-    [Column("Salary_Column")]
+    [Column("Salary")]
     public decimal Salary { get; set; }
 
-    [Column("Latitude_Column")]
+    [Column("Latitude")]
     public double Latitude { get; set; }
 
-    [Column("LastLogin_Column")]
+    [Column("LastLogin")]
     public DateTime? LastLogin { get; set; }
     
     
