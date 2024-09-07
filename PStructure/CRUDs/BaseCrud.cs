@@ -80,7 +80,7 @@ namespace PStructure.CRUDs
                 (conn, sqlQuery, parameters, txn) => { conn.Execute(sqlQuery, parameters, txn); return item; });
         }
 
-        public IEnumerable<T> ReadByPrimaryKey(T item, ref DbCom dbCom)
+        public T ReadByPrimaryKey(T item, ref DbCom dbCom)
         {
             var sql = _sqlGenerator.GetReadSqlByPrimaryKey(typeof(T), _tableLocation.PrintTableLocation());
 
@@ -91,17 +91,17 @@ namespace PStructure.CRUDs
                 ref dbCom,
                 (conn, sqlQuery, parameters, txn) =>
                 {
-                    var results = new List<T>();
+                    T entity = Activator.CreateInstance<T>();
                     using (var reader = conn.ExecuteReader(sqlQuery, parameters, txn))
                     {
                         while (reader.Read())
                         {
-                            T entity = Activator.CreateInstance<T>();
                             _mapperPdoQuery.MapTableColumnsToPdo(entity, reader);
-                            results.Add(entity);
+                            
                         }
                     }
-                    return results;
+
+                    return entity;
                 });
         }
 

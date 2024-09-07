@@ -67,11 +67,12 @@ namespace PStructure.Test.DefaultItemManagerTest
             itemManager.InsertByInstance(testEntry, ref dbCom);
 
             TestEntry tableValue = null;
+            _dbConnection.Open();
             using (var command = _dbConnection.CreateCommand())
             {
                 command.CommandText = "SELECT * FROM TestEntry WHERE GuidValue = @GuidValue";
                 command.Parameters.Add(new MySqlParameter("@GuidValue", testEntry.GuidValue));
-
+                
                 using (var reader = command.ExecuteReader())
                 {
                     while (reader.Read())
@@ -95,7 +96,6 @@ namespace PStructure.Test.DefaultItemManagerTest
                     }
                 }
             }
-
             Assert.That(tableValue, Is.Not.Null);
             Assert.That(tableValue.GuidValue, Is.EqualTo(testEntry.GuidValue));
             Assert.That(tableValue.IntegerValue, Is.EqualTo(testEntry.IntegerValue));

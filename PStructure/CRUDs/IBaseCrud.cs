@@ -15,7 +15,7 @@ namespace PStructure.CRUDs
         /// <param name="item"></param>
         /// <param name="dbCom"></param>
         /// <returns></returns>
-        IEnumerable<T> ReadByPrimaryKey(T item, ref DbCom dbCom);
+        T ReadByPrimaryKey(T item, ref DbCom dbCom);
         
         /// <summary>
         /// Aktualisiert einen Datensatz anhand seiner Instanz

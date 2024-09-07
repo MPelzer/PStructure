@@ -22,8 +22,8 @@ public class UpdateByInstanceTests
         {
             _dbConnection = new MySqlConnection(ConnectionString);
             _dbConnection.Open();
-            var entryFactory = new TestEntryFactory();
-            entryFactory.intitalizeDatabaseTable(_dbConnection);
+            _testEntryFactory = new TestEntryFactory();
+            _testEntryFactory.intitalizeDatabaseTable(_dbConnection);
         }
         catch (Exception ex)
         {
@@ -74,6 +74,7 @@ public class UpdateByInstanceTests
 
         // Verify update
         TestEntry updatedEntry = null;
+        _dbConnection.Open();
         using (var command = _dbConnection.CreateCommand())
         {
             command.CommandText = "SELECT * FROM TestEntry WHERE GuidValue = @GuidValue";

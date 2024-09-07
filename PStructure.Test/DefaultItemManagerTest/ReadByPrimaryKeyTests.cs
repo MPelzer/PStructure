@@ -71,12 +71,9 @@ namespace PStructure.Test.DefaultItemManagerTest
             itemManager.InsertByInstance(insertedEntry, ref dbCom);
 
             // Step 2: Use ReadByPrimaryKey to retrieve the entry
-            var retrievedEntries = itemManager.ReadByPrimaryKey(insertedEntry, ref dbCom).ToList();
+            var retrievedEntry = itemManager.ReadByPrimaryKey(insertedEntry, ref dbCom);
 
             // Step 3: Assert that the retrieved entry matches the inserted one
-            Assert.That(retrievedEntries.Count, Is.EqualTo(1), "Expected exactly one entry to be retrieved.");
-            var retrievedEntry = retrievedEntries.First();
-
             Assert.That(retrievedEntry.GuidValue, Is.EqualTo(insertedEntry.GuidValue));
             Assert.That(retrievedEntry.IntegerValue, Is.EqualTo(insertedEntry.IntegerValue));
             Assert.That(retrievedEntry.LongValue, Is.EqualTo(insertedEntry.LongValue));

@@ -2,20 +2,44 @@
 	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;&#xD;
   &lt;PhysicalFolder Path="C:\Users\mattp\.nuget\packages\nunit\4.2.2" Loaded="True" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=1fb275f6_002Db199_002D4959_002Dae73_002Dd36aaf640cf0/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="InsertByInstanceTests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::54A4BDA8-919B-45E0-AD4D-E263A572BDFB::net6.0::PStructure.Test.DefaultItemManagerTest.InsertByInstanceTests&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
 	
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=4309fde9_002Dfc08_002D4d05_002Da110_002Dad2a05bcd105/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="DefaultItemManagerTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;NUnit3x::54A4BDA8-919B-45E0-AD4D-E263A572BDFB::net6.0::PStructure.Test.DefaultItemManagerTest&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=59fcc33d_002D2ac1_002D42d5_002D92c6_002D5651df62885d/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="DefaultItemManagerTest #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=59fcc33d_002D2ac1_002D42d5_002D92c6_002D5651df62885d/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="DefaultItemManagerTest #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;ProjectFolder&gt;54A4BDA8-919B-45E0-AD4D-E263A572BDFB/d:DefaultItemManagerTest&lt;/ProjectFolder&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=81b663cd_002Dbd9e_002D4c2e_002Db3f9_002Dee4b59a7dc29/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="DeleteByPrimaryKey_Should_RemoveDataCorrectly" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::54A4BDA8-919B-45E0-AD4D-E263A572BDFB::net6.0::PStructure.Test.DefaultItemManagerTest&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::54A4BDA8-919B-45E0-AD4D-E263A572BDFB::net6.0::PStructure.Test.DefaultItemManagerTest.DeleteTests.DeleteByPrimaryKey_Should_RemoveDataCorrectly&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=96531b05_002D9bab_002D49b4_002Db44b_002D56dc17f4cee7/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="ReadByPrimaryKey_Should_ReturnCorrectData" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;ProjectFolder&gt;54A4BDA8-919B-45E0-AD4D-E263A572BDFB/d:DefaultItemManagerTest&lt;/ProjectFolder&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=970c7b25_002D9c55_002D40b2_002Daf72_002Dc0e2d9ef7f7a/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="InsertByInstance_Should_InsertDataCorrectly #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::54A4BDA8-919B-45E0-AD4D-E263A572BDFB::net6.0::PStructure.Test.DefaultItemManagerTest.InsertByInstanceTests.InsertByInstance_Should_InsertDataCorrectly&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=c182c465_002D0e70_002D4e66_002Da847_002D9d5935ea123f/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="DefaultItemManagerTest #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;ProjectFolder&gt;54A4BDA8-919B-45E0-AD4D-E263A572BDFB/d:DefaultItemManagerTest&lt;/ProjectFolder&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=d30fff55_002Dfd6a_002D45a7_002D91ab_002Df093ed82bdbe/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="InsertByInstance_Should_InsertDataCorrectly" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::54A4BDA8-919B-45E0-AD4D-E263A572BDFB::net6.0::PStructure.Test.DefaultItemManagerTest&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::54A4BDA8-919B-45E0-AD4D-E263A572BDFB::net6.0::PStructure.Test.DefaultItemManagerTest.InsertByInstanceTests.InsertByInstance_Should_InsertDataCorrectly&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=d47e8177_002D0acb_002D4440_002Dba11_002D37d9a9b43293/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="ReadByPrimaryKeyTests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::54A4BDA8-919B-45E0-AD4D-E263A572BDFB::net6.0::PStructure.Test.DefaultItemManagerTest.ReadByPrimaryKeyTests&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	

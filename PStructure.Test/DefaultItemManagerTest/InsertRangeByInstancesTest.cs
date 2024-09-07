@@ -91,7 +91,7 @@ namespace PStructure.Test.DefaultItemManagerTest
 
             // Validate the inserted entries
             var insertedEntries = new List<TestEntry>();
-
+            _dbConnection.Open();
             using (var command = _dbConnection.CreateCommand())
             {
                 command.CommandText = "SELECT * FROM TestEntry";

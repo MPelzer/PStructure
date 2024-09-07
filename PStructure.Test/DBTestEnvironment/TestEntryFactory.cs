@@ -34,33 +34,36 @@ namespace PStructure.Test.Models
             using (var command = dbConnection.CreateCommand())
             {
                 command.CommandText = @"
-                    CREATE TABLE IF NOT EXISTS TestEntry (
-                        IntegerValue INT,
-                        LongValue BIGINT,
-                        ShortValue SMALLINT,
-                        ByteValue TINYINT,
-                        FloatValue FLOAT,
-                        DoubleValue DOUBLE,
-                        DecimalValue DECIMAL(18,2),
-                        BooleanValue BOOLEAN,
-                        CharValue CHAR(1),
-                        StringValue TEXT,
-                        DateTimeValue DATETIME,
-                        GuidValue UNIQUEIDENTIFIER PRIMARY KEY,
-                        ByteArrayValue VARBINARY(MAX)
-                    )";
+                CREATE TABLE IF NOT EXISTS TestEntry (
+                    GuidValue CHAR(36) PRIMARY KEY, 
+                    IntegerValue INT,
+                    LongValue BIGINT,
+                    ShortValue SMALLINT,
+                    ByteValue TINYINT UNSIGNED, -- Use TINYINT UNSIGNED to allow values 0-255
+                    FloatValue FLOAT,
+                    DoubleValue DOUBLE,
+                    DecimalValue DECIMAL(18,2),
+                    BooleanValue BOOLEAN,
+                    CharValue CHAR(1),
+                    StringValue TEXT,
+                    DateTimeValue DATETIME,
+                    ByteArrayValue BLOB
+                )";
                 command.ExecuteNonQuery();
             }
         }
+
         public void TearDown(DbConnection dbConnection)
         {
             try
             {
+                
                 using (var command = dbConnection.CreateCommand())
                 {
                     command.CommandText = "DROP TABLE IF EXISTS TestEntry";
                     command.ExecuteNonQuery();
                 }
+                dbConnection.Close();
             }
             catch (Exception ex)
             {

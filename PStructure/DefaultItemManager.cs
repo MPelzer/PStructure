@@ -52,19 +52,18 @@ namespace PStructure
             return item;
         }
 
-        public IEnumerable<T> ReadByPrimaryKey(T item, ref DbCom dbCom)
+        public T ReadByPrimaryKey(T item, ref DbCom dbCom)
         {
-            IEnumerable<T> items = null;
             DbComHandler.ExecuteWithTransaction(
                 ref dbCom,
-                action: (ref DbCom db) => items = _extendedCrud.ReadByPrimaryKey(item, ref db),
+                action: (ref DbCom db) => item = _extendedCrud.ReadByPrimaryKey(item, ref db),
                 onException: (ref DbCom db, Exception ex) => {
                     // Handle exception if necessary
                 },
                 commitCondition: (ref DbCom db) => db.requestAnswer
             );
 
-            return items;
+            return item;
         }
 
         public IEnumerable<T> InsertRangeByInstances(IEnumerable<T> items, ref DbCom dbCom)

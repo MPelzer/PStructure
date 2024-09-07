@@ -24,8 +24,8 @@ public class DeleteTests
         {
             _dbConnection = new MySqlConnection(ConnectionString);
             _dbConnection.Open();
-            var entryFactory = new TestEntryFactory();
-            entryFactory.intitalizeDatabaseTable(_dbConnection);
+            _testEntryFactory = new TestEntryFactory();
+            _testEntryFactory.intitalizeDatabaseTable(_dbConnection);
         }
         catch (Exception ex)
         {
@@ -73,11 +73,12 @@ public class DeleteTests
 
         // Verify deletion
         TestEntry deletedEntry = null;
+        _dbConnection.Open();
         using (var command = _dbConnection.CreateCommand())
         {
             command.CommandText = "SELECT * FROM TestEntry WHERE GuidValue = @GuidValue";
             command.Parameters.Add(new MySqlParameter("@GuidValue", testEntry.GuidValue));
-
+            
             using (var reader = command.ExecuteReader())
             {
                 while (reader.Read())
