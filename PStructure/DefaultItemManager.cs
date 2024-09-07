@@ -61,6 +61,7 @@ namespace PStructure
                 onException: (ref DbCom db, Exception ex) => {
                     // Handle exception if necessary
                 },
+                
                 commitCondition: (ref DbCom db) => db.requestAnswer
             );
 
@@ -112,6 +113,20 @@ namespace PStructure
             );
 
             return items;
+        }
+        public void DeleteByPrimaryKey(T item, ref DbCom dbCom)
+        {
+            DbComHandler.ExecuteWithTransaction(
+                ref dbCom,
+                action: (ref DbCom db) =>
+                {
+                    _extendedCrud.DeleteByPrimaryKey(item, ref db);
+                },
+                onException: (ref DbCom db, Exception ex) => {
+                    // Handle exception if necessary
+                },
+                commitCondition: (ref DbCom db) => db.requestAnswer
+            );
         }
         public bool IsPrimaryKeyValid()
         {
