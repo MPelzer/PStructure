@@ -52,7 +52,7 @@ namespace PStructure
             return item;
         }
 
-        public IEnumerable<T> ReadRangeByPrimaryKey(T item, ref DbCom dbCom)
+        public IEnumerable<T> ReadByPrimaryKey(T item, ref DbCom dbCom)
         {
             IEnumerable<T> items = null;
             DbComHandler.ExecuteWithTransaction(
@@ -61,7 +61,6 @@ namespace PStructure
                 onException: (ref DbCom db, Exception ex) => {
                     // Handle exception if necessary
                 },
-                
                 commitCondition: (ref DbCom db) => db.requestAnswer
             );
 
