@@ -22,7 +22,6 @@
 
     <ItemGroup>
       <Folder Include="CustomDateHandlersTests\" />
-      <Folder Include="DbComHandlerTests\" />
       <Folder Include="ExtendedCrudTests\" />
       <Folder Include="MapperPdoQueryTests\" />
       <Folder Include="Models\" />

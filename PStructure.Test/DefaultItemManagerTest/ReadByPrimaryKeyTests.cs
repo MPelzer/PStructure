@@ -58,13 +58,10 @@ namespace PStructure.Test.DefaultItemManagerTest
             var tableLocation = new BaseTableLocation("", "TestEntry");
             var itemManager = new DefaultItemManager<TestEntry>(tableLocation, logger);
 
-            var dbCom = new DbCom
+            var dbCom = new DbFeedback(_dbConnection)
             {
-                requestAnswer = false,
-                _dbConnection = _dbConnection,
-                _transaction = null,
-                injectedSql = " ",
-                requestException = null
+                InjectedSql = string.Empty,
+                DbTransaction = null
             };
 
             // Insert the entry into the database

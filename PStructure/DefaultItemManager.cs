@@ -17,125 +17,148 @@ namespace PStructure
     public class DefaultItemManager<T> : IItemManager<T> where T : new()
     {
         private readonly ExtendedCrud<T> _extendedCrud;
-
         private readonly IItemFactory<T> _itemFactory;
 
+        /// <summary>
+        /// Constructor for DefaultItemManager with BaseTableLocation and optional ILogger
+        /// </summary>
         public DefaultItemManager(BaseTableLocation tableLocation, ILogger<T> logger = null)
         {
             _itemFactory = new ItemFactory<T>();
             var mapper = new MapperPdoQuery<T>();
             var sqlGenerator = new BaseSqlGenerator<T>();
-            _extendedCrud = new ExtendedCrud<T>(sqlGenerator,mapper,tableLocation,logger);
+            _extendedCrud = new ExtendedCrud<T>(sqlGenerator, mapper, tableLocation, logger);
         }
-        
+
         /// <summary>
-        /// Ist für die komplette Verwaltung einer Datenbankrepräsentation (PDO) zuständig
+        /// Constructor for DefaultItemManager with an existing ExtendedCrud and optional IItemFactory.
         /// </summary>
-        /// <param name="extendedCrud"></param>
-        /// <param name="itemFactory"></param>
         public DefaultItemManager(ExtendedCrud<T> extendedCrud, Option<IItemFactory<T>> itemFactory)
         {
             _extendedCrud = extendedCrud;
             _itemFactory = itemFactory.ValueOrDefault();
         }
-        public T InsertByInstance(T item, ref DbCom dbCom)
-        {
-            DbComHandler.ExecuteWithTransaction(
-                ref dbCom,
-                action: (ref DbCom db) => _extendedCrud.InsertByInstance(item, ref db),
-                onException: (ref DbCom db, Exception ex) => {
-                    //Optionales weiteres Fehlerhandling neben dem Crud-Standardverhalten
-                },
-                commitCondition: (ref DbCom db) => db.requestAnswer
-            );
 
+        /// <summary>
+        /// Inserts an item by instance, handling database feedback by reference.
+        /// </summary>
+        public T InsertByInstance(T item, ref DbFeedback dbFeedback)
+        {
+            DbFeedbackHandler.ExecuteWithTransaction(
+                ref dbFeedback,
+                action: (ref DbFeedback db) => _extendedCrud.InsertByInstance(item, ref db),
+                onException: (ref DbFeedback db, Exception ex) =>
+                {
+                    // Optional additional error handling
+                },
+                commitCondition: (ref DbFeedback db) => db.RequestAnswer
+            );
             return item;
         }
 
-        public T ReadByPrimaryKey(T item, ref DbCom dbCom)
+        /// <summary>
+        /// Reads an item by its primary key, updating the database feedback.
+        /// </summary>
+        public T ReadByPrimaryKey(T item, ref DbFeedback dbFeedback)
         {
-            DbComHandler.ExecuteWithTransaction(
-                ref dbCom,
-                action: (ref DbCom db) => item = _extendedCrud.ReadByPrimaryKey(item, ref db),
-                onException: (ref DbCom db, Exception ex) => {
+            DbFeedbackHandler.ExecuteWithTransaction(
+                ref dbFeedback,
+                action: (ref DbFeedback db) => item = _extendedCrud.ReadByPrimaryKey(item, ref db),
+                onException: (ref DbFeedback db, Exception ex) =>
+                {
                     // Handle exception if necessary
                 },
-                commitCondition: (ref DbCom db) => db.requestAnswer
+                commitCondition: (ref DbFeedback db) => db.RequestAnswer
             );
-
             return item;
         }
 
-        public IEnumerable<T> InsertRangeByInstances(IEnumerable<T> items, ref DbCom dbCom)
+        /// <summary>
+        /// Inserts a range of items by instance, updating the database feedback.
+        /// </summary>
+        public IEnumerable<T> InsertRangeByInstances(IEnumerable<T> items, ref DbFeedback dbFeedback)
         {
-            DbComHandler.ExecuteWithTransaction(
-                ref dbCom,
-                action: (ref DbCom db) => {
-                    _extendedCrud.InsertByInstances(items, ref db);
-                },
-                onException: (ref DbCom db, Exception ex) => {
+            DbFeedbackHandler.ExecuteWithTransaction(
+                ref dbFeedback,
+                action: (ref DbFeedback db) => _extendedCrud.InsertByInstances(items, ref db),
+                onException: (ref DbFeedback db, Exception ex) =>
+                {
                     // Handle exception if necessary
                 },
-                commitCondition: (ref DbCom db) => db.requestAnswer
+                commitCondition: (ref DbFeedback db) => db.RequestAnswer
             );
-
             return items;
         }
 
-        public T UpdateByInstance(T item, ref DbCom dbCom)
+        /// <summary>
+        /// Updates an item by instance, updating the database feedback.
+        /// </summary>
+        public T UpdateByInstance(T item, ref DbFeedback dbFeedback)
         {
-            DbComHandler.ExecuteWithTransaction(
-                ref dbCom,
-                action: (ref DbCom db) => _extendedCrud.UpdateByInstance(item, ref db),
-                onException: (ref DbCom db, Exception ex) => {
+            DbFeedbackHandler.ExecuteWithTransaction(
+                ref dbFeedback,
+                action: (ref DbFeedback db) => _extendedCrud.UpdateByInstance(item, ref db),
+                onException: (ref DbFeedback db, Exception ex) =>
+                {
                     // Handle exception if necessary
                 },
-                commitCondition: (ref DbCom db) => db.requestAnswer
+                commitCondition: (ref DbFeedback db) => db.RequestAnswer
             );
-
             return item;
         }
 
-        public IEnumerable<T> UpdateRangeByInstances(IEnumerable<T> items, ref DbCom dbCom)
+        /// <summary>
+        /// Updates a range of items by instance, updating the database feedback.
+        /// </summary>
+        public IEnumerable<T> UpdateRangeByInstances(IEnumerable<T> items, ref DbFeedback dbFeedback)
         {
-            DbComHandler.ExecuteWithTransaction(
-                ref dbCom,
-                action: (ref DbCom db) =>
+            DbFeedbackHandler.ExecuteWithTransaction(
+                ref dbFeedback,
+                action: (ref DbFeedback db) => _extendedCrud.UpdateByInstances(items, ref db),
+                onException: (ref DbFeedback db, Exception ex) =>
                 {
-                    _extendedCrud.UpdateByInstances(items, ref db);
-                },
-                onException: (ref DbCom db, Exception ex) => {
                     // Handle exception if necessary
                 },
-                commitCondition: (ref DbCom db) => db.requestAnswer
+                commitCondition: (ref DbFeedback db) => db.RequestAnswer
             );
-
             return items;
         }
-        public void DeleteByPrimaryKey(T item, ref DbCom dbCom)
+
+        /// <summary>
+        /// Deletes an item by its primary key, updating the database feedback.
+        /// </summary>
+        public void DeleteByPrimaryKey(T item, ref DbFeedback dbFeedback)
         {
-            DbComHandler.ExecuteWithTransaction(
-                ref dbCom,
-                action: (ref DbCom db) =>
+            DbFeedbackHandler.ExecuteWithTransaction(
+                ref dbFeedback,
+                action: (ref DbFeedback db) => _extendedCrud.DeleteByPrimaryKey(item, ref db),
+                onException: (ref DbFeedback db, Exception ex) =>
                 {
-                    _extendedCrud.DeleteByPrimaryKey(item, ref db);
-                },
-                onException: (ref DbCom db, Exception ex) => {
                     // Handle exception if necessary
                 },
-                commitCondition: (ref DbCom db) => db.requestAnswer
+                commitCondition: (ref DbFeedback db) => db.RequestAnswer
             );
         }
+
+        /// <summary>
+        /// Checks if the primary key is valid for an item.
+        /// </summary>
         public bool IsPrimaryKeyValid()
         {
             throw new NotImplementedException("IsPrimaryKeyValid needs to be implemented.");
         }
 
+        /// <summary>
+        /// Outputs a test-friendly string representation of the manager.
+        /// </summary>
         public string ToStringForTest()
         {
             throw new NotImplementedException("ToStringForTest needs to be implemented.");
         }
 
+        /// <summary>
+        /// Validates the PDO (PHP Data Object).
+        /// </summary>
         public bool ValidatePdo()
         {
             throw new NotImplementedException("ValidatePdo needs to be implemented.");

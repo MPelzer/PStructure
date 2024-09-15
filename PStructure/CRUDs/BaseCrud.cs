@@ -39,7 +39,7 @@ namespace PStructure.CRUDs
         /// <param name="sql"></param>
         /// <param name="mapParametersFunc"></param>
         /// <param name="item"></param>
-        /// <param name="dbCom"></param>
+        /// <param name="dbFeedback"></param>
         /// <param name="executeFunc"></param>
         /// <typeparam name="TResult"></typeparam>
         /// <returns></returns>
@@ -47,7 +47,7 @@ namespace PStructure.CRUDs
             string sql,
             Action<T, DynamicParameters> mapParametersFunc,
             T item,
-            ref DbCom dbCom,
+            ref DbFeedback dbFeedback,
             Func<IDbConnection, string, DynamicParameters, IDbTransaction, TResult> executeFunc)
         {
             var parameters = new DynamicParameters();
@@ -58,7 +58,7 @@ namespace PStructure.CRUDs
             try
             {
                 _logger.LogDebug("Parameters: {Parameters}", parameters);
-                var result = executeFunc(dbCom._dbConnection, sql, parameters, dbCom._transaction);
+                var result = executeFunc(dbFeedback.DbConnection, sql, parameters, dbFeedback.DbTransaction);
                 _logger.LogInformation("Operation successful for item: {Item}", item);
                 return result;
             }
@@ -69,18 +69,18 @@ namespace PStructure.CRUDs
             }
         }
 
-        public T InsertByInstance(T item, ref DbCom dbCom)
+        public T InsertByInstance(T item, ref DbFeedback dbFeedback)
         {
             var sql = _sqlGenerator.GetInsertSql(typeof(T), _tableLocation.PrintTableLocation());
             return ExecuteOperation(
                 sql,
                 (i, parameters) => _mapperPdoQuery.MapPdoToTable(i, parameters),
                 item,
-                ref dbCom,
+                ref dbFeedback,
                 (conn, sqlQuery, parameters, txn) => { conn.Execute(sqlQuery, parameters, txn); return item; });
         }
 
-        public T ReadByPrimaryKey(T item, ref DbCom dbCom)
+        public T ReadByPrimaryKey(T item, ref DbFeedback dbFeedback)
         {
             var sql = _sqlGenerator.GetReadSqlByPrimaryKey(typeof(T), _tableLocation.PrintTableLocation());
 
@@ -88,7 +88,7 @@ namespace PStructure.CRUDs
                 sql,
                 _mapperPdoQuery.MapPrimaryKeysToParameters,
                 item,
-                ref dbCom,
+                ref dbFeedback,
                 (conn, sqlQuery, parameters, txn) =>
                 {
                     T entity = Activator.CreateInstance<T>();
@@ -105,7 +105,7 @@ namespace PStructure.CRUDs
                 });
         }
 
-        public T UpdateByInstance(T item, ref DbCom dbCom)
+        public T UpdateByInstance(T item, ref DbFeedback dbFeedback)
         {
             var sql = _sqlGenerator.GetUpdateSqlByPrimaryKey(typeof(T), _tableLocation.PrintTableLocation());
             return ExecuteOperation(
@@ -116,22 +116,22 @@ namespace PStructure.CRUDs
                     _mapperPdoQuery.MapPrimaryKeysToParameters(i, parameters);
                 },
                 item,
-                ref dbCom,
+                ref dbFeedback,
                 (conn, sqlQuery, parameters, txn) => { conn.Execute(sqlQuery, parameters, txn); return item; });
         }
 
-        public T DeleteByPrimaryKey(T item, ref DbCom dbCom)
+        public T DeleteByPrimaryKey(T item, ref DbFeedback dbFeedback)
         {
             var sql = _sqlGenerator.GetDeleteSqlByPrimaryKey(typeof(T), _tableLocation.PrintTableLocation());
             return ExecuteOperation(
                 sql,
                 _mapperPdoQuery.MapPrimaryKeysToParameters,
                 item,
-                ref dbCom,
+                ref dbFeedback,
                 (conn, sqlQuery, parameters, txn) => { conn.Execute(sqlQuery, parameters, txn); return item; });
         }
 
-        public IEnumerable<T> ReadAll(ref DbCom dbCom)
+        public IEnumerable<T> ReadAll(ref DbFeedback dbFeedback)
         {
             var sql = _sqlGenerator.GetSelectAll(_tableLocation.PrintTableLocation());
 
@@ -139,7 +139,7 @@ namespace PStructure.CRUDs
 
             try
             {
-                var result = dbCom._dbConnection.Query<T>(sql, transaction: dbCom._transaction);
+                var result = dbFeedback.DbConnection.Query<T>(sql, transaction: dbFeedback.DbTransaction);
                 _logger.LogInformation("Read all items successful.");
                 return result;
             }

@@ -36,7 +36,7 @@ namespace PStructure.CRUDs
 
         private T ExecuteBatchOperation(
             IEnumerable<T> items, 
-            ref DbCom dbCom, 
+            ref DbFeedback dbFeedback, 
             Func<Type, string, string> sqlGeneratorFunc, 
             Action<T, DynamicParameters> mapParametersFunc)
         {
@@ -54,7 +54,7 @@ namespace PStructure.CRUDs
                 try
                 {
                     _logger?.LogDebug("Executing SQL for item: {Item}", item);
-                    dbCom._dbConnection.Execute(sql, parameters, dbCom._transaction);
+                    dbFeedback.DbConnection.Execute(sql, parameters, dbFeedback.DbTransaction);
                     result = item;
                 }
                 catch (Exception ex)
@@ -67,21 +67,21 @@ namespace PStructure.CRUDs
             return result;
         }
 
-        public IEnumerable<T> ReadRangeByPrimaryKeys(IEnumerable<T> items, ref DbCom dbCom)
+        public IEnumerable<T> ReadRangeByPrimaryKeys(IEnumerable<T> items, ref DbFeedback dbFeedback)
         {
             return ExecuteBatchOperation(
                 items, 
-                ref dbCom, 
+                ref dbFeedback, 
                 _sqlGenerator.GetReadSqlByPrimaryKey, 
                 (item, parameters) => _mapperPdoQuery.MapPrimaryKeysToParameters(item, parameters))
                 .Yield();
         }
 
-        public T UpdateByInstances(IEnumerable<T> items, ref DbCom dbCom)
+        public T UpdateByInstances(IEnumerable<T> items, ref DbFeedback dbFeedback)
         {
             return ExecuteBatchOperation(
                 items, 
-                ref dbCom, 
+                ref dbFeedback, 
                 _sqlGenerator.GetUpdateSqlByPrimaryKey, 
                 (item, parameters) =>
                 {
@@ -90,20 +90,20 @@ namespace PStructure.CRUDs
                 });
         }
 
-        public T InsertByInstances(IEnumerable<T> items, ref DbCom dbCom)
+        public T InsertByInstances(IEnumerable<T> items, ref DbFeedback dbFeedback)
         {
             return ExecuteBatchOperation(
                 items, 
-                ref dbCom, 
+                ref dbFeedback, 
                 _sqlGenerator.GetInsertSql, 
                 (item, parameters) => _mapperPdoQuery.MapPdoToTable(item, parameters));
         }
 
-        public T DeleteByPrimaryKeys(IEnumerable<T> items, ref DbCom dbCom)
+        public T DeleteByPrimaryKeys(IEnumerable<T> items, ref DbFeedback dbFeedback)
         {
             return ExecuteBatchOperation(
                 items, 
-                ref dbCom, 
+                ref dbFeedback, 
                 _sqlGenerator.GetDeleteSqlByPrimaryKey, 
                 _mapperPdoQuery.MapPrimaryKeysToParameters);
         }
