@@ -1,11 +1,16 @@
 ﻿using System;
 
-namespace PStructure.Interfaces
+namespace PStructure.FunctionFeedback
 {
     public interface IFunctionFeedback
     {
-        bool RequestAnswer { get; set; }
-        Exception RequestException { get; set; }
-        bool SilentThrow { get; set; }
+       void SetRequestAnswer(bool value);
+       bool GetRequestAnswer();
+       void SetRequestException(Exception exception);
+       Exception GetRequestException();
+       void SetSilentThrow(bool value);
+       bool ExceptionGetsThrownSilently();
+
+       void SetBackToDefault();
     }
 }

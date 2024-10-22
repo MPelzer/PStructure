@@ -5,9 +5,7 @@ using Optional;
 using Optional.Unsafe;
 using PStructure.CRUDs;
 using PStructure.FunctionFeedback;
-using PStructure.Interfaces;
 using PStructure.Mapper;
-using PStructure.Models;
 using PStructure.root;
 using PStructure.SqlGenerator;
 using PStructure.TableLocation;
@@ -16,7 +14,7 @@ namespace PStructure
 {
     public class DefaultItemManager<T> : IItemManager<T> where T : new()
     {
-        private readonly ExtendedCrud<T> _extendedCrud;
+        private readonly ICrud<T> _crud;
         private readonly IItemFactory<T> _itemFactory;
 
         /// <summary>
@@ -27,101 +25,86 @@ namespace PStructure
             _itemFactory = new ItemFactory<T>();
             var mapper = new MapperPdoQuery<T>();
             var sqlGenerator = new BaseSqlGenerator<T>();
-            _extendedCrud = new ExtendedCrud<T>(sqlGenerator, mapper, tableLocation, logger);
+            _crud = new SimpleCrud<T>(sqlGenerator, mapper, tableLocation, logger);
         }
 
         /// <summary>
         /// Constructor for DefaultItemManager with an existing ExtendedCrud and optional IItemFactory.
         /// </summary>
-        public DefaultItemManager(ExtendedCrud<T> extendedCrud, Option<IItemFactory<T>> itemFactory)
+        public DefaultItemManager(ICrud<T> crud, Option<IItemFactory<T>> itemFactory)
         {
-            _extendedCrud = extendedCrud;
+            _crud = crud;
             _itemFactory = itemFactory.ValueOrDefault();
-        }
-
-        /// <summary>
-        /// Inserts an item by instance, handling database feedback by reference.
-        /// </summary>
-        public T InsertByInstance(T item, ref DbFeedback dbFeedback)
-        {
-            DbFeedbackHandler.ExecuteWithTransaction(
-                ref dbFeedback,
-                action: (ref DbFeedback db) => _extendedCrud.InsertByInstance(item, ref db),
-                onException: (ref DbFeedback db, Exception ex) =>
-                {
-                    // Optional additional error handling
-                },
-                commitCondition: (ref DbFeedback db) => db.RequestAnswer
-            );
-            return item;
-        }
-
-        /// <summary>
-        /// Reads an item by its primary key, updating the database feedback.
-        /// </summary>
-        public T ReadByPrimaryKey(T item, ref DbFeedback dbFeedback)
-        {
-            DbFeedbackHandler.ExecuteWithTransaction(
-                ref dbFeedback,
-                action: (ref DbFeedback db) => item = _extendedCrud.ReadByPrimaryKey(item, ref db),
-                onException: (ref DbFeedback db, Exception ex) =>
-                {
-                    // Handle exception if necessary
-                },
-                commitCondition: (ref DbFeedback db) => db.RequestAnswer
-            );
-            return item;
         }
 
         /// <summary>
         /// Inserts a range of items by instance, updating the database feedback.
         /// </summary>
-        public IEnumerable<T> InsertRangeByInstances(IEnumerable<T> items, ref DbFeedback dbFeedback)
+        public void CreateByInstance(T item, ref DbFeedback dbFeedback)
+        {
+            CreateByInstances(new List<T> { item }, ref dbFeedback);
+        }
+        
+        /// <summary>
+        /// Inserts an item by instance, handling database feedback by reference.
+        /// </summary>
+        public void CreateByInstances(IEnumerable<T> items, ref DbFeedback dbFeedback)
         {
             DbFeedbackHandler.ExecuteWithTransaction(
                 ref dbFeedback,
-                action: (ref DbFeedback db) => _extendedCrud.InsertByInstances(items, ref db),
+                action: (ref DbFeedback db) => _crud.Create(items, ref db),
                 onException: (ref DbFeedback db, Exception ex) =>
                 {
-                    // Handle exception if necessary
-                },
-                commitCondition: (ref DbFeedback db) => db.RequestAnswer
+                    // Optional additional error handling
+                }
             );
-            return items;
         }
 
         /// <summary>
-        /// Updates an item by instance, updating the database feedback.
+        /// Reads an item by its primary key, updating the database feedback.
         /// </summary>
-        public T UpdateByInstance(T item, ref DbFeedback dbFeedback)
+        public IEnumerable<T> ReadByInstance(T item, ref DbFeedback dbFeedback)
+        {
+            return ReadByInstances(new List<T> { item }, ref dbFeedback);
+        }
+        
+        /// <summary>
+        /// Reads an item by its primary key, updating the database feedback.
+        /// </summary>
+        public IEnumerable<T> ReadByInstances(IEnumerable<T> items, ref DbFeedback dbFeedback)
         {
             DbFeedbackHandler.ExecuteWithTransaction(
                 ref dbFeedback,
-                action: (ref DbFeedback db) => _extendedCrud.UpdateByInstance(item, ref db),
+                action: (ref DbFeedback db) => items = _crud.Read(items, ref db),
                 onException: (ref DbFeedback db, Exception ex) =>
                 {
                     // Handle exception if necessary
-                },
-                commitCondition: (ref DbFeedback db) => db.RequestAnswer
+                }
             );
-            return item;
+            return items;
+        }
+        
+        /// <summary>
+        /// Updates an item by instance, updating the database feedback.
+        /// </summary>
+        public  void UpdateByInstance(T item, ref DbFeedback dbFeedback)
+        {
+             UpdateByInstances(new List<T> { item }, ref dbFeedback);
         }
 
         /// <summary>
         /// Updates a range of items by instance, updating the database feedback.
         /// </summary>
-        public IEnumerable<T> UpdateRangeByInstances(IEnumerable<T> items, ref DbFeedback dbFeedback)
+        public void UpdateByInstances(IEnumerable<T> items, ref DbFeedback dbFeedback)
         {
             DbFeedbackHandler.ExecuteWithTransaction(
                 ref dbFeedback,
-                action: (ref DbFeedback db) => _extendedCrud.UpdateByInstances(items, ref db),
+                action: (ref DbFeedback db) => _crud.Update(items, ref db),
                 onException: (ref DbFeedback db, Exception ex) =>
                 {
                     // Handle exception if necessary
-                },
-                commitCondition: (ref DbFeedback db) => db.RequestAnswer
+                }
             );
-            return items;
         }
 
         /// <summary>
@@ -129,17 +112,24 @@ namespace PStructure
         /// </summary>
         public void DeleteByPrimaryKey(T item, ref DbFeedback dbFeedback)
         {
+            DeleteByPrimaryKeys(new List<T> { item }, ref dbFeedback);
+        }
+        
+        /// <summary>
+        /// Deletes an item by its primary key, updating the database feedback.
+        /// </summary>
+        public void DeleteByPrimaryKeys(IEnumerable<T> items, ref DbFeedback dbFeedback)
+        {
             DbFeedbackHandler.ExecuteWithTransaction(
                 ref dbFeedback,
-                action: (ref DbFeedback db) => _extendedCrud.DeleteByPrimaryKey(item, ref db),
+                action: (ref DbFeedback db) => _crud.Delete(items, ref db),
                 onException: (ref DbFeedback db, Exception ex) =>
                 {
                     // Handle exception if necessary
-                },
-                commitCondition: (ref DbFeedback db) => db.RequestAnswer
+                }
             );
         }
-
+        
         /// <summary>
         /// Checks if the primary key is valid for an item.
         /// </summary>

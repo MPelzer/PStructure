@@ -1,68 +1,42 @@
 ﻿using System;
 using System.Data;
+using System.Data.Common;
+using Dapper;
 using PStructure.Interfaces;
 
 namespace PStructure.FunctionFeedback
 {
     /// <summary>
-    /// Combines database request handling and feedback mechanisms into a single class.
+    /// 
     /// </summary>
-    public class DbFeedback : IFunctionFeedback, IDbRequest
+    public class DbFeedback : FunctionFeedback
     {
-        public bool RequestAnswer { get; set; }
-        public Exception RequestException { get; set; }
-        public bool SilentThrow { get; set; }
-        
         // DbRequest methods
-        public IDbConnection DbConnection { get; set; }
-        public IDbTransaction DbTransaction { get; set; }
-        public string InjectedSql { get; set; }
-
+        private IDbConnection _dbConnection;
+        private IDbTransaction _dbTransaction;
         public DbFeedback(IDbConnection dbConnection)
         {
-            DbConnection = dbConnection;
-            RequestAnswer = false;
-            RequestException = null;
-            SilentThrow = false;
+            _dbConnection = dbConnection;
         }
         
-        
-        public void OpenConnection()
+        public void SetDbTransaction(IDbTransaction dbTransaction)
         {
-            if (DbConnection.State != ConnectionState.Open)
-            {
-                DbConnection.Open();
-            }
+            _dbTransaction = dbTransaction;
         }
 
-        public void CloseConnection()
+        public IDbTransaction GetDbTransaction()
         {
-            if (DbConnection.State == ConnectionState.Open)
-            {
-                DbConnection.Close();
-            }
+            return _dbTransaction;
         }
 
-        public void BeginTransaction()
+        public void SetDbConnection(IDbConnection dbConnection)
         {
-            if (DbTransaction == null)
-            {
-                DbTransaction = DbConnection.BeginTransaction();
-            }
+            _dbConnection = dbConnection;
         }
 
-        public void CommitTransaction()
+        public IDbConnection GetDbConnection()
         {
-            DbTransaction?.Commit();
-            DbTransaction = null;
+            return _dbConnection;
         }
-
-        public void RollbackTransaction()
-        {
-            DbTransaction?.Rollback();
-            DbTransaction = null;
-        }
-
-        
     }
 }

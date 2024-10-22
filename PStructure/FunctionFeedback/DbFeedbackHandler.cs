@@ -34,54 +34,74 @@ namespace PStructure.FunctionFeedback
     {
         /// <summary>
         /// Stellt den Standardmechanismus/Standardverhalten dar, welcher rund um Datenbankzugriffe notwendig ist.
-        /// Dazu gehören u.A das Öffnen temporärer <see cref="IDbTransaction"/> und das Füllen von <see cref="DbCom"/>
+        /// Dazu gehören u.A das Öffnen temporärer <see cref="IDbTransaction"/> und das Füllen von <see cref="DbFeedback"/>
         /// mit den richtigen Rückmeldungen für den Konsumenten.
         /// </summary>
-        /// <param name="dbCom"></param>
+        /// <param name="dbFeedback"></param>
         /// <param name="action"></param>
         /// <param name="onException"></param>
-        /// <param name="commitCondition"></param>
         /// <param name="onFinally"></param>
         public static void ExecuteWithTransaction(
-            ref DbFeedback dbFeedback, // Pass DbFeedback as reference
+            ref DbFeedback dbFeedback, 
             DbAction action,
             DbExceptionAction onException,
-            DbCondition commitCondition,
             Action onFinally = null)
         {
             var transactionStartedHere = true;
             try
             {
-                dbFeedback.OpenConnection();
-                dbFeedback.RequestAnswer = false;
-                transactionStartedHere = StartTransactionIfNotAlready(ref dbFeedback);
+                transactionStartedHere = PrepareDbFeedback(ref dbFeedback);
                 action(ref dbFeedback);
-                dbFeedback.RequestAnswer = true;
-                if (!transactionStartedHere || !commitCondition(ref dbFeedback)) return;
-                dbFeedback.CommitTransaction();
+                ApplyActionResult(transactionStartedHere, ref dbFeedback);
             }
             catch (Exception exception)
             {
-                dbFeedback.RequestAnswer = false;
-                dbFeedback.RequestException = exception;
-                if (transactionStartedHere)
-                {
-                    dbFeedback.RollbackTransaction();
-                }
+                ApplyException(transactionStartedHere, exception, ref dbFeedback);
                 onException?.Invoke(ref dbFeedback, exception);
             }
             finally
             {
-                dbFeedback.CloseConnection();
+                PostprocessDbFeedback(ref dbFeedback);
                 onFinally?.Invoke();
             }
+            
         }
 
-        private static bool StartTransactionIfNotAlready(ref DbFeedback dbFeedback)
+        private static void ApplyException(bool transactionStartedHere, Exception exception, ref DbFeedback dbFeedback)
         {
-            if (dbFeedback.DbTransaction != null) return false;
-            dbFeedback.BeginTransaction();
+            dbFeedback.SetRequestAnswer(false);
+            dbFeedback.SetRequestException(exception);
+            if (!transactionStartedHere) return;
+            dbFeedback.GetDbTransaction()?.Rollback();
+            dbFeedback.SetDbTransaction(null);
+        }
+
+        private static void ApplyActionResult(bool transactionStartedHere, ref DbFeedback dbFeedback)
+        {
+            dbFeedback.SetRequestAnswer(true);
+            if (!transactionStartedHere) return;
+            dbFeedback.GetDbTransaction()?.Commit();
+            dbFeedback.SetDbTransaction(null);
+        }
+
+        private static bool PrepareDbFeedback(ref DbFeedback dbFeedback)
+        {
+            if (dbFeedback.GetDbConnection().State != ConnectionState.Open)
+            {
+                dbFeedback.GetDbConnection().Open();
+            }
+            dbFeedback.SetRequestAnswer(false);
+            if (dbFeedback.GetDbTransaction() != null) return false;
+            dbFeedback.SetDbTransaction(dbFeedback.GetDbConnection().BeginTransaction());
             return true;
+        }
+
+        private static void PostprocessDbFeedback(ref DbFeedback dbFeedback)
+        {
+            if (dbFeedback.GetDbConnection().State == ConnectionState.Open)
+            {
+                dbFeedback.GetDbConnection().Close();
+            }
         }
     }
 }

@@ -63,7 +63,7 @@ public class DeleteTests
             DbTransaction = null
         };
 
-        itemManager.InsertByInstance(testEntry, ref dbCom);
+        itemManager.CreateByInstances(testEntry, ref dbCom);
 
         // Delete data by primary key
         itemManager.DeleteByPrimaryKey(testEntry, ref dbCom);
