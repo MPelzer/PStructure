@@ -8,9 +8,8 @@ namespace PStructure.Mapper
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public interface IMapperPdoQuery<T>
-    {
-        void MapTableColumnsToPdo(T entity, IDataReader reader);
-        void MapPdoToTable(T item, DynamicParameters parameters);
+    { 
+        void MapPropertiesToParameters(T item, DynamicParameters parameters);
         void MapPrimaryKeysToParameters(T item, DynamicParameters parameters);
     }
 

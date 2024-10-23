@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Dapper;
 using Microsoft.Extensions.Logging;
 using Optional.Unsafe;
+using PStructure.DapperSqlDateTimeMappers;
 using PStructure.FunctionFeedback;
 using PStructure.Interfaces;
+using PStructure.Interfaces.DapperSqlDateTimeMappers;
 using PStructure.Mapper;
 using PStructure.Models;
 using PStructure.SqlGenerator;
@@ -30,6 +33,7 @@ namespace PStructure.CRUDs
             _mapperPdoQuery = mapperPdoQuery;
             _tableLocation = tableLocation;
             _logger = logger;
+            ApplyTypeHandlersForObject<T>();
         }
         public int Execute(
             IEnumerable<T> items, 
@@ -98,7 +102,7 @@ namespace PStructure.CRUDs
                 items, 
                 ref dbFeedback, 
                 _sqlGenerator.GetInsertSql, 
-                (item, parameters) => _mapperPdoQuery.MapPdoToTable(item, parameters));
+                (item, parameters) => _mapperPdoQuery.MapPropertiesToParameters(item, parameters));
         }
         public IEnumerable<T> Read(IEnumerable<T> items, ref DbFeedback dbFeedback)
         {
@@ -135,7 +139,7 @@ namespace PStructure.CRUDs
                 _sqlGenerator.GetUpdateSqlByPrimaryKey, 
                 (item, parameters) =>
                 {
-                    _mapperPdoQuery.MapPdoToTable(item, parameters);
+                    _mapperPdoQuery.MapPropertiesToParameters(item, parameters);
                     _mapperPdoQuery.MapPrimaryKeysToParameters(item, parameters);
                 });
         }
@@ -149,6 +153,18 @@ namespace PStructure.CRUDs
                 _mapperPdoQuery.MapPrimaryKeysToParameters);
         }
         
+        public void ApplyTypeHandlersForObject<T>()
+        {
+            var properties = typeof(T).GetProperties();
+            foreach (var property in properties)
+            {
+                var handlerAttribute = property.GetCustomAttribute<TypeHandlerAttribute>();
+                if (handlerAttribute == null) continue;
+                var handlerInstance = (SqlMapper.ITypeHandler)Activator.CreateInstance(handlerAttribute.HandlerType);
+                SqlMapper.AddTypeHandler(property.PropertyType, handlerInstance);
+            }
+        }
+
     }
     
 }

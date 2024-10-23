@@ -61,8 +61,8 @@ namespace PStructure.CRUDs
         /// <param name="dbFeedback"></param>
         /// <returns></returns>
         int Delete(IEnumerable<T> items, ref DbFeedback dbFeedback);
-        
-        
-        
+
+        void ApplyTypeHandlersForObject<T>();
+
     }
 }

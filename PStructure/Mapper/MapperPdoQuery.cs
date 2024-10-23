@@ -43,58 +43,19 @@ namespace PStructure.Mapper
         /// <param name="item"></param>
         /// <param name="parameters"></param>
         /// <exception cref="InvalidOperationException"></exception>
-        public void MapPdoToTable(T item, DynamicParameters parameters)
+        public void MapPropertiesToParameters(T item, DynamicParameters parameters)
         {
             foreach (var prop in typeof(T).GetProperties())
             {
                 var value = prop.GetValue(item);
                 var columnAttr = prop.GetCustomAttribute<ColumnAttribute>();
-                var handlerAttr = prop.GetCustomAttribute<TypeHandlerAttribute>();
                 
                 if (columnAttr == null)
                 {
                     throw new InvalidOperationException($"Property {prop.Name} does not have a ColumnAttribute.");
                 }
                 var columnName = columnAttr.ColumnName;
-                if (handlerAttr != null)
-                {
-                    var handler = (ICustomHandler)Activator.CreateInstance(handlerAttr.HandlerType);
-                    value = handler.Format(value);
-                }
-
                 parameters.Add("@" + columnName, value);
-            }
-        }
-
-        /// <summary>
-        /// Erhält einen <see cref="IDataReader"/> und setzt anhand der Spalten-Eigenschaft-Zuweisung durch Attribute im
-        /// PDO die aus der Datenbank ausgelesenen Werte.
-        /// </summary>
-        /// <param name="entity"></param>
-        /// <param name="reader"></param>
-        public void MapTableColumnsToPdo(T entity, IDataReader reader)
-        {
-            foreach (var prop in typeof(T).GetProperties())
-            {
-                var columnName = prop.Name;
-
-                var columnAttr = prop.GetCustomAttribute<ColumnAttribute>();
-                if (columnAttr != null)
-                {
-                    columnName = columnAttr.ColumnName;
-                }
-
-                var value = reader[columnName];
-                if (value == DBNull.Value) continue; //Wenn DB-Null, dann ignorieren. (Es bleibt der Factory-Wert)
-
-                var handlerAttr = prop.GetCustomAttribute<TypeHandlerAttribute>();
-                if (handlerAttr != null)
-                {
-                    var handler = (ICustomHandler)Activator.CreateInstance(handlerAttr.HandlerType);
-                    value = handler.Parse(value);
-                }
-
-                prop.SetValue(entity, value);
             }
         }
     }
