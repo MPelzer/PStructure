@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data;
 using System.Linq;
 using System.Reflection;
 using Dapper;
@@ -14,6 +13,23 @@ namespace PStructure.Mapper
     /// <typeparam name="T"></typeparam>
     public class MapperPdoQuery<T> : IMapperPdoQuery<T>
     {
+        
+        private static readonly PropertyInfo[] _propertyInfoCache;
+        private static readonly PropertyInfo[] _primaryKeyInfoCache;
+
+        // Static constructor to initialize the property caches
+        static MapperPdoQuery()
+        {
+            _propertyInfoCache = typeof(T).GetProperties()
+                .Where(prop => prop.GetCustomAttribute<ColumnAttribute>() != null)
+                .ToArray();
+
+            _primaryKeyInfoCache = typeof(T).GetProperties()
+                .Where(prop => prop.GetCustomAttribute<PrimaryKeyAttribute>() != null)
+                .ToArray();
+        }
+        
+        
         /// <summary>
         /// Fügt einem Set an DynamicParameters Parameter für alle Eigenschaften des PDO´s mit Attribut <see cref="PrimaryKeyAttribute"/>
         /// hinzu.
@@ -22,16 +38,12 @@ namespace PStructure.Mapper
         /// <param name="parameters"></param>
         public void MapPrimaryKeysToParameters(T item, DynamicParameters parameters)
         {
-            var primaryKeyProps = typeof(T).GetProperties()
-                .Where(prop => prop.GetCustomAttribute<PrimaryKeyAttribute>() != null);
-
-            foreach (var prop in primaryKeyProps)
+            foreach (var prop in _primaryKeyInfoCache)
             {
                 var columnAttr = prop.GetCustomAttribute<ColumnAttribute>();
                 var value = prop.GetValue(item);
 
                 var columnName = columnAttr?.ColumnName ?? prop.Name;
-
                 parameters.Add("@" + columnName, value);
             }
         }
@@ -45,7 +57,7 @@ namespace PStructure.Mapper
         /// <exception cref="InvalidOperationException"></exception>
         public void MapPropertiesToParameters(T item, DynamicParameters parameters)
         {
-            foreach (var prop in typeof(T).GetProperties())
+            foreach (var prop in _propertyInfoCache)
             {
                 var value = prop.GetValue(item);
                 var columnAttr = prop.GetCustomAttribute<ColumnAttribute>();
@@ -54,6 +66,7 @@ namespace PStructure.Mapper
                 {
                     throw new InvalidOperationException($"Property {prop.Name} does not have a ColumnAttribute.");
                 }
+
                 var columnName = columnAttr.ColumnName;
                 parameters.Add("@" + columnName, value);
             }

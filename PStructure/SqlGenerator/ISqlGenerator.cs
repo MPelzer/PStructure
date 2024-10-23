@@ -1,19 +1,17 @@
-﻿using System;
-
-namespace PStructure.SqlGenerator
+﻿namespace PStructure.SqlGenerator
 {
     /// <summary>
-    /// Interface für den SQLGenerator, welcher die grundlegendsten SQLs für übergebene PDOs generiert./>
+    /// Interface für den SQLGenerator, welcher die grundlegendsten SQLs für übergebene PDOs generiert.
     /// </summary>
-    public interface ISqlGenerator
+    public interface ISqlGenerator<T>
     {
-        string GetInsertSql(Type type, string tableLocation);
+        string GetInsertSql(string tableLocation);
 
-        string GetReadSqlByPrimaryKey(Type type, string tableLocation);
+        string GetReadSqlByPrimaryKey(string tableLocation);
 
-        string GetDeleteSqlByPrimaryKey(Type type, string tableLocation);
+        string GetDeleteSqlByPrimaryKey(string tableLocation);
 
-        string GetUpdateSqlByPrimaryKey(Type type, string tableLocation);
+        string GetUpdateSqlByPrimaryKey(string tableLocation);
 
         string GetSelectAll(string tableLocation);
     }

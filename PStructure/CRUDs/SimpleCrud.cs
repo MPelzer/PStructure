@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using Dapper;
 using Microsoft.Extensions.Logging;
-using Optional.Unsafe;
-using PStructure.DapperSqlDateTimeMappers;
 using PStructure.FunctionFeedback;
-using PStructure.Interfaces;
-using PStructure.Interfaces.DapperSqlDateTimeMappers;
 using PStructure.Mapper;
 using PStructure.Models;
 using PStructure.SqlGenerator;
@@ -18,13 +13,13 @@ namespace PStructure.CRUDs
 {
     public class SimpleCrud<T> : ICrud<T>
     {
-        private readonly ISqlGenerator _sqlGenerator;
+        private readonly ISqlGenerator<T> _sqlGenerator;
         private readonly IMapperPdoQuery<T> _mapperPdoQuery;
         private readonly ITableLocation _tableLocation;
         private readonly ILogger<T> _logger;
 
         public SimpleCrud(
-            ISqlGenerator sqlGenerator,
+            ISqlGenerator<T> sqlGenerator,
             IMapperPdoQuery<T> mapperPdoQuery,
             ITableLocation tableLocation,
             ILogger<T> logger)
@@ -33,17 +28,17 @@ namespace PStructure.CRUDs
             _mapperPdoQuery = mapperPdoQuery;
             _tableLocation = tableLocation;
             _logger = logger;
-            ApplyTypeHandlersForObject<T>();
+            ApplyTypeHandlersForObject();
         }
         public int Execute(
             IEnumerable<T> items, 
             ref DbFeedback dbFeedback, 
-            Func<Type, string, string> sqlGeneratorFunc, 
+            Func<string, string> sqlGeneratorFunc, 
             Action<T, DynamicParameters> mapParametersFunc)
         {
             var result = 0;
             var tableLocation = _tableLocation.PrintTableLocation();
-            var sql = sqlGeneratorFunc(typeof(T), tableLocation);
+            var sql = sqlGeneratorFunc(tableLocation);
             
             _logger?.LogInformation("Executing for {EntityType} with SQL: {Sql}", typeof(T).Name, sql);
             
@@ -68,12 +63,12 @@ namespace PStructure.CRUDs
         public IEnumerable<T> Query(
             IEnumerable<T> items, 
             ref DbFeedback dbFeedback, 
-            Func<Type, string, string> sqlGeneratorFunc, 
+            Func<string, string> sqlGeneratorFunc, 
             Action<T, DynamicParameters> mapParametersFunc)
         {
             var result = new List<T>();
             var tableLocation = _tableLocation.PrintTableLocation();
-            var sql = sqlGeneratorFunc(typeof(T), tableLocation);
+            var sql = sqlGeneratorFunc(tableLocation);
             
             _logger?.LogInformation("Executing for {EntityType} with SQL: {Sql}", typeof(T).Name, sql);
             
@@ -153,7 +148,7 @@ namespace PStructure.CRUDs
                 _mapperPdoQuery.MapPrimaryKeysToParameters);
         }
         
-        public void ApplyTypeHandlersForObject<T>()
+        public void ApplyTypeHandlersForObject()
         {
             var properties = typeof(T).GetProperties();
             foreach (var property in properties)

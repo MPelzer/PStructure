@@ -14,13 +14,13 @@ namespace PStructure.CRUDs
         int Execute(
             IEnumerable<T> items,
             ref DbFeedback dbFeedback,
-            Func<Type, string, string> sqlGeneratorFunc,
+            Func<string, string> sqlGeneratorFunc,
             Action<T, DynamicParameters> mapParametersFunc);
 
         IEnumerable<T> Query(
             IEnumerable<T> items,
             ref DbFeedback dbFeedback,
-            Func<Type, string, string> sqlGeneratorFunc,
+            Func<string, string> sqlGeneratorFunc,
             Action<T, DynamicParameters> mapParametersFunc);
         
         /// <summary>
@@ -62,7 +62,7 @@ namespace PStructure.CRUDs
         /// <returns></returns>
         int Delete(IEnumerable<T> items, ref DbFeedback dbFeedback);
 
-        void ApplyTypeHandlersForObject<T>();
+        void ApplyTypeHandlersForObject();
 
     }
 }
