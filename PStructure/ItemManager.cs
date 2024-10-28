@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Extensions.Logging;
 using Optional;
 using Optional.Unsafe;
@@ -12,31 +13,23 @@ using PStructure.TableLocation;
 
 namespace PStructure
 {
-    public class DefaultItemManager<T> : IItemManager<T> where T : new()
+    
+    public class ItemManager<T> : ClassCore, IItemManager<T> where T : new()
     {
         private readonly ICrud<T> _crud;
         private readonly IItemFactory<T> _itemFactory;
-
+        private readonly ILogger _logger;
+        
         /// <summary>
         /// Constructor for DefaultItemManager with BaseTableLocation and optional ILogger
         /// </summary>
-        public DefaultItemManager(BaseTableLocation tableLocation, ILogger<T> logger = null)
+        public ItemManager(ICrud<T> crud, ILogger<T> logger = null)
         {
             _itemFactory = new ItemFactory<T>();
-            var mapper = new MapperPdoQuery<T>();
-            var sqlGenerator = new BaseSqlGenerator<T>();
-            _crud = new SimpleCrud<T>(sqlGenerator, mapper, tableLocation, logger);
-        }
-
-        /// <summary>
-        /// Constructor for DefaultItemManager with an existing ExtendedCrud and optional IItemFactory.
-        /// </summary>
-        public DefaultItemManager(ICrud<T> crud, Option<IItemFactory<T>> itemFactory)
-        {
+            _logger = logger;
             _crud = crud;
-            _itemFactory = itemFactory.ValueOrDefault();
         }
-
+        
         /// <summary>
         /// Inserts a range of items by instance, updating the database feedback.
         /// </summary>
@@ -50,9 +43,11 @@ namespace PStructure
         /// </summary>
         public void CreateByInstances(IEnumerable<T> items, ref DbFeedback dbFeedback)
         {
+            LogFunctionStart(ref items,"Create");
             DbFeedbackHandler.ExecuteWithTransaction(
                 ref dbFeedback,
-                action: (ref DbFeedback db) => _crud.Create(items, ref db),
+                _logger,
+                action: (ILogger logger, ref DbFeedback db) => _crud.Create(items, ref db, _logger),
                 onException: (ref DbFeedback db, Exception ex) =>
                 {
                     // Optional additional error handling
@@ -73,9 +68,11 @@ namespace PStructure
         /// </summary>
         public IEnumerable<T> ReadByInstances(IEnumerable<T> items, ref DbFeedback dbFeedback)
         {
+            LogFunctionStart(ref items,"Read");
             DbFeedbackHandler.ExecuteWithTransaction(
                 ref dbFeedback,
-                action: (ref DbFeedback db) => items = _crud.Read(items, ref db),
+                _logger,
+                action: (ILogger logger, ref DbFeedback db) => items = _crud.Read(items, ref db, _logger),
                 onException: (ref DbFeedback db, Exception ex) =>
                 {
                     // Handle exception if necessary
@@ -97,9 +94,11 @@ namespace PStructure
         /// </summary>
         public void UpdateByInstances(IEnumerable<T> items, ref DbFeedback dbFeedback)
         {
+            LogFunctionStart(ref items,"Update");
             DbFeedbackHandler.ExecuteWithTransaction(
                 ref dbFeedback,
-                action: (ref DbFeedback db) => _crud.Update(items, ref db),
+                _logger,
+                action: (ILogger logger, ref DbFeedback db) => _crud.Update(items, ref db, _logger),
                 onException: (ref DbFeedback db, Exception ex) =>
                 {
                     // Handle exception if necessary
@@ -120,14 +119,28 @@ namespace PStructure
         /// </summary>
         public void DeleteByPrimaryKeys(IEnumerable<T> items, ref DbFeedback dbFeedback)
         {
+            LogFunctionStart(ref items,"Delete");
             DbFeedbackHandler.ExecuteWithTransaction(
                 ref dbFeedback,
-                action: (ref DbFeedback db) => _crud.Delete(items, ref db),
+                _logger,
+                action: (ILogger logger, ref DbFeedback db) => _crud.Delete(items, ref db, _logger),
                 onException: (ref DbFeedback db, Exception ex) =>
                 {
                     // Handle exception if necessary
                 }
             );
+        }
+        
+        /// <summary>
+        /// Logging of given 
+        /// </summary>
+        /// <param name="sqlType">Describes the desired outcome of the action</param>
+        /// <param name="items">Set of data</param>
+        /// <param name="dbFeedback"></param>
+        private void LogFunctionStart(ref IEnumerable<T> items, string sqlType)
+        {
+            var itemCount = items is ICollection<T> collection ? collection.Count : items.Count();
+            _logger?.LogDebug("{location} Start Executing {sqlType} for {count} items des Typs {type}",PrintLocation(), sqlType, itemCount, typeof(T));
         }
         
         /// <summary>

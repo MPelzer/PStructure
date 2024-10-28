@@ -1,8 +1,4 @@
-﻿using System;
-using System.Data;
-using System.Data.Common;
-using Dapper;
-using PStructure.Interfaces;
+﻿using System.Data;
 
 namespace PStructure.FunctionFeedback
 {

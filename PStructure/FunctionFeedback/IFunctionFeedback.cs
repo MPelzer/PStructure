@@ -10,7 +10,6 @@ namespace PStructure.FunctionFeedback
        Exception GetRequestException();
        void SetSilentThrow(bool value);
        bool ExceptionGetsThrownSilently();
-
        void SetBackToDefault();
     }
 }

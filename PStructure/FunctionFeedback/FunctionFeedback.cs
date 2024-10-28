@@ -7,7 +7,7 @@ namespace PStructure.FunctionFeedback
         private bool _requestAnswer = false;
         private Exception _requestException = null;
         private bool _silentThrow = false;
-        
+       
         public void SetRequestAnswer(bool value)
         {
             _requestAnswer = value;

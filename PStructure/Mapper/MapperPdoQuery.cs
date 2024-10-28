@@ -4,6 +4,7 @@ using System.Reflection;
 using Dapper;
 using PStructure.Interfaces;
 using PStructure.Models;
+using PStructure.Utils;
 
 namespace PStructure.Mapper
 {
@@ -11,22 +12,15 @@ namespace PStructure.Mapper
     /// Bildet die PDO-Eigenschaften auf die Tabellenspalten ab.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class MapperPdoQuery<T> : IMapperPdoQuery<T>
+    public class MapperPdoQuery<T> : ClassCore, IMapperPdoQuery<T>
     {
-        
-        private static readonly PropertyInfo[] _propertyInfoCache;
-        private static readonly PropertyInfo[] _primaryKeyInfoCache;
-
         // Static constructor to initialize the property caches
-        static MapperPdoQuery()
+        public MapperPdoQuery()
         {
-            _propertyInfoCache = typeof(T).GetProperties()
-                .Where(prop => prop.GetCustomAttribute<ColumnAttribute>() != null)
-                .ToArray();
-
-            _primaryKeyInfoCache = typeof(T).GetProperties()
-                .Where(prop => prop.GetCustomAttribute<PrimaryKeyAttribute>() != null)
-                .ToArray();
+            if (!PdoPropertyCache<T>.PrimaryKeyProperties.Any())
+            {
+                throw new InvalidOperationException($"{PrintLocation()} The PDO {typeof(T)} has no Attribute of Type.");
+            }
         }
         
         
@@ -38,7 +32,7 @@ namespace PStructure.Mapper
         /// <param name="parameters"></param>
         public void MapPrimaryKeysToParameters(T item, DynamicParameters parameters)
         {
-            foreach (var prop in _primaryKeyInfoCache)
+            foreach (var prop in PdoPropertyCache<T>.PrimaryKeyProperties)
             {
                 var columnAttr = prop.GetCustomAttribute<ColumnAttribute>();
                 var value = prop.GetValue(item);
@@ -57,14 +51,14 @@ namespace PStructure.Mapper
         /// <exception cref="InvalidOperationException"></exception>
         public void MapPropertiesToParameters(T item, DynamicParameters parameters)
         {
-            foreach (var prop in _propertyInfoCache)
+            foreach (var prop in PdoPropertyCache<T>.Properties)
             {
                 var value = prop.GetValue(item);
                 var columnAttr = prop.GetCustomAttribute<ColumnAttribute>();
                 
                 if (columnAttr == null)
                 {
-                    throw new InvalidOperationException($"Property {prop.Name} does not have a ColumnAttribute.");
+                    throw new InvalidOperationException($"{PrintLocation()} Property {prop.Name} does not have a ColumnAttribute.");
                 }
 
                 var columnName = columnAttr.ColumnName;

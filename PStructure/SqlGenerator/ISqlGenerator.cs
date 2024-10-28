@@ -1,18 +1,20 @@
-﻿namespace PStructure.SqlGenerator
+﻿using Microsoft.Extensions.Logging;
+
+namespace PStructure.SqlGenerator
 {
     /// <summary>
     /// Interface für den SQLGenerator, welcher die grundlegendsten SQLs für übergebene PDOs generiert.
     /// </summary>
     public interface ISqlGenerator<T>
     {
-        string GetInsertSql(string tableLocation);
+        string GetInsertSql(ILogger logger, string tableLocation);
 
-        string GetReadSqlByPrimaryKey(string tableLocation);
+        string GetReadSqlByPrimaryKey(ILogger logger, string tableLocation);
 
-        string GetDeleteSqlByPrimaryKey(string tableLocation);
+        string GetDeleteSqlByPrimaryKey(ILogger logger, string tableLocation);
 
-        string GetUpdateSqlByPrimaryKey(string tableLocation);
+        string GetUpdateSqlByPrimaryKey(ILogger logger, string tableLocation);
 
-        string GetSelectAll(string tableLocation);
+        string GetReadAll(ILogger logger, string tableLocation);
     }
 }
