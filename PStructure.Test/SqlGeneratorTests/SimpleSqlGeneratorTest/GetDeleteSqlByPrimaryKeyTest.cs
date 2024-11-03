@@ -8,21 +8,28 @@ using PStructure.root;
 namespace PStructure.Test.SqlGeneratorTest
 {
     [TestFixture]
-    public class GetDeleteSqlByPrimaryKeyTests
+    public class GetDeleteSqlByPrimaryKeyTests : BasicTest
     {
-        private BaseSqlGenerator<TestEntity> _generator;
+        private SimpleSqlGenerator<TestEntity> _generator;
 
         [SetUp]
         public void SetUp()
         {
-            _generator = new BaseSqlGenerator<TestEntity>();
+            SetUpDatabase();
+            _generator = new SimpleSqlGenerator<TestEntity>(null);
         }
 
+        [TearDown]
+        public void TearDown()
+        {
+            TearDownDatabase();
+        }
+        
         [Test]
         public void GetDeleteSqlByPrimaryKey_ShouldReturnCorrectSql()
         {
             var tableName = "TestTable";
-            var sql = _generator.GetDeleteSqlByPrimaryKey(typeof(TestEntity), tableName);
+            var sql = _generator.GetDeleteSqlByPrimaryKey(null, tableName);
 
             var expectedSql = "DELETE FROM TestTable WHERE PrimaryKey = @PrimaryKey";
 
@@ -33,7 +40,7 @@ namespace PStructure.Test.SqlGeneratorTest
         public void GetDeleteSqlByPrimaryKey_MultiplePrimaryKeys_ShouldReturnCorrectSql()
         {
             var tableName = "TestTable";
-            var sql = _generator.GetDeleteSqlByPrimaryKey(typeof(MultiplePrimaryKeyEntity), tableName);
+            var sql = _generator.GetDeleteSqlByPrimaryKey(null, tableName);
 
             var expectedSql = "DELETE FROM TestTable WHERE PrimaryKey1 = @PrimaryKey1 AND PrimaryKey2 = @PrimaryKey2";
 
@@ -44,7 +51,7 @@ namespace PStructure.Test.SqlGeneratorTest
         public void GetDeleteSqlByPrimaryKey_ColumnNamesWithSpecialCharacters_ShouldReturnCorrectSql()
         {
             var tableName = "TestTable";
-            var sql = _generator.GetDeleteSqlByPrimaryKey(typeof(SpecialCharColumnEntity), tableName);
+            var sql = _generator.GetDeleteSqlByPrimaryKey(null, tableName);
 
             var expectedSql = "DELETE FROM TestTable WHERE [Special Key] = @Special_Key";
 
@@ -55,7 +62,7 @@ namespace PStructure.Test.SqlGeneratorTest
         public void GetDeleteSqlByPrimaryKey_EmptyTableName_ShouldReturnCorrectSql()
         {
             var tableName = string.Empty;
-            var sql = _generator.GetDeleteSqlByPrimaryKey(typeof(TestEntity), tableName);
+            var sql = _generator.GetDeleteSqlByPrimaryKey(null, tableName);
 
             var expectedSql = "DELETE FROM  WHERE PrimaryKey = @PrimaryKey";
 
@@ -68,15 +75,15 @@ namespace PStructure.Test.SqlGeneratorTest
             var typeWithNoPrimaryKey = typeof(EntityWithNoPrimaryKey);
             var tableName = "TestTable";
 
-            Assert.Throws<InvalidOperationException>(() => _generator.GetDeleteSqlByPrimaryKey(typeWithNoPrimaryKey, tableName));
+            Assert.Throws<InvalidOperationException>(() => _generator.GetDeleteSqlByPrimaryKey(null, tableName));
         }
 
         [Test]
         public void Caching_DeleteSql_ShouldUseCachedValue()
         {
             var tableName = "TestTable";
-            var sql1 = _generator.GetDeleteSqlByPrimaryKey(typeof(TestEntity), tableName);
-            var sql2 = _generator.GetDeleteSqlByPrimaryKey(typeof(TestEntity), tableName);
+            var sql1 = _generator.GetDeleteSqlByPrimaryKey(null, tableName);
+            var sql2 = _generator.GetDeleteSqlByPrimaryKey(null, tableName);
 
             Assert.That(NormalizeSql(sql1), Is.EqualTo(NormalizeSql(sql2)), "The cached SQL should be used.");
         }
@@ -92,24 +99,6 @@ namespace PStructure.Test.SqlGeneratorTest
             [PrimaryKey]
             [Column("PrimaryKey")]
             public int Id { get; set; }
-        }
-
-        public class MultiplePrimaryKeyEntity
-        {
-            [PrimaryKey]
-            [Column("PrimaryKey1")]
-            public int Key1 { get; set; }
-
-            [PrimaryKey]
-            [Column("PrimaryKey2")]
-            public int Key2 { get; set; }
-        }
-
-        public class SpecialCharColumnEntity
-        {
-            [PrimaryKey]
-            [Column("Special Key")]
-            public int Key { get; set; }
         }
 
         public class EntityWithNoPrimaryKey

@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Data;
-using System.Data.Common;
 using MySqlConnector;
 using NUnit.Framework;
+using Moq;
 using PStructure.FunctionFeedback;
+using Microsoft.Extensions.Logging;
 
 namespace PStructure.Test.DbComHandlerTests
 {
@@ -12,12 +13,14 @@ namespace PStructure.Test.DbComHandlerTests
     {
         private const string ConnectionString = "Server=localhost;Port=3306;Database=testdb;User=testuser;Password=testpassword;";
         private MySqlConnection _dbConnection;
+        private Mock<ILogger> _loggerMock;
 
         [SetUp]
         public void SetUp()
         {
             _dbConnection = new MySqlConnection(ConnectionString);
             _dbConnection.Open();
+            _loggerMock = new Mock<ILogger>();
         }
 
         [TearDown]
@@ -35,20 +38,20 @@ namespace PStructure.Test.DbComHandlerTests
         {
             // Arrange
             var dbFeedback = new DbFeedback(_dbConnection);
-            DbAction action = (ref DbFeedback dbFeedbackInstance) => { /* Perform DB operations */ };
-            DbCondition commitCondition = (ref DbFeedback dbFeedbackInstance) => true;
+            DbAction action = (ILogger logger, ref DbFeedback dbFeedbackInstance) => { /* Perform DB operations */ };
+            DbExceptionAction onException = (ref DbFeedback dbFeedbackInstance, Exception ex) => { /* Handle exception */ };
 
             // Act
             DbFeedbackHandler.ExecuteWithTransaction(
                 ref dbFeedback,
+                _loggerMock.Object,
                 action: action,
-                onException: null,
-                commitCondition: commitCondition
+                onException: onException
             );
 
             // Assert
-            Assert.That(dbFeedback.DbTransaction, Is.Null, "Transaction should be null after commit.");
-            Assert.That(dbFeedback.DbConnection.State, Is.EqualTo(ConnectionState.Open), "Connection should remain open after commit.");
+            Assert.That(dbFeedback.GetDbTransaction(), Is.Null, "Transaction should be null after commit.");
+            Assert.That(dbFeedback.GetDbConnection().State, Is.EqualTo(ConnectionState.Open), "Connection should remain open after commit.");
         }
 
         [Test]
@@ -56,20 +59,20 @@ namespace PStructure.Test.DbComHandlerTests
         {
             // Arrange
             var dbFeedback = new DbFeedback(_dbConnection);
-            DbAction action = (ref DbFeedback dbFeedbackInstance) => { /* Perform DB operations */ };
-            DbCondition commitCondition = (ref DbFeedback dbFeedbackInstance) => false;
+            DbAction action = (ILogger logger, ref DbFeedback dbFeedbackInstance) => { /* Perform DB operations */ };
+            DbExceptionAction onException = (ref DbFeedback dbFeedbackInstance, Exception ex) => { /* Handle exception */ };
 
             // Act
             DbFeedbackHandler.ExecuteWithTransaction(
                 ref dbFeedback,
+                _loggerMock.Object,
                 action: action,
-                onException: null,
-                commitCondition: commitCondition
+                onException: onException
             );
 
             // Assert
-            Assert.That(dbFeedback.DbTransaction, Is.Null, "Transaction should be null after rollback or no commit.");
-            Assert.That(dbFeedback.DbConnection.State, Is.EqualTo(ConnectionState.Open), "Connection should remain open after execution.");
+            Assert.That(dbFeedback.GetDbTransaction(), Is.Null, "Transaction should be null after rollback or no commit.");
+            Assert.That(dbFeedback.GetDbConnection().State, Is.EqualTo(ConnectionState.Open), "Connection should remain open after execution.");
         }
 
         [Test]
@@ -78,22 +81,22 @@ namespace PStructure.Test.DbComHandlerTests
             // Arrange
             var dbFeedback = new DbFeedback(_dbConnection);
             var transaction = _dbConnection.BeginTransaction();
-            
+            dbFeedback.SetDbTransaction(transaction);
 
-            DbAction action = (ref DbFeedback dbFeedbackInstance) => { /* Perform DB operations */ };
-            DbCondition commitCondition = (ref DbFeedback dbFeedbackInstance) => true;
+            DbAction action = (ILogger logger, ref DbFeedback dbFeedbackInstance) => { /* Perform DB operations */ };
+            DbExceptionAction onException = (ref DbFeedback dbFeedbackInstance, Exception ex) => { /* Handle exception */ };
 
             // Act
             DbFeedbackHandler.ExecuteWithTransaction(
                 ref dbFeedback,
+                _loggerMock.Object,
                 action: action,
-                onException: null,
-                commitCondition: commitCondition
+                onException: onException
             );
 
             // Assert
-            Assert.That(dbFeedback.DbTransaction, Is.EqualTo(transaction), "External transaction should not be altered.");
-            Assert.That(dbFeedback.DbConnection.State, Is.EqualTo(ConnectionState.Open), "Connection should remain open after execution.");
+            Assert.That(dbFeedback.GetDbTransaction(), Is.EqualTo(transaction), "External transaction should not be altered.");
+            Assert.That(dbFeedback.GetDbConnection().State, Is.EqualTo(ConnectionState.Open), "Connection should remain open after execution.");
         }
 
         [Test]
@@ -101,26 +104,23 @@ namespace PStructure.Test.DbComHandlerTests
         {
             // Arrange
             var dbFeedback = new DbFeedback(_dbConnection);
-            DbAction action = (ref DbFeedback dbFeedbackInstance) => throw new InvalidOperationException("Test exception");
-            DbCondition commitCondition = (ref DbFeedback dbFeedbackInstance) => true;
+            DbAction action = (ILogger logger, ref DbFeedback dbFeedbackInstance) => throw new InvalidOperationException("Test exception");
+            DbExceptionAction onException = (ref DbFeedback dbFeedbackInstance, Exception ex) => { /* Handle exception */ };
 
             // Act & Assert
             Assert.Throws<InvalidOperationException>(() =>
             {
                 DbFeedbackHandler.ExecuteWithTransaction(
                     ref dbFeedback,
+                    _loggerMock.Object,
                     action: action,
-                    onException: (ref DbFeedback dbFeedbackInstance, Exception ex) =>
-                    {
-                        // Custom exception handling logic
-                    },
-                    commitCondition: commitCondition
+                    onException: onException
                 );
             });
 
             // Ensure transaction is rolled back and connection is open
-            Assert.That(dbFeedback.DbTransaction, Is.Null, "Transaction should be null after rollback due to exception.");
-            Assert.That(dbFeedback.DbConnection.State, Is.EqualTo(ConnectionState.Open), "Connection should remain open after execution.");
+            Assert.That(dbFeedback.GetDbTransaction(), Is.Null, "Transaction should be null after rollback due to exception.");
+            Assert.That(dbFeedback.GetDbConnection().State, Is.EqualTo(ConnectionState.Open), "Connection should remain open after execution.");
         }
 
         [Test]
@@ -128,18 +128,19 @@ namespace PStructure.Test.DbComHandlerTests
         {
             // Arrange
             var dbFeedback = new DbFeedback(_dbConnection);
-            DbAction action = (ref DbFeedback dbFeedbackInstance) => { /* Perform DB operations */ };
+            DbAction action = (ILogger logger, ref DbFeedback dbFeedbackInstance) => { /* Perform DB operations */ };
+            DbExceptionAction onException = (ref DbFeedback dbFeedbackInstance, Exception ex) => { /* Handle exception */ };
 
             // Act
             DbFeedbackHandler.ExecuteWithTransaction(
                 ref dbFeedback,
+                _loggerMock.Object,
                 action: action,
-                onException: null,
-                commitCondition: (ref DbFeedback dbFeedbackInstance) => true
+                onException: onException
             );
 
             // Assert
-            Assert.That(dbFeedback.DbConnection.State, Is.EqualTo(ConnectionState.Open), "Connection should remain open after execution.");
+            Assert.That(dbFeedback.GetDbConnection().State, Is.EqualTo(ConnectionState.Open), "Connection should remain open after execution.");
         }
 
         [Test]
@@ -149,20 +150,21 @@ namespace PStructure.Test.DbComHandlerTests
             var dbFeedback = new DbFeedback(_dbConnection);
             bool finallyCalled = false;
 
-            DbAction action = (ref DbFeedback dbFeedbackInstance) => { /* Perform DB operations */ };
+            DbAction action = (ILogger logger, ref DbFeedback dbFeedbackInstance) => { /* Perform DB operations */ };
+            DbExceptionAction onException = (ref DbFeedback dbFeedbackInstance, Exception ex) => { /* Handle exception */ };
 
             // Act
             DbFeedbackHandler.ExecuteWithTransaction(
                 ref dbFeedback,
+                _loggerMock.Object,
                 action: action,
-                onException: null,
-                commitCondition: (ref DbFeedback dbFeedbackInstance) => true,
+                onException: onException,
                 onFinally: () => finallyCalled = true
             );
 
             // Assert
             Assert.That(finallyCalled, Is.True, "Finally action should be called.");
-            Assert.That(dbFeedback.DbConnection.State, Is.EqualTo(ConnectionState.Open), "Connection should remain open after execution.");
+            Assert.That(dbFeedback.GetDbConnection().State, Is.EqualTo(ConnectionState.Open), "Connection should remain open after execution.");
         }
 
         [Test]
@@ -170,18 +172,19 @@ namespace PStructure.Test.DbComHandlerTests
         {
             // Arrange
             var dbFeedback = new DbFeedback(_dbConnection);
-            DbAction action = (ref DbFeedback dbFeedbackInstance) => { /* Perform DB operations */ };
+            DbAction action = (ILogger logger, ref DbFeedback dbFeedbackInstance) => { /* Perform DB operations */ };
+            DbExceptionAction onException = (ref DbFeedback dbFeedbackInstance, Exception ex) => { /* Handle exception */ };
 
             // Act
             DbFeedbackHandler.ExecuteWithTransaction(
                 ref dbFeedback,
+                _loggerMock.Object,
                 action: action,
-                onException: null,
-                commitCondition: (ref DbFeedback dbFeedbackInstance) => true
+                onException: onException
             );
 
             // Assert
-            Assert.That(dbFeedback.DbConnection.State, Is.EqualTo(ConnectionState.Open), "Connection should remain open after execution, even if provided externally.");
+            Assert.That(dbFeedback.GetDbConnection().State, Is.EqualTo(ConnectionState.Open), "Connection should remain open after execution, even if provided externally.");
         }
     }
 }

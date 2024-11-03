@@ -10,27 +10,20 @@ using PStructure.Test.Models;
 namespace PStructure.Test.DefaultItemManagerTest
 {
     [TestFixture]
-    public class InsertRangeTests
+    public class InsertRangeTests : BasicTest
     {
-        private const string ConnectionString = "Server=localhost;Port=3306;Database=testdb;User=testuser;Password=testpassword;";
-        private MySqlConnection _dbConnection;
-        private TestEntryFactory _testEntryFactory;
-
         [SetUp]
         public void SetUp()
         {
-            try
-            {
-                _dbConnection = new MySqlConnection(ConnectionString);
-                _dbConnection.Open();
-                _testEntryFactory = new TestEntryFactory();
-                _testEntryFactory.intitalizeDatabaseTable(_dbConnection);
-            }
-            catch (Exception ex)
-            {
-                Assert.Fail($"Failed to initialize connection or table: {ex.Message}");
-            }
+            SetUpDatabase();
         }
+
+        [TearDown]
+        public void TearDown()
+        {
+            TearDownDatabase();
+        }
+        
 
         [Test]
         public void InsertRangeByInstances_Should_InsertDataCorrectly()
@@ -75,7 +68,7 @@ namespace PStructure.Test.DefaultItemManagerTest
             // Set up the item manager
             var logger = _testEntryFactory.GetTestLogger();
             var tableLocation = new BaseTableLocation("", "TestEntry");
-            var itemManager = new DefaultItemManager<TestEntry>(tableLocation, logger);
+            var itemManager = new ItemManager<TestEntry>(tableLocation, logger);
             
             var dbCom = new DbFeedback(_dbConnection)
             {
@@ -141,22 +134,5 @@ namespace PStructure.Test.DefaultItemManagerTest
             }
         }
 
-        [TearDown]
-        public void TearDown()
-        {
-            try
-            {
-                _testEntryFactory.TearDown(_dbConnection);
-            }
-            catch (Exception ex)
-            {
-                Assert.Fail($"Failed to drop table: {ex.Message}");
-            }
-            finally
-            {
-                _dbConnection?.Close();
-                _dbConnection?.Dispose();
-            }
-        }
     }
 }

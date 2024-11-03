@@ -11,26 +11,18 @@ using PStructure.Test.Models;
 namespace PStructure.Test.DefaultItemManagerTest
 {
     [TestFixture]
-    public class ReadByPrimaryKeyTests
+    public class ReadByPrimaryKeyTests : BasicTest
     {
-        private const string ConnectionString = "Server=localhost;Port=3306;Database=testdb;User=testuser;Password=testpassword;";
-        private MySqlConnection _dbConnection;
-        private TestEntryFactory _testEntryFactory;
-
         [SetUp]
         public void SetUp()
         {
-            try
-            {
-                _dbConnection = new MySqlConnection(ConnectionString);
-                _dbConnection.Open();
-                _testEntryFactory = new TestEntryFactory();
-                _testEntryFactory.intitalizeDatabaseTable(_dbConnection);
-            }
-            catch (Exception ex)
-            {
-                Assert.Fail($"Failed to initialize connection or table: {ex.Message}");
-            }
+            SetUpDatabase();
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            TearDownDatabase();
         }
 
         [Test]
@@ -56,7 +48,7 @@ namespace PStructure.Test.DefaultItemManagerTest
 
             var logger = _testEntryFactory.GetTestLogger();
             var tableLocation = new BaseTableLocation("", "TestEntry");
-            var itemManager = new DefaultItemManager<TestEntry>(tableLocation, logger);
+            var itemManager = new ItemManager<TestEntry>(tableLocation, logger);
 
             var dbCom = new DbFeedback(_dbConnection)
             {
@@ -65,7 +57,7 @@ namespace PStructure.Test.DefaultItemManagerTest
             };
 
             // Insert the entry into the database
-            itemManager.InsertByInstance(insertedEntry, ref dbCom);
+            itemManager.CreateByInstances(insertedEntry, ref dbCom);
 
             // Step 2: Use ReadByPrimaryKey to retrieve the entry
             var retrievedEntry = itemManager.ReadByPrimaryKey(insertedEntry, ref dbCom);
@@ -86,22 +78,6 @@ namespace PStructure.Test.DefaultItemManagerTest
             Assert.That(retrievedEntry.ByteArrayValue, Is.EqualTo(insertedEntry.ByteArrayValue));
         }
 
-        [TearDown]
-        public void TearDown()
-        {
-            try
-            {
-                _testEntryFactory.TearDown(_dbConnection);
-            }
-            catch (Exception ex)
-            {
-                Assert.Fail($"Failed to drop table: {ex.Message}");
-            }
-            finally
-            {
-                _dbConnection?.Close();
-                _dbConnection?.Dispose();
-            }
-        }
+        
     }
 }

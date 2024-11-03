@@ -13,4 +13,10 @@
       <PackageReference Include="System.Text.Json" Version="9.0.0-preview.7.24405.7" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="PersistenceLayer\PdoToTableMapping\" />
+      <Folder Include="Factories\" />
+      <Folder Include="Interfaces\" />
+    </ItemGroup>
+
 </Project>

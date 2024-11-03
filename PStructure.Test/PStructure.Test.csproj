@@ -21,10 +21,11 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="BaseCrudTests\" />
       <Folder Include="CustomDateHandlersTests\" />
-      <Folder Include="ExtendedCrudTests\" />
+      <Folder Include="DBTestEnvironment\" />
       <Folder Include="MapperPdoQueryTests\" />
-      <Folder Include="Models\" />
+      <Folder Include="SqlGeneratorTests\" />
     </ItemGroup>
 
     <ItemGroup>

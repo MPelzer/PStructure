@@ -1,9 +1,9 @@
-﻿using System;
+﻿
+using System;
 using MySqlConnector;
 using NUnit.Framework;
 using PStructure.CRUDs;
 using PStructure.FunctionFeedback;
-using PStructure.SqlGenerator;
 using PStructure.TableLocation;
 using PStructure.Test.DBTestEnvironment;
 using PStructure.Test.Models;
@@ -11,26 +11,20 @@ using PStructure.Test.Models;
 namespace PStructure.Test.DefaultItemManagerTest;
 
 [TestFixture]
-public class DeleteTests
+public class DeleteTests : BasicTest
 {
-    private const string ConnectionString = "Server=localhost;Port=3306;Database=testdb;User=testuser;Password=testpassword;";
-    private MySqlConnection _dbConnection;
     private TestEntryFactory _testEntryFactory;
-
     [SetUp]
     public void SetUp()
     {
-        try
-        {
-            _dbConnection = new MySqlConnection(ConnectionString);
-            _dbConnection.Open();
-            _testEntryFactory = new TestEntryFactory();
-            _testEntryFactory.intitalizeDatabaseTable(_dbConnection);
-        }
-        catch (Exception ex)
-        {
-            Assert.Fail($"Failed to initialize connection or table: {ex.Message}");
-        }
+        _testEntryFactory = new TestEntryFactory();
+        SetUpDatabase();
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        TearDownDatabase();
     }
 
     [Test]
@@ -56,7 +50,11 @@ public class DeleteTests
 
         var logger = _testEntryFactory.GetTestLogger();
         var tableLocation = new BaseTableLocation("", "TestEntry");
-        var itemManager = new DefaultItemManager<TestEntry>(tableLocation, logger);
+        
+        
+        var simpleCrud = new SimpleCrud<TestEntry>()
+        
+        var itemManager = new ItemManager<TestEntry>(tableLocation, logger);
         var dbCom = new DbFeedback(_dbConnection)
         {
             InjectedSql = string.Empty,
@@ -90,24 +88,5 @@ public class DeleteTests
         }
 
         Assert.That(deletedEntry, Is.Null);
-    }
-
-    [TearDown]
-    public void TearDown()
-    {
-        try
-        {
-            var entryFactory = new TestEntryFactory();
-            entryFactory.TearDown(_dbConnection);
-        }
-        catch (Exception ex)
-        {
-            Assert.Fail($"Failed to drop table: {ex.Message}");
-        }
-        finally
-        {
-            _dbConnection?.Close();
-            _dbConnection?.Dispose();
-        }
     }
 }

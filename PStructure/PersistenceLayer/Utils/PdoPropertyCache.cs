@@ -18,7 +18,13 @@ namespace PStructure.Utils
                 .Where(prop => prop.GetCustomAttribute<PrimaryKeyAttribute>() != null)
                 .ToArray()
         );
-
+        
+        private static readonly Lazy<PropertyInfo[]> _primaryKeyProperties = new Lazy<PropertyInfo[]>(() => 
+            typeof(T).GetProperties()
+                .Where(prop => prop.GetCustomAttribute<PrimaryKeyAttribute>() != null)
+                .ToArray()
+        );
+        
         public static PropertyInfo[] Properties => _properties.Value;
         public static PropertyInfo[] PrimaryKeyProperties => _primaryKeyProperties.Value;
     }

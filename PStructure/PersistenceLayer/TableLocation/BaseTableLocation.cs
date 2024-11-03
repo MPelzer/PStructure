@@ -1,4 +1,5 @@
-﻿using PStructure.Models;
+﻿using System.Data;
+using PStructure.Models;
 
 namespace PStructure.TableLocation
 {
