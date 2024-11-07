@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.Logging;
 using PStructure.Models;
-using PStructure.Utils;
+using PStructure.PersistenceLayer.PdoProperties;
 
 namespace PStructure.SqlGenerator
 {
@@ -45,8 +45,8 @@ namespace PStructure.SqlGenerator
         {
             var sql = _sqlCache.GetOrAdd((typeof(T), SqlCommandType.Insert), _ =>
             {
-                var columnNames = PdoPropertyCache<T>.Properties.Select(prop => prop.GetCustomAttribute<ColumnAttribute>().ColumnName);
-                var parameterNames = PdoPropertyCache<T>.Properties.Select(prop => "@" + prop.GetCustomAttribute<ColumnAttribute>().ColumnName);
+                var columnNames = PdoPropertyCache<T>.Properties.Select(prop => prop.GetCustomAttribute<Column>().ColumnName);
+                var parameterNames = PdoPropertyCache<T>.Properties.Select(prop => "@" + prop.GetCustomAttribute<Column>().ColumnName);
 
                 return $"INSERT INTO {tableLocation} ({string.Join(", ", columnNames)}) VALUES ({string.Join(", ", parameterNames)})";
             });
@@ -68,7 +68,7 @@ namespace PStructure.SqlGenerator
 
                 var whereClauses = PdoPropertyCache<T>.PrimaryKeyProperties.Select(prop =>
                 {
-                    var columnAttr = prop.GetCustomAttribute<ColumnAttribute>();
+                    var columnAttr = prop.GetCustomAttribute<Column>();
                     var columnName = columnAttr?.ColumnName ?? prop.Name;
                     return $"{columnName} = @{columnName}";
                 });
@@ -93,7 +93,7 @@ namespace PStructure.SqlGenerator
 
                 var whereClauses = PdoPropertyCache<T>.PrimaryKeyProperties.Select(prop =>
                 {
-                    var columnAttr = prop.GetCustomAttribute<ColumnAttribute>();
+                    var columnAttr = prop.GetCustomAttribute<Column>();
                     var columnName = columnAttr?.ColumnName ?? prop.Name;
                     return $"{columnName} = @{columnName}";
                 });
@@ -118,14 +118,14 @@ namespace PStructure.SqlGenerator
 
                 var setClauses = PdoPropertyCache<T>.Properties.Except(PdoPropertyCache<T>.PrimaryKeyProperties).Select(prop =>
                 {
-                    var columnAttr = prop.GetCustomAttribute<ColumnAttribute>();
+                    var columnAttr = prop.GetCustomAttribute<Column>();
                     var columnName = columnAttr?.ColumnName ?? prop.Name;
                     return $"{columnName} = @{columnName}";
                 });
 
                 var whereClauses = PdoPropertyCache<T>.PrimaryKeyProperties.Select(prop =>
                 {
-                    var columnAttr = prop.GetCustomAttribute<ColumnAttribute>();
+                    var columnAttr = prop.GetCustomAttribute<Column>();
                     var columnName = columnAttr?.ColumnName ?? prop.Name;
                     return $"{columnName} = @{columnName}";
                 });

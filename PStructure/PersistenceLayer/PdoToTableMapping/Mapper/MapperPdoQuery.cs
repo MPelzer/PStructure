@@ -4,7 +4,7 @@ using System.Reflection;
 using Dapper;
 using PStructure.Interfaces;
 using PStructure.Models;
-using PStructure.Utils;
+using PStructure.PersistenceLayer.PdoProperties;
 
 namespace PStructure.Mapper
 {
@@ -34,7 +34,7 @@ namespace PStructure.Mapper
         {
             foreach (var prop in PdoPropertyCache<T>.PrimaryKeyProperties)
             {
-                var columnAttr = prop.GetCustomAttribute<ColumnAttribute>();
+                var columnAttr = prop.GetCustomAttribute<Column>();
                 var value = prop.GetValue(item);
 
                 var columnName = columnAttr?.ColumnName ?? prop.Name;
@@ -54,7 +54,7 @@ namespace PStructure.Mapper
             foreach (var prop in PdoPropertyCache<T>.Properties)
             {
                 var value = prop.GetValue(item);
-                var columnAttr = prop.GetCustomAttribute<ColumnAttribute>();
+                var columnAttr = prop.GetCustomAttribute<Column>();
                 
                 if (columnAttr == null)
                 {

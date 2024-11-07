@@ -156,7 +156,7 @@ namespace PStructure.CRUDs
             var properties = typeof(T).GetProperties();
             foreach (var property in properties)
             {
-                var handlerAttribute = property.GetCustomAttribute<TypeHandlerAttribute>();
+                var handlerAttribute = property.GetCustomAttribute<TypeHandler>();
                 if (handlerAttribute == null) continue;
                 var handlerInstance = (SqlMapper.ITypeHandler)Activator.CreateInstance(handlerAttribute.HandlerType);
                 SqlMapper.AddTypeHandler(property.PropertyType, handlerInstance);

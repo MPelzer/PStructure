@@ -1,12 +1,16 @@
 ﻿using System;
 using PStructure.DapperSqlDateTimeMappers;
 using PStructure.Interfaces.DapperSqlDateTimeMappers;
+using PStructure.PersistenceLayer;
+
 // For the custom date handlers
 
 // For ICustomHandler
 
 namespace PStructure.Models
 {
+    [TableLocation(WorkMode.Test, Database.TestDb, "TestSchema", "TestTable")]
+    [TableLocation(WorkMode.Live, Database.LiveDb, "LiveSchema", "LiveTable")]
     public class PdoExample
     {
         // Primary key, simple integer
