@@ -16,5 +16,7 @@ namespace PStructure.SqlGenerator
         string GetUpdateSqlByPrimaryKey(ILogger logger, string tableLocation);
 
         string GetReadAll(ILogger logger, string tableLocation);
+
+        string LogGeneratedSql();
     }
 }

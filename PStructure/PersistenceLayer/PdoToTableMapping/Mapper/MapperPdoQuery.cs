@@ -9,28 +9,18 @@ using PStructure.PersistenceLayer.PdoProperties;
 namespace PStructure.Mapper
 {
     /// <summary>
-    /// Bildet die PDO-Eigenschaften auf die Tabellenspalten ab.
+    /// Maps the properties of a PDO object to table columns.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class MapperPdoQuery<T> : ClassCore, IMapperPdoQuery<T>
+    /// <typeparam name="T">The type of the PDO object.</typeparam>
+    public static class MapperPdoQuery<T> where T : class
     {
-        // Static constructor to initialize the property caches
-        public MapperPdoQuery()
-        {
-            if (!PdoPropertyCache<T>.PrimaryKeyProperties.Any())
-            {
-                throw new InvalidOperationException($"{PrintLocation()} The PDO {typeof(T)} has no Attribute of Type.");
-            }
-        }
-        
         
         /// <summary>
-        /// Fügt einem Set an DynamicParameters Parameter für alle Eigenschaften des PDO´s mit Attribut <see cref="PrimaryKeyAttribute"/>
-        /// hinzu.
+        /// Adds parameters for all primary key properties of the PDO object to a set of <see cref="DynamicParameters"/>.
         /// </summary>
-        /// <param name="item"></param>
-        /// <param name="parameters"></param>
-        public void MapPrimaryKeysToParameters(T item, DynamicParameters parameters)
+        /// <param name="item">The PDO object.</param>
+        /// <param name="parameters">The dynamic parameters set to add to.</param>
+        public static void MapPrimaryKeysToParameters(T item, DynamicParameters parameters)
         {
             foreach (var prop in PdoPropertyCache<T>.PrimaryKeyProperties)
             {
@@ -43,22 +33,21 @@ namespace PStructure.Mapper
         }
 
         /// <summary>
-        /// Fügt einem Set an Parametern Parameter für jedes Attribut hinzu. Dabei werden potenziell transformationen durch
-        /// einen <see cref="ICustomHandler"/> vorgenommen
+        /// Adds parameters for all properties with a <see cref="Column"/> attribute to a set of <see cref="DynamicParameters"/>.
         /// </summary>
-        /// <param name="item"></param>
-        /// <param name="parameters"></param>
-        /// <exception cref="InvalidOperationException"></exception>
-        public void MapPropertiesToParameters(T item, DynamicParameters parameters)
+        /// <param name="item">The PDO object.</param>
+        /// <param name="parameters">The dynamic parameters set to add to.</param>
+        /// <exception cref="InvalidOperationException">Thrown if any property is missing a <see cref="Column"/> attribute.</exception>
+        public static void MapPropertiesToParameters(T item, DynamicParameters parameters)
         {
             foreach (var prop in PdoPropertyCache<T>.Properties)
             {
                 var value = prop.GetValue(item);
                 var columnAttr = prop.GetCustomAttribute<Column>();
-                
+
                 if (columnAttr == null)
                 {
-                    throw new InvalidOperationException($"{PrintLocation()} Property {prop.Name} does not have a ColumnAttribute.");
+                    throw new InvalidOperationException($"Property {prop.Name} does not have a Column attribute.");
                 }
 
                 var columnName = columnAttr.ColumnName;

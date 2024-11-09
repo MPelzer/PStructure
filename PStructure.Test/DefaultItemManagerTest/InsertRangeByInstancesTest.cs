@@ -67,7 +67,7 @@ namespace PStructure.Test.DefaultItemManagerTest
 
             // Set up the item manager
             var logger = _testEntryFactory.GetTestLogger();
-            var tableLocation = new BaseTableLocation("", "TestEntry");
+            var tableLocation = new TableLocation.TableLocation("", "TestEntry");
             var itemManager = new ItemManager<TestEntry>(tableLocation, logger);
             
             var dbCom = new DbFeedback(_dbConnection)

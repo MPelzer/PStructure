@@ -9,63 +9,41 @@ using PStructure.PersistenceLayer.PdoProperties;
 namespace PStructure.SqlGenerator
 {
     /// <summary>
-    /// Generates standard CRUD SQL commands for items.
+    /// Generates standard CRUD SQL commands for items of type <typeparamref name="T"/>.
     /// </summary>
-    /// <typeparam name="T">The type of the item.</typeparam>
-    public class SimpleSqlGenerator<T> : ClassCore, ISqlGenerator<T> 
+    public static class SimpleSqlGenerator<T> where T : ISqlGenerator<T>
     {
-        private enum SqlCommandType
-        {
-            Insert,
-            Update,
-            Read,
-            Delete
-        }
-
-        /// <summary>
-        /// Cache for SQL commands based on type and command type.
-        /// </summary>
-        private readonly ConcurrentDictionary<(Type Type, SqlCommandType CommandType), string> _sqlCache 
-            = new ConcurrentDictionary<(Type, SqlCommandType), string>();
-
-        public SimpleSqlGenerator(ILogger logger)
-        {
-            if (!PdoPropertyCache<T>.PrimaryKeyProperties.Any())
-            {
-                throw new InvalidOperationException($"{PrintLocation()} The PDO {typeof(T)} does not have any properties with a primary key attribute defined.");
-            }
-
-            logger?.LogDebug("{location}Start fetching property information for PDO {type}", PrintLocation(), typeof(T));
-        }
+        // SQL command cache for each type
+        private static readonly ConcurrentDictionary<string, string> _sqlCache 
+            = new ConcurrentDictionary<string, string>();
 
         /// <summary>
         /// Generates the INSERT SQL command for a PDO.
         /// </summary>
-        public string GetInsertSql(ILogger logger, string tableLocation)
+        public static string GetInsertSql(ILogger logger, string tableLocation)
         {
-            var sql = _sqlCache.GetOrAdd((typeof(T), SqlCommandType.Insert), _ =>
+            return _sqlCache.GetOrAdd($"{typeof(T).FullName}_Insert", _ =>
             {
-                var columnNames = PdoPropertyCache<T>.Properties.Select(prop => prop.GetCustomAttribute<Column>().ColumnName);
-                var parameterNames = PdoPropertyCache<T>.Properties.Select(prop => "@" + prop.GetCustomAttribute<Column>().ColumnName);
+                var columnNames = PdoPropertyCache<T>.Properties
+                    .Select(prop => prop.GetCustomAttribute<Column>().ColumnName);
+                var parameterNames = PdoPropertyCache<T>.Properties
+                    .Select(prop => "@" + prop.GetCustomAttribute<Column>().ColumnName);
 
-                return $"INSERT INTO {tableLocation} ({string.Join(", ", columnNames)}) VALUES ({string.Join(", ", parameterNames)})";
+                var sql = $"INSERT INTO {tableLocation} ({string.Join(", ", columnNames)}) " +
+                          $"VALUES ({string.Join(", ", parameterNames)})";
+
+                LogGeneratedSql(logger, sql, "Insert");
+                return sql;
             });
-            LogGeneratedSql(logger, sql, SqlCommandType.Insert);
-            return sql;
         }
 
         /// <summary>
         /// Generates the READ SQL command by primary key.
         /// </summary>
-        public string GetReadSqlByPrimaryKey(ILogger logger, string tableLocation)
+        public static string GetReadSqlByPrimaryKey(ILogger logger, string tableLocation)
         {
-            var sql = _sqlCache.GetOrAdd((typeof(T), SqlCommandType.Read), _ =>
+            return _sqlCache.GetOrAdd($"{typeof(T).FullName}_Read", _ =>
             {
-                if (!PdoPropertyCache<T>.PrimaryKeyProperties.Any())
-                {
-                    throw new InvalidOperationException($"{PrintLocation()} Type {typeof(T).Name} does not have any properties with [PrimaryKey] attribute.");
-                }
-
                 var whereClauses = PdoPropertyCache<T>.PrimaryKeyProperties.Select(prop =>
                 {
                     var columnAttr = prop.GetCustomAttribute<Column>();
@@ -73,24 +51,19 @@ namespace PStructure.SqlGenerator
                     return $"{columnName} = @{columnName}";
                 });
 
-                return $"SELECT * FROM {tableLocation} WHERE {string.Join(" AND ", whereClauses)}";
+                var sql = $"SELECT * FROM {tableLocation} WHERE {string.Join(" AND ", whereClauses)}";
+                LogGeneratedSql(logger, sql, "Read");
+                return sql;
             });
-            LogGeneratedSql(logger, sql, SqlCommandType.Read);
-            return sql;
         }
 
         /// <summary>
         /// Generates the DELETE SQL command by primary key.
         /// </summary>
-        public string GetDeleteSqlByPrimaryKey(ILogger logger, string tableLocation)
+        public static string GetDeleteSqlByPrimaryKey(ILogger logger, string tableLocation)
         {
-            var sql = _sqlCache.GetOrAdd((typeof(T), SqlCommandType.Delete), _ =>
+            return _sqlCache.GetOrAdd($"{typeof(T).FullName}_Delete", _ =>
             {
-                if (!PdoPropertyCache<T>.PrimaryKeyProperties.Any())
-                {
-                    throw new InvalidOperationException($"{PrintLocation()} Type {typeof(T).Name} does not have any properties with [PrimaryKey] attribute.");
-                }
-
                 var whereClauses = PdoPropertyCache<T>.PrimaryKeyProperties.Select(prop =>
                 {
                     var columnAttr = prop.GetCustomAttribute<Column>();
@@ -98,30 +71,27 @@ namespace PStructure.SqlGenerator
                     return $"{columnName} = @{columnName}";
                 });
 
-                return $"DELETE FROM {tableLocation} WHERE {string.Join(" AND ", whereClauses)}";
+                var sql = $"DELETE FROM {tableLocation} WHERE {string.Join(" AND ", whereClauses)}";
+                LogGeneratedSql(logger, sql, "Delete");
+                return sql;
             });
-            LogGeneratedSql(logger, sql, SqlCommandType.Delete);
-            return sql;
         }
 
         /// <summary>
         /// Generates the UPDATE SQL command by primary key.
         /// </summary>
-        public string GetUpdateSqlByPrimaryKey(ILogger logger, string tableLocation)
+        public static string GetUpdateSqlByPrimaryKey(ILogger logger, string tableLocation)
         {
-            var sql = _sqlCache.GetOrAdd((typeof(T), SqlCommandType.Update), _ =>
+            return _sqlCache.GetOrAdd($"{typeof(T).FullName}_Update", _ =>
             {
-                if (!PdoPropertyCache<T>.PrimaryKeyProperties.Any())
-                {
-                    throw new InvalidOperationException($"{PrintLocation()} Type {typeof(T).Name} does not have any properties with [PrimaryKey] attribute.");
-                }
-
-                var setClauses = PdoPropertyCache<T>.Properties.Except(PdoPropertyCache<T>.PrimaryKeyProperties).Select(prop =>
-                {
-                    var columnAttr = prop.GetCustomAttribute<Column>();
-                    var columnName = columnAttr?.ColumnName ?? prop.Name;
-                    return $"{columnName} = @{columnName}";
-                });
+                var setClauses = PdoPropertyCache<T>.Properties
+                    .Except(PdoPropertyCache<T>.PrimaryKeyProperties)
+                    .Select(prop =>
+                    {
+                        var columnAttr = prop.GetCustomAttribute<Column>();
+                        var columnName = columnAttr?.ColumnName ?? prop.Name;
+                        return $"{columnName} = @{columnName}";
+                    });
 
                 var whereClauses = PdoPropertyCache<T>.PrimaryKeyProperties.Select(prop =>
                 {
@@ -130,25 +100,34 @@ namespace PStructure.SqlGenerator
                     return $"{columnName} = @{columnName}";
                 });
 
-                return $"UPDATE {tableLocation} SET {string.Join(", ", setClauses)} WHERE {string.Join(" AND ", whereClauses)}";
+                var sql = $"UPDATE {tableLocation} SET {string.Join(", ", setClauses)} WHERE {string.Join(" AND ", whereClauses)}";
+                LogGeneratedSql(logger, sql, "Update");
+                return sql;
             });
-            LogGeneratedSql(logger, sql, SqlCommandType.Update);
+        }
+
+        /// <summary>
+        /// Generates the SQL command to read all records.
+        /// </summary>
+        public static string GetReadAll(ILogger logger, string tableLocation)
+        {
+            var sql = $"SELECT * FROM {tableLocation}";
+            LogGeneratedSql(logger, sql, "ReadAll");
             return sql;
         }
 
         /// <summary>
-        /// Reads the entire table for a PDO type.
+        /// Logs the generated SQL command.
         /// </summary>
-        public string GetReadAll(ILogger logger, string tableLocation)
+        private static void LogGeneratedSql(ILogger logger, string sql, string commandType)
         {
-            var sql = $"SELECT * FROM {tableLocation}";
-            LogGeneratedSql(logger, sql, SqlCommandType.Read);
-            return sql;
+            logger?.LogDebug("{Location} SQL of type {Type} generated: {Sql}", 
+                PrintLocation(), commandType, sql);
         }
 
-        private void LogGeneratedSql(ILogger logger, string sql, SqlCommandType sqlCommandType)
-        {
-            logger.LogDebug("{location} SQL of type {type} generated: {sql}", PrintLocation(), sqlCommandType, sql);
-        }
+        /// <summary>
+        /// Retrieves the formatted location string for logging purposes.
+        /// </summary>
+        private static string PrintLocation() => $"[{typeof(T).Name}]";
     }
 }

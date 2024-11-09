@@ -49,7 +49,7 @@ public class DeleteTests : BasicTest
         };
 
         var logger = _testEntryFactory.GetTestLogger();
-        var tableLocation = new BaseTableLocation("", "TestEntry");
+        var tableLocation = new TableLocation.TableLocation("", "TestEntry");
         
         
         var simpleCrud = new SimpleCrud<TestEntry>()
