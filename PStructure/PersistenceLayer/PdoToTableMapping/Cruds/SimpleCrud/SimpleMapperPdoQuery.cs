@@ -4,7 +4,7 @@ using System.Reflection;
 using Dapper;
 using PStructure.Interfaces;
 using PStructure.Models;
-using PStructure.PersistenceLayer.PdoProperties;
+using PStructure.PersistenceLayer.PdoData;
 
 namespace PStructure.Mapper
 {
@@ -12,17 +12,21 @@ namespace PStructure.Mapper
     /// Maps the properties of a PDO object to table columns.
     /// </summary>
     /// <typeparam name="T">The type of the PDO object.</typeparam>
-    public static class MapperPdoQuery<T> where T : class
+    public class SimpleMapperPdoQuery<T> : IMapperPdoQuery<T> 
     {
-        
+
+        public SimpleMapperPdoQuery()
+        {
+            
+        }
         /// <summary>
         /// Adds parameters for all primary key properties of the PDO object to a set of <see cref="DynamicParameters"/>.
         /// </summary>
         /// <param name="item">The PDO object.</param>
         /// <param name="parameters">The dynamic parameters set to add to.</param>
-        public static void MapPrimaryKeysToParameters(T item, DynamicParameters parameters)
+        public void MapPrimaryKeysToParameters(T item, DynamicParameters parameters)
         {
-            foreach (var prop in PdoPropertyCache<T>.PrimaryKeyProperties)
+            foreach (var prop in PdoProperties<T>.PrimaryKeyProperties)
             {
                 var columnAttr = prop.GetCustomAttribute<Column>();
                 var value = prop.GetValue(item);
@@ -38,9 +42,9 @@ namespace PStructure.Mapper
         /// <param name="item">The PDO object.</param>
         /// <param name="parameters">The dynamic parameters set to add to.</param>
         /// <exception cref="InvalidOperationException">Thrown if any property is missing a <see cref="Column"/> attribute.</exception>
-        public static void MapPropertiesToParameters(T item, DynamicParameters parameters)
+        public void MapPropertiesToParameters(T item, DynamicParameters parameters)
         {
-            foreach (var prop in PdoPropertyCache<T>.Properties)
+            foreach (var prop in PdoProperties<T>.Properties)
             {
                 var value = prop.GetValue(item);
                 var columnAttr = prop.GetCustomAttribute<Column>();

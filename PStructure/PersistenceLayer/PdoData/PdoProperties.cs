@@ -3,9 +3,9 @@ using System.Linq;
 using System.Reflection;
 using PStructure.Models;
 
-namespace PStructure.PersistenceLayer.PdoProperties
+namespace PStructure.PersistenceLayer.PdoData
 {
-    public static class PdoPropertyCache<T>
+    public static class PdoProperties<T>
     {
 
         #region Properties

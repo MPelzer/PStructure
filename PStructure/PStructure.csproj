@@ -14,9 +14,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="PersistenceLayer\PdoToTableMapping\" />
       <Folder Include="Factories\" />
       <Folder Include="Interfaces\" />
+      <Folder Include="PersistenceLayer\PdoToTableMapping\Cruds\BluePrintCrud\" />
       <Folder Include="PersistenceLayer\Utils\" />
     </ItemGroup>
 

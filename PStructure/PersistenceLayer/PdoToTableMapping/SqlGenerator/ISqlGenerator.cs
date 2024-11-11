@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace PStructure.SqlGenerator
+namespace PStructure.PersistenceLayer.PdoToTableMapping.SqlGenerator
 {
     /// <summary>
     /// Interface für den SQLGenerator, welcher die grundlegendsten SQLs für übergebene PDOs generiert.
@@ -17,6 +17,6 @@ namespace PStructure.SqlGenerator
 
         string GetReadAll(ILogger logger, string tableLocation);
 
-        string LogGeneratedSql();
+        void LogGeneratedSql(ILogger logger, string sql, string commandType);
     }
 }

@@ -2,6 +2,7 @@
 using MySqlConnector;
 using NUnit.Framework;
 using PStructure.FunctionFeedback;
+using PStructure.PersistenceLayer;
 using PStructure.TableLocation;
 using PStructure.Test.DBTestEnvironment;
 using PStructure.Test.Models;

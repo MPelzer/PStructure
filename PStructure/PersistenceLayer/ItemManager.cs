@@ -2,30 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
-using Optional;
-using Optional.Unsafe;
 using PStructure.CRUDs;
 using PStructure.FunctionFeedback;
-using PStructure.Mapper;
 using PStructure.root;
-using PStructure.SqlGenerator;
-using PStructure.TableLocation;
 
-namespace PStructure
+namespace PStructure.PersistenceLayer
 {
     
-    public class ItemManager<T> : ClassCore, IItemManager<T> where T : new()
+    public class ItemManager<T> : ClassCore where T : new()
     {
         private readonly ICrud<T> _crud;
-        private readonly IItemFactory<T> _itemFactory;
         private readonly ILogger _logger;
         
         /// <summary>
         /// Constructor for DefaultItemManager with BaseTableLocation and optional ILogger
         /// </summary>
-        public ItemManager(ICrud<T> crud, ILogger<T> logger = null)
+        public ItemManager(ICrud<T> crud, ILogger logger = null)
         {
-            _itemFactory = new ItemFactory<T>();
             _logger = logger;
             _crud = crud;
         }
@@ -142,14 +135,6 @@ namespace PStructure
             var itemCount = items is ICollection<T> collection ? collection.Count : items.Count();
             _logger?.LogDebug("{location} Start Executing {sqlType} for {count} items des Typs {type}",PrintLocation(), sqlType, itemCount, typeof(T));
         }
-        
-        /// <summary>
-        /// Checks if the primary key is valid for an item.
-        /// </summary>
-        public bool IsPrimaryKeyValid()
-        {
-            throw new NotImplementedException("IsPrimaryKeyValid needs to be implemented.");
-        }
 
         /// <summary>
         /// Outputs a test-friendly string representation of the manager.
@@ -157,14 +142,6 @@ namespace PStructure
         public string ToStringForTest()
         {
             throw new NotImplementedException("ToStringForTest needs to be implemented.");
-        }
-
-        /// <summary>
-        /// Validates the PDO (PHP Data Object).
-        /// </summary>
-        public bool ValidatePdo()
-        {
-            throw new NotImplementedException("ValidatePdo needs to be implemented.");
         }
     }
 }

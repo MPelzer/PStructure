@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
-using PStructure.SqlGenerator;
 using PStructure.Models;
+using PStructure.PersistenceLayer.PdoToTableMapping.SqlGenerator;
 using PStructure.Test.DBTestEnvironment;
 
 namespace PStructure.Test.SqlGeneratorTest

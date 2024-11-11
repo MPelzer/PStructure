@@ -25,7 +25,7 @@ namespace PStructure.Models
 
         public string PrintTableLocation()
         {
-            throw new NotImplementedException();
+            return $"{Schema}.{TableName} ";
         }
     }
 }

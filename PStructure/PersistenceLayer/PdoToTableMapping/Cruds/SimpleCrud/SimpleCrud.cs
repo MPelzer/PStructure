@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using PStructure.FunctionFeedback;
 using PStructure.Mapper;
 using PStructure.Models;
-using PStructure.SqlGenerator;
+using PStructure.PersistenceLayer.PdoToTableMapping.SqlGenerator;
 using PStructure.TableLocation;
 
 namespace PStructure.CRUDs

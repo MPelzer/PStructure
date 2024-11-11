@@ -1,55 +1,43 @@
 ﻿using System;
 using PStructure.Models;
 using PStructure.PersistenceLayer;
-using PStructure.PersistenceLayer.PdoProperties;
+using PStructure.PersistenceLayer.PdoData;
 
 namespace PStructure.TableLocation
 {
     /// <summary>
-    /// A factory class for creating instances of BaseTableLocation.
+    /// Factory for retrieving table locations based on the model type and work mode.
     /// </summary>
-    public static class TableLocationFactory<T>
+    public static class TableLocationFactory<T> where T : class
     {
         /// <summary>
-        /// Creates an instance of BaseTableLocation based on a specified WorkMode.
+        /// Creates an ITableLocation instance based on the specified work mode.
         /// </summary>
-        /// <param name="mode">The WorkMode (e.g., Test, Live, etc.).</param>
-        /// <returns>A new instance of BaseTableLocation, or throws an exception if configuration is missing.</returns>
+        /// <param name="mode">The desired work mode (e.g., Test, Live).</param>
+        /// <returns>Configured TableLocation object for the specified work mode.</returns>
         public static ITableLocation CreateTableLocationByMode(WorkMode mode)
         {
-            var tableLocationAttribute = PdoPropertyCache<T>.GetTableLocationByWorkMode(mode);
+            var tableLocation = PdoProperties<T>.GetTableLocationByWorkMode(mode);
 
-            if (tableLocationAttribute == null)
-                throw new InvalidOperationException($"Table location for WorkMode '{mode}' is not defined.");
+            if (tableLocation == null)
+                throw new InvalidOperationException($"Table location for WorkMode '{mode}' is not defined on {typeof(T).Name}.");
 
-            return tableLocationAttribute;
-        }
-        
-        /// <summary>
-        /// Creates an instance of BaseTableLocation for the Live environment.
-        /// </summary>
-        /// <returns>A new instance of BaseTableLocation configured for the Live environment.</returns>
-        public static ITableLocation CreateLiveTableLocation()
-        {
-            return CreateTableLocationByMode(WorkMode.Live);
-        }
-        
-        /// <summary>
-        /// Creates an instance of BaseTableLocation for the Test environment.
-        /// </summary>
-        /// <returns>A new instance of BaseTableLocation configured for the Test environment.</returns>
-        public static ITableLocation CreateForTest()
-        {
-            return CreateTableLocationByMode(WorkMode.Test);
+            return tableLocation;
         }
 
         /// <summary>
-        /// Creates an instance of BaseTableLocation for a dummy configuration, or test cases that simulate database interactions.
+        /// Utility method to create ITableLocation for Live environment.
         /// </summary>
-        /// <returns>A new instance of BaseTableLocation configured for a dummy environment.</returns>
-        public static ITableLocation CreateForDummy()
-        {
-            return CreateTableLocationByMode(WorkMode.Dummy); // Assuming Dummy mode exists in WorkMode enum
-        }
+        public static ITableLocation CreateLiveTableLocation() => CreateTableLocationByMode(WorkMode.Live);
+
+        /// <summary>
+        /// Utility method to create ITableLocation for Test environment.
+        /// </summary>
+        public static ITableLocation CreateTestTableLocation() => CreateTableLocationByMode(WorkMode.Test);
+
+        /// <summary>
+        /// Utility method to create ITableLocation for Dummy environment.
+        /// </summary>
+        public static ITableLocation CreateDummyTableLocation() => CreateTableLocationByMode(WorkMode.Dummy);
     }
 }
