@@ -37,7 +37,5 @@
         /// </summary>
         /// <returns></returns>
         string ToStringForTest();
-        
-        
     }
 }

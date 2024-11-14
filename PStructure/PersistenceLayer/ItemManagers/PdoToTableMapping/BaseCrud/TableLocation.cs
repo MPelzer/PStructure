@@ -11,14 +11,12 @@ namespace PStructure.Models
     public class TableLocation : Attribute, ITableLocation
     {
         public WorkMode Mode { get; }
-        public Database Database { get; }
         public string Schema { get; }
         public string TableName { get; }
 
-        public TableLocation(WorkMode mode, Database database, string schema, string tableName)
+        public TableLocation(WorkMode mode, string schema, string tableName)
         {
             Mode = mode;
-            Database = database;
             Schema = schema;
             TableName = tableName;
         }

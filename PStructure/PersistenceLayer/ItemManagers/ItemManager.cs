@@ -9,7 +9,7 @@ using PStructure.root;
 namespace PStructure.PersistenceLayer
 {
     
-    public class ItemManager<T> : ClassCore where T : new()
+    public class ItemManager<T> : ClassCore 
     {
         private readonly ICrud<T> _crud;
         private readonly ILogger _logger;
@@ -133,7 +133,7 @@ namespace PStructure.PersistenceLayer
         private void LogFunctionStart(ref IEnumerable<T> items, string sqlType)
         {
             var itemCount = items is ICollection<T> collection ? collection.Count : items.Count();
-            _logger?.LogDebug("{location} Start Executing {sqlType} for {count} items des Typs {type}",PrintLocation(), sqlType, itemCount, typeof(T));
+            _logger?.LogDebug("{location} Start Executing {sqlType} for {count} items des Typs {type}",GetLoggingClassName(), sqlType, itemCount, typeof(T));
         }
 
         /// <summary>

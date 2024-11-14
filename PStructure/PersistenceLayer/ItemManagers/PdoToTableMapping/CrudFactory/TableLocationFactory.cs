@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using PStructure.Models;
 using PStructure.PersistenceLayer;
 using PStructure.PersistenceLayer.PdoData;
@@ -17,27 +18,12 @@ namespace PStructure.TableLocation
         /// <returns>Configured TableLocation object for the specified work mode.</returns>
         public static ITableLocation CreateTableLocationByMode(WorkMode mode)
         {
-            var tableLocation = PdoProperties<T>.GetTableLocationByWorkMode(mode);
+            var tableLocation = PdoMetadata<T>.TableLocationData.FirstOrDefault(attr => attr.Mode == mode);
 
             if (tableLocation == null)
                 throw new InvalidOperationException($"Table location for WorkMode '{mode}' is not defined on {typeof(T).Name}.");
 
             return tableLocation;
         }
-
-        /// <summary>
-        /// Utility method to create ITableLocation for Live environment.
-        /// </summary>
-        public static ITableLocation CreateLiveTableLocation() => CreateTableLocationByMode(WorkMode.Live);
-
-        /// <summary>
-        /// Utility method to create ITableLocation for Test environment.
-        /// </summary>
-        public static ITableLocation CreateTestTableLocation() => CreateTableLocationByMode(WorkMode.Test);
-
-        /// <summary>
-        /// Utility method to create ITableLocation for Dummy environment.
-        /// </summary>
-        public static ITableLocation CreateDummyTableLocation() => CreateTableLocationByMode(WorkMode.Dummy);
     }
 }

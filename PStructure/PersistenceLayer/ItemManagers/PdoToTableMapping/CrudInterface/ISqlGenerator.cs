@@ -7,15 +7,17 @@ namespace PStructure.PersistenceLayer.PdoToTableMapping.SqlGenerator
     /// </summary>
     public interface ISqlGenerator<T>
     {
-        string GetInsertSql(ILogger logger, string tableLocation);
+        string GetInsertSql(ILogger logger);
 
-        string GetReadSqlByPrimaryKey(ILogger logger, string tableLocation);
+        string GetReadSqlByPrimaryKey(ILogger logger);
 
-        string GetDeleteSqlByPrimaryKey(ILogger logger, string tableLocation);
+        string GetDeleteSqlByPrimaryKey(ILogger logger);
 
-        string GetUpdateSqlByPrimaryKey(ILogger logger, string tableLocation);
+        string GetUpdateSqlByPrimaryKey(ILogger logger);
 
-        string GetReadAll(ILogger logger, string tableLocation);
+        string GetReadAll(ILogger logger);
+
+        string GetTableLocation();
 
         void LogGeneratedSql(ILogger logger, string sql, string commandType);
     }

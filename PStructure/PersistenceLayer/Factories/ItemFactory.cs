@@ -1,39 +1,37 @@
 ﻿using System;
 using System.Linq;
-using System.Reflection;
 using System.Text.Json;
+using PStructure.PersistenceLayer.PdoData;
+
 namespace PStructure.root
 {
     /// <summary>
-    /// Kapselt Methoden rund um das Erstellen von PDO´s
+    /// Provides utility methods for creating and handling items of a specified type.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class ItemFactory<T> : IItemFactory<T> where T : new()
+    public static class ItemFactory<T>
     {
         /// <summary>
-        /// Erstellt ein Item mit Standardwerten, indem der parameterlose Konstruktor von T aufgerufen wird.
+        /// Creates an item with default values by calling the parameterless constructor of T.
         /// </summary>
-        /// <returns>Eine neue Instanz von T mit Standardwerten.</returns>
-        public T CreateDefaultEntry()
+        /// <typeparam name="T">The type of item to create.</typeparam>
+        /// <returns>A new instance of T with default values.</returns>
+        public static T CreateDefaultEntry<T>() where T : new()
         {
-            return new T(); // Nimmt an, dass T einen parameterlosen Konstruktor hat
-            //Todo: Muss noch hier definert werden.
+            return new T();
         }
 
         /// <summary>
-        /// Klont das angegebene Item, indem eine neue Instanz erstellt und alle Eigenschaften kopiert werden.
+        /// Clones the specified item by creating a new instance and copying all properties.
         /// </summary>
-        /// <param name="itemToClone">Das zu klonende Item.</param>
-        /// <returns>Eine neue Instanz von T mit kopierten Eigenschaften des Original-Items.</returns>
-        public T CloneEntry(T itemToClone)
+        /// <typeparam name="T">The type of item to clone.</typeparam>
+        /// <param name="itemToClone">The item to clone.</param>
+        /// <returns>A new instance of T with copied properties from the original item.</returns>
+        public static T CloneEntry<T>(T itemToClone) where T : new()
         {
-            if (itemToClone == null)
-            {
-                throw new ArgumentNullException(nameof(itemToClone));
-            }
+            if (itemToClone == null) throw new ArgumentNullException(nameof(itemToClone));
 
             var clonedItem = new T();
-            foreach (var prop in typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            foreach (var prop in PdoMetadata<T>.Properties)
             {
                 if (prop.CanWrite)
                 {
@@ -45,38 +43,40 @@ namespace PStructure.root
         }
 
         /// <summary>
-        /// Konvertiert das Item in eine JSON-String-Darstellung.
+        /// Converts the item to a JSON string representation.
         /// </summary>
-        /// <returns>Die JSON-String-Darstellung des Items.</returns>
-        public string ToJson(T item)
+        /// <typeparam name="T">The type of item to convert to JSON.</typeparam>
+        /// <param name="item">The item to serialize to JSON.</param>
+        /// <returns>A JSON string representation of the item.</returns>
+        public static string ToJson<T>(T item)
         {
             return JsonSerializer.Serialize(item);
         }
 
         /// <summary>
-        /// Erstellt ein Item aus einem JSON-String.
+        /// Creates an item from a JSON string.
         /// </summary>
-        /// <param name="json">Der JSON-String, der deserialisiert werden soll.</param>
-        /// <returns>Eine Instanz von T, die mit Daten aus dem JSON-String gefüllt ist.</returns>
-        public T FromJson(string json)
+        /// <typeparam name="T">The type of item to create from JSON.</typeparam>
+        /// <param name="json">The JSON string to deserialize.</param>
+        /// <returns>An instance of T populated with data from the JSON string.</returns>
+        public static T FromJson<T>(string json)
         {
             if (string.IsNullOrEmpty(json))
-            {
-                throw new ArgumentException("JSON-String darf nicht null oder leer sein", nameof(json));
-            }
+                throw new ArgumentException("JSON string cannot be null or empty", nameof(json));
 
             return JsonSerializer.Deserialize<T>(json);
         }
 
         /// <summary>
-        /// Gibt eine Zeichenfolgen-Darstellung des Objekts im Format "KlassenName: Wert, Eigenschaft1: Wert, Eigenschaft2: Wert, ..." zurück.
+        /// Provides a string representation of the default object of type T, listing each property and its value.
         /// </summary>
-        /// <returns>Eine Zeichenfolge, die das Objekt und seine Eigenschaften darstellt.</returns>
-        public string ToStringForTest()
+        /// <typeparam name="T">The type of item to represent as a string.</typeparam>
+        /// <returns>A string representation of the object and its properties.</returns>
+        public static string ToStringForTest<T>() where T : new()
         {
-            var item = CreateDefaultEntry(); // Annahme: Wir wollen die String-Darstellung eines Standard-Entries
+            var item = CreateDefaultEntry<T>();
             var typeName = typeof(T).Name;
-            var propertyValues = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance)
+            var propertyValues = PdoMetadata<T>.Properties
                 .Where(prop => prop.CanRead)
                 .Select(prop => $"{prop.Name}: {prop.GetValue(item)}");
 

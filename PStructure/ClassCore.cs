@@ -4,9 +4,10 @@ namespace PStructure
 {
     public class ClassCore
     {
-        public string PrintLocation([CallerMemberName] string functionName = null)
+        public string GetLoggingClassName([CallerMemberName] string functionName = null)
         {
             return $"{GetType().Name}.{functionName}:";
         }
+        
     }
 }

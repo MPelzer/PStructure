@@ -16,14 +16,14 @@ namespace PStructure.CRUDs
             IEnumerable<T> items,
             ref DbFeedback dbFeedback,
             ILogger logger,
-            Func<ILogger, string, string> sqlGeneratorFunc,
+            Func<ILogger, string> sqlGeneratorFunc,
             Action<T, DynamicParameters> mapParametersFunc);
 
         IEnumerable<T> Query(
             IEnumerable<T> items,
             ref DbFeedback dbFeedback,
             ILogger logger,
-            Func<ILogger, string, string> sqlGeneratorFunc,
+            Func<ILogger, string> sqlGeneratorFunc,
             Action<T, DynamicParameters> mapParametersFunc);
 
         /// <summary>

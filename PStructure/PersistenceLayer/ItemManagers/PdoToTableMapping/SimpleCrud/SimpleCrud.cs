@@ -6,6 +6,8 @@ using Microsoft.Extensions.Logging;
 using PStructure.FunctionFeedback;
 using PStructure.Mapper;
 using PStructure.Models;
+using PStructure.PersistenceLayer;
+using PStructure.PersistenceLayer.PdoData;
 using PStructure.PersistenceLayer.PdoToTableMapping.SqlGenerator;
 using PStructure.TableLocation;
 
@@ -14,14 +16,12 @@ namespace PStructure.CRUDs
     public class SimpleCrud<T> : ClassCore, ICrud<T>
     {
         private readonly ISqlGenerator<T> _sqlGenerator;
-        private readonly IMapperPdoQuery<T> _mapperPdoQuery;
-        private readonly ITableLocation _tableLocation;
+        private readonly IMapper<T> _mapper;
 
-        public SimpleCrud(ISqlGenerator<T> sqlGenerator, IMapperPdoQuery<T> mapperPdoQuery, ITableLocation tableLocation)
+        public SimpleCrud(ISqlGenerator<T> sqlGenerator, IMapper<T> mapper)
         {
             _sqlGenerator = sqlGenerator;
-            _mapperPdoQuery = mapperPdoQuery;
-            _tableLocation = tableLocation;
+            _mapper = mapper;
             ApplyTypeHandlersForObject();
         }
 
@@ -29,14 +29,13 @@ namespace PStructure.CRUDs
             IEnumerable<T> items,
             ref DbFeedback dbFeedback,
             ILogger logger,
-            Func<ILogger, string, string> sqlGeneratorFunc,
+            Func<ILogger, string> sqlGeneratorFunc,
             Action<T, DynamicParameters> mapParametersFunc)
         {
             var result = 0;
-            var tableLocation = _tableLocation.PrintTableLocation();
-            var sql = sqlGeneratorFunc(logger, tableLocation);
+            var sql = sqlGeneratorFunc(logger);
 
-            logger?.LogInformation("{location} Executing for {EntityType} with SQL: {Sql}", PrintLocation(), typeof(T).Name, sql);
+            logger?.LogInformation("{location} Executing for {EntityType} with SQL: {Sql}", GetLoggingClassName(), typeof(T).Name, sql);
 
             foreach (var item in items)
             {
@@ -44,12 +43,12 @@ namespace PStructure.CRUDs
                 mapParametersFunc(item, parameters);
                 try
                 {
-                    logger?.LogDebug("{location} Executing SQL for item: {Item}", PrintLocation(), item);
+                    logger?.LogDebug("{location} Executing SQL for item: {Item}", GetLoggingClassName(), item);
                     result += dbFeedback.GetDbConnection().Execute(sql, parameters, dbFeedback.GetDbTransaction());
                 }
                 catch (Exception ex)
                 {
-                    logger?.LogError(ex, "{location} Error executing SQL for item: {Item}", PrintLocation(), item);
+                    logger?.LogError(ex, "{location} Error executing SQL for item: {Item}", GetLoggingClassName(), item);
                     throw;
                 }
             }
@@ -61,14 +60,13 @@ namespace PStructure.CRUDs
             IEnumerable<T> items,
             ref DbFeedback dbFeedback,
             ILogger logger,
-            Func<ILogger, string, string> sqlGeneratorFunc,
+            Func<ILogger, string> sqlGeneratorFunc,
             Action<T, DynamicParameters> mapParametersFunc)
         {
             var result = new List<T>();
-            var tableLocation = _tableLocation.PrintTableLocation();
-            var sql = sqlGeneratorFunc(logger, tableLocation);
+            var sql = sqlGeneratorFunc(logger);
 
-            logger?.LogInformation("{location} Executing fetching operation for {EntityType} with SQL: {Sql}", PrintLocation(), typeof(T).Name, sql);
+            logger?.LogInformation("{location} Executing fetching operation for {EntityType} with SQL: {Sql}", GetLoggingClassName(), typeof(T).Name, sql);
 
             foreach (var item in items)
             {
@@ -76,12 +74,12 @@ namespace PStructure.CRUDs
                 mapParametersFunc(item, parameters);
                 try
                 {
-                    logger?.LogDebug("{location} Executing SQL for item: {Item}", PrintLocation(), item);
+                    logger?.LogDebug("{location} Executing SQL for item: {Item}", GetLoggingClassName(), item);
                     result.AddRange(dbFeedback.GetDbConnection().Query<T>(sql, parameters, dbFeedback.GetDbTransaction()));
                 }
                 catch (Exception ex)
                 {
-                    logger?.LogError(ex, "{location} Error executing SQL for item: {Item}", PrintLocation(), item);
+                    logger?.LogError(ex, "{location} Error executing SQL for item: {Item}", GetLoggingClassName(), item);
                     throw;
                 }
             }
@@ -96,7 +94,7 @@ namespace PStructure.CRUDs
                 ref dbFeedback,
                 logger,
                 _sqlGenerator.GetInsertSql,
-                (item, parameters) => _mapperPdoQuery.MapPropertiesToParameters(item, parameters));
+                (item, parameters) => _mapper.MapPropertiesToParameters(item, parameters));
         }
 
         public IEnumerable<T> Read(IEnumerable<T> items, ref DbFeedback dbFeedback, ILogger logger)
@@ -106,23 +104,23 @@ namespace PStructure.CRUDs
                 ref dbFeedback,
                 logger,
                 _sqlGenerator.GetReadSqlByPrimaryKey,
-                (item, parameters) => _mapperPdoQuery.MapPrimaryKeysToParameters(item, parameters));
+                (item, parameters) => _mapper.MapPrimaryKeysToParameters(item, parameters));
         }
 
         public IEnumerable<T> ReadAll(ref DbFeedback dbFeedback, ILogger logger)
         {
-            var sql = _sqlGenerator.GetReadAll(logger, _tableLocation.PrintTableLocation());
-            logger?.LogInformation("{location} Reading all items with SQL: {Sql}", PrintLocation(), sql);
+            var sql = _sqlGenerator.GetReadAll(logger);
+            logger?.LogInformation("{location} Reading all items with SQL: {Sql}", GetLoggingClassName(), sql);
 
             try
             {
                 var result = dbFeedback.GetDbConnection().Query<T>(sql, transaction: dbFeedback.GetDbTransaction());
-                logger?.LogInformation("{location} Read all items successful.", PrintLocation());
+                logger?.LogInformation("{location} Read all items successful.", GetLoggingClassName());
                 return result;
             }
             catch (Exception ex)
             {
-                logger?.LogError(ex, "{location} Error reading all items.", PrintLocation());
+                logger?.LogError(ex, "{location} Error reading all items.", GetLoggingClassName());
                 throw;
             }
         }
@@ -136,8 +134,8 @@ namespace PStructure.CRUDs
                 _sqlGenerator.GetUpdateSqlByPrimaryKey,
                 (item, parameters) =>
                 {
-                    _mapperPdoQuery.MapPropertiesToParameters(item, parameters);
-                    _mapperPdoQuery.MapPrimaryKeysToParameters(item, parameters);
+                    _mapper.MapPropertiesToParameters(item, parameters);
+                    _mapper.MapPrimaryKeysToParameters(item, parameters);
                 });
         }
 
@@ -148,7 +146,7 @@ namespace PStructure.CRUDs
                 ref dbFeedback,
                 logger,
                 _sqlGenerator.GetDeleteSqlByPrimaryKey,
-                _mapperPdoQuery.MapPrimaryKeysToParameters);
+                _mapper.MapPrimaryKeysToParameters);
         }
 
         public void ApplyTypeHandlersForObject()
