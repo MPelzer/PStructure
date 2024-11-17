@@ -5,6 +5,8 @@ using NUnit.Framework;
 using PStructure.CRUDs;
 using PStructure.FunctionFeedback;
 using PStructure.PersistenceLayer;
+using PStructure.PersistenceLayer.Pdo;
+using PStructure.PersistenceLayer.Pdo.PdoToTableMapping.SimpleCrud;
 using PStructure.TableLocation;
 using PStructure.Test.DBTestEnvironment;
 using PStructure.Test.Models;
@@ -55,7 +57,7 @@ public class DeleteTests : BasicTest
         
         var simpleCrud = new SimpleCrud<TestEntry>()
         
-        var itemManager = new ItemManager<TestEntry>(tableLocation, logger);
+        var itemManager = new SimpleItemManager<TestEntry>(tableLocation, logger);
         var dbCom = new DbFeedback(_dbConnection)
         {
             InjectedSql = string.Empty,

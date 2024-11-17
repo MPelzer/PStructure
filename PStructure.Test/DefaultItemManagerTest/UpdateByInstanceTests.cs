@@ -3,6 +3,7 @@ using MySqlConnector;
 using NUnit.Framework;
 using PStructure.FunctionFeedback;
 using PStructure.PersistenceLayer;
+using PStructure.PersistenceLayer.Pdo;
 using PStructure.TableLocation;
 using PStructure.Test.DBTestEnvironment;
 using PStructure.Test.Models;
@@ -47,7 +48,7 @@ public class UpdateByInstanceTests : BasicTest
 
         var logger = _testEntryFactory.GetTestLogger();
         var tableLocation = new TableLocation.TableLocation("", "TestEntry");
-        var itemManager = new ItemManager<TestEntry>(tableLocation, logger);
+        var itemManager = new SimpleItemManager<TestEntry>(tableLocation, logger);
         var dbCom = new DbFeedback(_dbConnection)
         {
             InjectedSql = string.Empty,

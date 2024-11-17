@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using PStructure.Models;
+using PStructure.PersistenceLayer.Pdo.PdoToTableMapping.SimpleCrud;
 using PStructure.PersistenceLayer.PdoToTableMapping.SqlGenerator;
 using PStructure.root;
 

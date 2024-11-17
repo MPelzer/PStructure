@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
 using PStructure.Models;
+using PStructure.PersistenceLayer.Pdo.PdoToTableMapping.SimpleCrud;
 using PStructure.PersistenceLayer.PdoToTableMapping.SqlGenerator;
 using PStructure.Test.DBTestEnvironment;
 

@@ -1,22 +1,22 @@
 ﻿using System;
 using System.Linq;
-using PStructure.Models;
-namespace PStructure.PersistenceLayer.PdoData
+using PStructure.PersistenceLayer.PdoData;
+
+namespace PStructure.PersistenceLayer.Pdo.PdoValidation
 {
-    public static class PdoValidator<T> : IValidator<T>
+    public class PdoValidator<T> : IValidator<T>
     {
         /// <summary>
-        /// Validiert die gegebenen <see cref="PdoMetadata{T}"/> auf Vollständigkeit.
+        /// Validiert die gegebenen <see cref="PdoDataCache{T}"/> auf Vollständigkeit.
         /// Notiz: Absichtlich nur Vollständigkeit, da Einschränkungen 
         /// </summary>
         /// <typeparam name="T">Der Typ des Modells, das validiert wird.</typeparam>
         /// <exception cref="InvalidOperationException">Wird ausgelöst, wenn die Validierung fehlschlägt.</exception>
-        public static void Validate()
+        public void Validate()
         {
             ValidatePrimaryKeyProperties();
             ValidateProperties();
             ValidateTableLocationMode();
-            ValidateDatabase();
             ValidateSchema();
             ValidateTableName();
         }
@@ -26,7 +26,7 @@ namespace PStructure.PersistenceLayer.PdoData
         /// </summary>
         private static void ValidatePrimaryKeyProperties()
         {
-            if (!PdoMetadata<T>.PrimaryKeyProperties.Any())
+            if (!PdoDataCache<T>.PrimaryKeyProperties.Any())
             {
                 throw new InvalidOperationException($"Der Typ {typeof(T).Name} muss mindestens einen Primärschlüssel haben.");
             }
@@ -37,7 +37,7 @@ namespace PStructure.PersistenceLayer.PdoData
         /// </summary>
         private static void ValidateProperties()
         {
-            if (!PdoMetadata<T>.Properties.Any())
+            if (!PdoDataCache<T>.Properties.Any())
             {
                 throw new InvalidOperationException($"Der Typ {typeof(T).Name} muss mindestens eine Eigenschaft haben.");
             }
@@ -50,37 +50,16 @@ namespace PStructure.PersistenceLayer.PdoData
         {
             var workModes = Enum.GetValues(typeof(WorkMode)).Cast<WorkMode>().ToArray();
             
-            if (!PdoMetadata<T>.TableLocationData.Any())
+            if (!PdoDataCache<T>.TableLocationData.Any())
             {
                 throw new InvalidOperationException($"Der Typ {typeof(T).Name} muss mindestens einen TableLocation haben.");
             }
 
             foreach (var mode in workModes)
             {
-                if (PdoMetadata<T>.TableLocationData.All(tl => tl.Mode != mode))
+                if (PdoDataCache<T>.TableLocationData.All(tl => tl.Mode != mode))
                 {
                     throw new InvalidOperationException($"Der Typ {typeof(T).Name} muss mindestens einen TableLocation für den WorkMode '{mode}' haben.");
-                }
-            }
-        }
-
-        /// <summary>
-        /// Validiert, dass die Datenbank nicht null oder leer ist und dass alle Attribute vorhanden sind.
-        /// </summary>
-        private static void ValidateDatabase()
-        {
-            var tableLocations = PdoMetadata<T>.TableLocationData.ToArray();
-
-            if (!tableLocations.Any())
-            {
-                throw new InvalidOperationException($"Der Typ {typeof(T).Name} muss mindestens einen TableLocation haben.");
-            }
-
-            foreach (var tableLocation in tableLocations)
-            {
-                if (string.IsNullOrEmpty(tableLocation.Database.ToString()))
-                {
-                    throw new InvalidOperationException($"Der Typ {typeof(T).Name} muss eine gültige, nicht-Undefined Datenbank haben.");
                 }
             }
         }
@@ -90,7 +69,7 @@ namespace PStructure.PersistenceLayer.PdoData
         /// </summary>
         private static void ValidateSchema()
         {
-            var tableLocations = PdoMetadata<T>.TableLocationData.ToArray();
+            var tableLocations = PdoDataCache<T>.TableLocationData.ToArray();
 
             if (!tableLocations.Any())
             {
@@ -111,7 +90,7 @@ namespace PStructure.PersistenceLayer.PdoData
         /// </summary>
         private static void ValidateTableName()
         {
-            var tableLocations = PdoMetadata<T>.TableLocationData.ToArray();
+            var tableLocations = PdoDataCache<T>.TableLocationData.ToArray();
 
             if (!tableLocations.Any())
             {

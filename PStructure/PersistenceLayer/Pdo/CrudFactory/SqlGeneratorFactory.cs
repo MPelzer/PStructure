@@ -3,12 +3,13 @@ using System.Reflection;
 using PStructure.PersistenceLayer.PdoToTableMapping;
 using PStructure.PersistenceLayer.PdoToTableMapping.SqlGenerator;
 using PStructure.PersistenceLayer.Utils;
+using PStructure.TableLocation;
 
-namespace PStructure.PersistenceLayer.ItemManagers.PdoToTableMapping.Cruds.Crud
+namespace PStructure.PersistenceLayer.Pdo.CrudFactory
 {
-    public class SqlGeneratorFactory<T>
+    public static class SqlGeneratorFactory<T>
     {
-        public ISqlGenerator<T> GetSqlGenerator(CrudType crudType)
+        public static ISqlGenerator<T> GetSqlGenerator(CrudType crudType, ITableLocation tableLocation)
         {
             var attribute = crudType.GetType()
                 .GetField(crudType.ToString())
@@ -17,9 +18,8 @@ namespace PStructure.PersistenceLayer.ItemManagers.PdoToTableMapping.Cruds.Crud
             if (attribute == null)
                 throw new NotSupportedException($"CrudType '{crudType}' is not supported.");
 
-            // Use reflection to instantiate the SQL generator directly
             var generatorType = attribute.GeneratorType.MakeGenericType(typeof(T));
-            return (ISqlGenerator<T>)Activator.CreateInstance(generatorType);
+            return (ISqlGenerator<T>)Activator.CreateInstance(generatorType, tableLocation);
         }
     }
 }

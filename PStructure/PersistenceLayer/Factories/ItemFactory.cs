@@ -31,7 +31,7 @@ namespace PStructure.root
             if (itemToClone == null) throw new ArgumentNullException(nameof(itemToClone));
 
             var clonedItem = new T();
-            foreach (var prop in PdoMetadata<T>.Properties)
+            foreach (var prop in PdoDataCache<T>.Properties)
             {
                 if (prop.CanWrite)
                 {
@@ -76,7 +76,7 @@ namespace PStructure.root
         {
             var item = CreateDefaultEntry<T>();
             var typeName = typeof(T).Name;
-            var propertyValues = PdoMetadata<T>.Properties
+            var propertyValues = PdoDataCache<T>.Properties
                 .Where(prop => prop.CanRead)
                 .Select(prop => $"{prop.Name}: {prop.GetValue(item)}");
 

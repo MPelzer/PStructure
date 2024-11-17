@@ -2,12 +2,12 @@
 using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.Logging;
-using PStructure.Models;
 using PStructure.PersistenceLayer.ItemManagers.PdoToTableMapping.Cruds.Crud;
+using PStructure.PersistenceLayer.Pdo.PdoData.Attributes;
 using PStructure.PersistenceLayer.PdoData;
 using PStructure.TableLocation;
 
-namespace PStructure.PersistenceLayer.PdoToTableMapping.SqlGenerator
+namespace PStructure.PersistenceLayer.Pdo.PdoToTableMapping.SimpleCrud
 {
     /// <summary>
     /// Generates standard CRUD SQL commands for items of type <typeparamref name="T"/>.
@@ -28,10 +28,10 @@ namespace PStructure.PersistenceLayer.PdoToTableMapping.SqlGenerator
         {
             return _sqlCache.GetOrAdd($"{typeof(T).FullName}_Insert", _ =>
             {
-                var columnNames = PdoMetadata<T>.Properties
-                    .Select(prop => prop.GetCustomAttribute<Column>().ColumnName);
-                var parameterNames = PdoMetadata<T>.Properties
-                    .Select(prop => "@" + prop.GetCustomAttribute<Column>().ColumnName);
+                var columnNames = PdoDataCache<T>.Properties
+                    .Select(prop => prop.GetCustomAttribute<PdoPropertyAttributes.Column>().ColumnName);
+                var parameterNames = PdoDataCache<T>.Properties
+                    .Select(prop => "@" + prop.GetCustomAttribute<PdoPropertyAttributes.Column>().ColumnName);
                 var sql = $"INSERT INTO {GetTableLocation()} ({string.Join(", ", columnNames)}) " +
                           $"VALUES ({string.Join(", ", parameterNames)})";
 
@@ -47,9 +47,9 @@ namespace PStructure.PersistenceLayer.PdoToTableMapping.SqlGenerator
         {
             return _sqlCache.GetOrAdd($"{typeof(T).FullName}_Read", _ =>
             {
-                var whereClauses = PdoMetadata<T>.PrimaryKeyProperties.Select(prop =>
+                var whereClauses = PdoDataCache<T>.PrimaryKeyProperties.Select(prop =>
                 {
-                    var columnAttr = prop.GetCustomAttribute<Column>();
+                    var columnAttr = prop.GetCustomAttribute<PdoPropertyAttributes.Column>();
                     var columnName = columnAttr?.ColumnName ?? prop.Name;
                     return $"{columnName} = @{columnName}";
                 });
@@ -67,9 +67,9 @@ namespace PStructure.PersistenceLayer.PdoToTableMapping.SqlGenerator
         {
             return _sqlCache.GetOrAdd($"{typeof(T).FullName}_Delete", _ =>
             {
-                var whereClauses = PdoMetadata<T>.PrimaryKeyProperties.Select(prop =>
+                var whereClauses = PdoDataCache<T>.PrimaryKeyProperties.Select(prop =>
                 {
-                    var columnAttr = prop.GetCustomAttribute<Column>();
+                    var columnAttr = prop.GetCustomAttribute<PdoPropertyAttributes.Column>();
                     var columnName = columnAttr?.ColumnName ?? prop.Name;
                     return $"{columnName} = @{columnName}";
                 });
@@ -87,18 +87,18 @@ namespace PStructure.PersistenceLayer.PdoToTableMapping.SqlGenerator
         {
             return _sqlCache.GetOrAdd($"{typeof(T).FullName}_Update", _ =>
             {
-                var setClauses = PdoMetadata<T>.Properties
-                    .Except(PdoMetadata<T>.PrimaryKeyProperties)
+                var setClauses = PdoDataCache<T>.Properties
+                    .Except(PdoDataCache<T>.PrimaryKeyProperties)
                     .Select(prop =>
                     {
-                        var columnAttr = prop.GetCustomAttribute<Column>();
+                        var columnAttr = prop.GetCustomAttribute<PdoPropertyAttributes.Column>();
                         var columnName = columnAttr?.ColumnName ?? prop.Name;
                         return $"{columnName} = @{columnName}";
                     });
 
-                var whereClauses = PdoMetadata<T>.PrimaryKeyProperties.Select(prop =>
+                var whereClauses = PdoDataCache<T>.PrimaryKeyProperties.Select(prop =>
                 {
-                    var columnAttr = prop.GetCustomAttribute<Column>();
+                    var columnAttr = prop.GetCustomAttribute<PdoPropertyAttributes.Column>();
                     var columnName = columnAttr?.ColumnName ?? prop.Name;
                     return $"{columnName} = @{columnName}";
                 });

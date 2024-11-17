@@ -16,6 +16,7 @@
     <ItemGroup>
       <Folder Include="Factories\" />
       <Folder Include="Interfaces\" />
+      <Folder Include="PersistenceLayer\Utils\" />
     </ItemGroup>
 
 </Project>

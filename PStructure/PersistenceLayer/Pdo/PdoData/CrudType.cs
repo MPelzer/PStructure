@@ -1,5 +1,6 @@
 ﻿using PStructure.CRUDs;
 using PStructure.Mapper;
+using PStructure.PersistenceLayer.Pdo.PdoToTableMapping.SimpleCrud;
 using PStructure.PersistenceLayer.PdoToTableMapping.SqlGenerator;
 using PStructure.PersistenceLayer.Utils;
 

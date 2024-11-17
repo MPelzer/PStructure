@@ -16,6 +16,17 @@ namespace PStructure.PersistenceLayer.Utils
         }
 
         [AttributeUsage(AttributeTargets.Field, AllowMultiple = false)]
+        public class ValidatorAttribute : Attribute
+        {
+            public Type ValidatorType { get; }
+
+            public ValidatorAttribute(Type validatorType)
+            {
+                ValidatorType = validatorType;
+            }
+        }
+        
+        [AttributeUsage(AttributeTargets.Field, AllowMultiple = false)]
         public class MapperAttribute : Attribute
         {
             public Type MapperType { get; }

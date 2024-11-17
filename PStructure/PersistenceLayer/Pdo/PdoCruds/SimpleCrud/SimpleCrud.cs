@@ -3,15 +3,13 @@ using System.Collections.Generic;
 using System.Reflection;
 using Dapper;
 using Microsoft.Extensions.Logging;
+using PStructure.CRUDs;
 using PStructure.FunctionFeedback;
 using PStructure.Mapper;
-using PStructure.Models;
-using PStructure.PersistenceLayer;
-using PStructure.PersistenceLayer.PdoData;
+using PStructure.PersistenceLayer.Pdo.PdoData.Attributes;
 using PStructure.PersistenceLayer.PdoToTableMapping.SqlGenerator;
-using PStructure.TableLocation;
 
-namespace PStructure.CRUDs
+namespace PStructure.PersistenceLayer.Pdo.PdoToTableMapping.SimpleCrud
 {
     public class SimpleCrud<T> : ClassCore, ICrud<T>
     {
@@ -154,7 +152,7 @@ namespace PStructure.CRUDs
             var properties = typeof(T).GetProperties();
             foreach (var property in properties)
             {
-                var handlerAttribute = property.GetCustomAttribute<TypeHandler>();
+                var handlerAttribute = property.GetCustomAttribute<PdoPropertyAttributes.TypeHandler>();
                 if (handlerAttribute == null) continue;
                 var handlerInstance = (SqlMapper.ITypeHandler)Activator.CreateInstance(handlerAttribute.HandlerType);
                 SqlMapper.AddTypeHandler(property.PropertyType, handlerInstance);

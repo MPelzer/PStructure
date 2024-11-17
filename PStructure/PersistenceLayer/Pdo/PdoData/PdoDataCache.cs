@@ -2,11 +2,12 @@
 using System.Linq;
 using System.Reflection;
 using PStructure.Models;
+using PStructure.PersistenceLayer.Pdo.PdoData.Attributes;
 using PStructure.PersistenceLayer.PdoToTableMapping.SqlGenerator;
 
 namespace PStructure.PersistenceLayer.PdoData
 {
-    public static class PdoMetadata<T>
+    public static class PdoDataCache<T>
     {
 
         #region Properties
@@ -22,13 +23,13 @@ namespace PStructure.PersistenceLayer.PdoData
         
         private static readonly Lazy<PropertyInfo[]> _propertyData = new Lazy<PropertyInfo[]>(() => 
             typeof(T).GetProperties()
-                .Where(prop => prop.GetCustomAttribute<Column>() != null)
+                .Where(prop => prop.GetCustomAttribute<PdoPropertyAttributes.Column>() != null)
                 .ToArray()
         );
 
         private static readonly Lazy<PropertyInfo[]> _primaryKeyData = new Lazy<PropertyInfo[]>(() => 
             typeof(T).GetProperties()
-                .Where(prop => prop.GetCustomAttribute<PrimaryKey>() != null)
+                .Where(prop => prop.GetCustomAttribute<PdoPropertyAttributes.PrimaryKey>() != null)
                 .ToArray()
         );
 
@@ -37,14 +38,6 @@ namespace PStructure.PersistenceLayer.PdoData
         );
 
         #endregion
-
-
-        #region GettersByProperty
-
-        
-
-        #endregion
-        
         
     }
 }

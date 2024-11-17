@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Reflection;
 using Dapper;
-using PStructure.Interfaces;
-using PStructure.Models;
+using PStructure.Mapper;
+using PStructure.PersistenceLayer.Pdo.PdoData.Attributes;
 using PStructure.PersistenceLayer.PdoData;
 
-namespace PStructure.Mapper
+namespace PStructure.PersistenceLayer.Pdo.PdoToTableMapping.SimpleCrud
 {
     /// <summary>
     /// Maps the properties of a PDO object to table columns.
@@ -24,10 +24,10 @@ namespace PStructure.Mapper
         /// <param name="parameters">The dynamic parameters set to add to.</param>
         public void MapPrimaryKeysToParameters(T item, DynamicParameters parameters)
         {
-            foreach (var prop in PdoMetadata<T>.PrimaryKeyProperties)
+            foreach (var prop in PdoDataCache<T>.PrimaryKeyProperties)
             {
                 // Use the Column attribute if present, otherwise fallback to property name
-                var columnAttr = prop.GetCustomAttribute<Column>();
+                var columnAttr = prop.GetCustomAttribute<PdoPropertyAttributes.Column>();
                 var columnName = columnAttr?.ColumnName ?? prop.Name;
                 var value = prop.GetValue(item);
 
@@ -36,16 +36,16 @@ namespace PStructure.Mapper
         }
 
         /// <summary>
-        /// Adds parameters for all properties with a <see cref="Column"/> attribute to a set of <see cref="DynamicParameters"/>.
+        /// Adds parameters for all properties with a <see cref="DynamicParameters"/> attribute to a set of <see cref="parameters"/>.
         /// </summary>
         /// <param name="item">The PDO object.</param>
         /// <param name="parameters">The dynamic parameters set to add to.</param>
-        /// <exception cref="InvalidOperationException">Thrown if any property is missing a <see cref="Column"/> attribute.</exception>
+        /// <exception cref="PdoPropertyAttributes">Thrown if any property is missing a <see cref="PdoPropertyAttributes.Column"/> attribute.</exception>
         public void MapPropertiesToParameters(T item, DynamicParameters parameters)
         {
-            foreach (var prop in PdoMetadata<T>.Properties)
+            foreach (var prop in PdoDataCache<T>.Properties)
             {
-                var columnAttr = prop.GetCustomAttribute<Column>();
+                var columnAttr = prop.GetCustomAttribute<PdoPropertyAttributes.Column>();
                 if (columnAttr == null)
                 {
                     throw new InvalidOperationException($"Property {prop.Name} does not have a Column attribute.");

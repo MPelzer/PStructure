@@ -4,11 +4,11 @@ using PStructure.Mapper;
 using PStructure.PersistenceLayer.PdoToTableMapping;
 using PStructure.PersistenceLayer.Utils;
 
-namespace PStructure.PersistenceLayer.ItemManagers.PdoToTableMapping.Mappers
+namespace PStructure.PersistenceLayer.Pdo.CrudFactory
 {
-    public class MapperFactory<T>
+    public static class MapperFactory<T>
     {
-        public IMapper<T> GetMapper(CrudType crudType)
+        public static IMapper<T> GetMapper(CrudType crudType)
         {
             var attribute = crudType.GetType()
                 .GetField(crudType.ToString())
