@@ -2,6 +2,7 @@
 using PStructure.DapperSqlDateTimeMappers;
 using PStructure.Interfaces.DapperSqlDateTimeMappers;
 using PStructure.PersistenceLayer;
+using PStructure.PersistenceLayer.Pdo.PdoData.Attributes;
 
 // For the custom date handlers
 
@@ -9,8 +10,8 @@ using PStructure.PersistenceLayer;
 
 namespace PStructure.Models
 {
-    [TableLocation(WorkMode.Test, Database.TestDb, "TestSchema", "TestTable")]
-    [TableLocation(WorkMode.Live, Database.LiveDb, "LiveSchema", "LiveTable")]
+    [TableLocation(WorkMode.Test, "TestSchema", "TestTable")]
+    [TableLocation(WorkMode.Live, "LiveSchema", "LiveTable")]
     public class PdoExample
     {
         // Primary key, simple integer
@@ -31,23 +32,23 @@ namespace PStructure.Models
         // DateTime properties with custom handlers
 
         // Using CustomDateHandler_yyyyMMdd
-        [TypeHandler(typeof(CustomDateHandler_yyyyMMdd))]
+        [PdoPropertyAttributes.TypeHandler(typeof(CustomDateHandler_yyyyMMdd))]
         public DateTime DateInCompactFormat { get; set; }
 
         // Using CustomDateHandler_yyyy_MM_ddTHH_mm_ss
-        [TypeHandler(typeof(CustomDateHandler_yyyy_MM_ddTHH_mm_ss))]
+        [PdoPropertyAttributes.TypeHandler(typeof(CustomDateHandler_yyyy_MM_ddTHH_mm_ss))]
         public DateTime DateWithTimeFormat { get; set; }
 
         // Using CustomDateHandler_dd_MM_yyyy
-        [TypeHandler(typeof(CustomDateHandler_dd_MM_yyyy))]
+        [PdoPropertyAttributes.TypeHandler(typeof(CustomDateHandler_dd_MM_yyyy))]
         public DateTime DateInEuropeanFormat { get; set; }
 
         // Using CustomDateHandler_MM_dd_yyyy
-        [TypeHandler(typeof(CustomDateHandler_MM_dd_yyyy))]
+        [PdoPropertyAttributes.TypeHandler(typeof(CustomDateHandler_MM_dd_yyyy))]
         public DateTime DateInAmericanFormat { get; set; }
 
         // Using CustomDateHandler_cyyMMdd for Century-Representation Date Format
-        [TypeHandler(typeof(CustomDateHandler_cyyMMdd))]
+        [PdoPropertyAttributes.TypeHandler(typeof(CustomDateHandler_cyyMMdd))]
         public DateTime DateWithCenturyFormat { get; set; }
     }
 }

@@ -7,7 +7,7 @@ using PStructure.TableLocation;
 
 namespace PStructure.PersistenceLayer.Pdo
 {
-    public static class ItemManagerFactory<T>
+    public static class PdoManagerFactory<T>
     {
         /// <summary>
         /// Creates an ItemManager instance dynamically using the provided CrudType and TableLocation.
@@ -22,7 +22,7 @@ namespace PStructure.PersistenceLayer.Pdo
             var mapper = MapperFactory<T>.GetMapper(crudType);
             var crud = CrudFactory<T>.GetCrud(crudType, sqlGenerator, mapper);
             
-            return new ItemManager<T>(crud, logger);
+            return new PdoManager<T>(crud, logger);
         }
 
         /// <summary>

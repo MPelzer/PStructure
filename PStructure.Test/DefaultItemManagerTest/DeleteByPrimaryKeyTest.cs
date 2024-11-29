@@ -57,7 +57,7 @@ public class DeleteTests : BasicTest
         
         var simpleCrud = new SimpleCrud<TestEntry>()
         
-        var itemManager = new SimpleItemManager<TestEntry>(tableLocation, logger);
+        var itemManager = new SimplePdoManager<TestEntry>(tableLocation, logger);
         var dbCom = new DbFeedback(_dbConnection)
         {
             InjectedSql = string.Empty,

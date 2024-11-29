@@ -10,6 +10,7 @@ namespace PStructure.Models
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
     public class TableLocation : Attribute, ITableLocation
     {
+        
         public WorkMode Mode { get; }
         public string Schema { get; }
         public string TableName { get; }

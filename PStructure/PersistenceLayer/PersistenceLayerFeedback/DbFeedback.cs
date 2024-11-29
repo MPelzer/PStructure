@@ -7,9 +7,10 @@ namespace PStructure.FunctionFeedback
     /// </summary>
     public class DbFeedback : FunctionFeedback
     {
-        // DbRequest methods
+        
         private IDbConnection _dbConnection;
         private IDbTransaction _dbTransaction;
+        
         public DbFeedback(IDbConnection dbConnection)
         {
             _dbConnection = dbConnection;

@@ -50,7 +50,7 @@ namespace PStructure.Test.DefaultItemManagerTest
 
             var logger = _testEntryFactory.GetTestLogger();
             var tableLocation = new TableLocation.TableLocation("", "TestEntry");
-            var itemManager = new SimpleItemManager<TestEntry>(tableLocation, logger);
+            var itemManager = new SimplePdoManager<TestEntry>(tableLocation, logger);
 
             var dbCom = new DbFeedback(_dbConnection)
             {

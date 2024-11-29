@@ -8,9 +8,9 @@ using PStructure.FunctionFeedback;
 namespace PStructure.PersistenceLayer.Pdo
 {
     
-    public class SimpleItemManager<T> : ItemManager<T>
+    public class SimplePdoManager<T> : PdoManager<T>
     {
-        public SimpleItemManager(ICrud<T> crud, ILogger logger = null) : base(crud, logger)
+        public SimplePdoManager(ICrud<T> crud, ILogger logger = null) : base(crud, logger)
         {
         }
         

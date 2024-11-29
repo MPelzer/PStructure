@@ -5,13 +5,13 @@ using PStructure.FunctionFeedback;
 
 namespace PStructure.PersistenceLayer.Pdo
 {
-    public class ItemManager<T> : ClassCore, IItemManager<T>
+    public class PdoManager<T> : ClassCore, IItemManager<T>
     {
         protected ICrud<T> _crud;
         protected readonly ILogger _logger;
         
         
-        public ItemManager(ICrud<T> crud, ILogger logger = null)
+        public PdoManager(ICrud<T> crud, ILogger logger = null)
         {
             _logger = logger;
             _crud = crud;

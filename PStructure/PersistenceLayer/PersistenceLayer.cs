@@ -30,7 +30,7 @@ namespace PStructure.PersistenceLayer
         {
             if (_itemManagers.ContainsKey(typeof(T))) return (IItemManager<T>)_itemManagers[typeof(T)];
             
-            var manager = ItemManagerFactory<T>.CreateItemManager(crudType, _workMode, _logger);
+            var manager = PdoManagerFactory<T>.CreateItemManager(crudType, workMode, _logger);
             _itemManagers.TryAdd(typeof(T), (IItemManager<object>)manager);
 
             // Cast to IItemManager<T> when retrieving it
@@ -57,8 +57,7 @@ namespace PStructure.PersistenceLayer
                 createMethod.Invoke(this, new object[] { crudType, workMode });
             }
         }
-
-
+        
         /// <summary>
         /// Dynamically updates the Crud of a registered ItemManager.
         /// </summary>
@@ -67,7 +66,7 @@ namespace PStructure.PersistenceLayer
             if (_itemManagers.TryGetValue(typeof(T), out var manager))
             {
                 var typedManager = (IItemManager<T>)manager;
-                ItemManagerFactory<T>.UpdateItemManagerCrud(typedManager, newCrudType, _workMode, _logger);
+                PdoManagerFactory<T>.UpdateItemManagerCrud(typedManager, newCrudType, _workMode, _logger);
             }
             else
             {
