@@ -61,9 +61,9 @@ namespace PStructure.PersistenceLayer
         /// <summary>
         /// Dynamically updates the Crud of a registered ItemManager.
         /// </summary>
-        public void SetCrud<T>(CrudType newCrudType)
+        public void SetCrud<T>(Type type, CrudType newCrudType)
         {
-            if (_itemManagers.TryGetValue(typeof(T), out var manager))
+            if (_itemManagers.TryGetValue(type, out var manager))
             {
                 var typedManager = (IItemManager<T>)manager;
                 PdoManagerFactory<T>.UpdateItemManagerCrud(typedManager, newCrudType, _workMode, _logger);
