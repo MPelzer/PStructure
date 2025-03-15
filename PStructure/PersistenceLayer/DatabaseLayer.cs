@@ -8,7 +8,7 @@ using PStructure.PersistenceLayer.PdoToTableMapping;
 
 namespace PStructure.PersistenceLayer
 {
-    public class PersistenceLayer
+    public class DatabaseLayer : IPersistenceLayer
     {
         private readonly ILogger _logger;
         private readonly WorkMode _workMode;
@@ -16,7 +16,7 @@ namespace PStructure.PersistenceLayer
         // Dictionary to store ItemManagers for each type
         private readonly ConcurrentDictionary<Type, IItemManager<object>> _itemManagers;
 
-        public PersistenceLayer(WorkMode workMode, ILogger logger = null)
+        public DatabaseLayer(WorkMode workMode, ILogger logger = null)
         {
             _workMode = workMode;
             _logger = logger;
