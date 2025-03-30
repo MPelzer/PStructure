@@ -4,48 +4,48 @@ namespace PStructure.PersistenceLayer.Utils
 {
     public class FactoryAttibutes
     {
-        [AttributeUsage(AttributeTargets.Field, AllowMultiple = false)]
+        [AttributeUsage(AttributeTargets.Field)]
         public class CrudAttribute : Attribute
         {
-            public Type CrudType { get; }
-
             public CrudAttribute(Type crudType)
             {
                 CrudType = crudType;
             }
+
+            public Type CrudType { get; }
         }
 
-        [AttributeUsage(AttributeTargets.Field, AllowMultiple = false)]
+        [AttributeUsage(AttributeTargets.Field)]
         public class ValidatorAttribute : Attribute
         {
-            public Type ValidatorType { get; }
-
             public ValidatorAttribute(Type validatorType)
             {
                 ValidatorType = validatorType;
             }
+
+            public Type ValidatorType { get; }
         }
-        
-        [AttributeUsage(AttributeTargets.Field, AllowMultiple = false)]
+
+        [AttributeUsage(AttributeTargets.Field)]
         public class MapperAttribute : Attribute
         {
-            public Type MapperType { get; }
-
             public MapperAttribute(Type mapperType)
             {
                 MapperType = mapperType;
             }
+
+            public Type MapperType { get; }
         }
-        
-        [AttributeUsage(AttributeTargets.Field, AllowMultiple = false)]
+
+        [AttributeUsage(AttributeTargets.Field)]
         public class SqlGeneratorAttribute : Attribute
         {
-            public Type GeneratorType { get; }
-
             public SqlGeneratorAttribute(Type generatorType)
             {
                 GeneratorType = generatorType;
             }
+
+            public Type GeneratorType { get; }
         }
     }
 }

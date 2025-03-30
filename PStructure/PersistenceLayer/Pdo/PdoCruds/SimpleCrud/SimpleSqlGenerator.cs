@@ -10,19 +10,20 @@ using PStructure.TableLocation;
 namespace PStructure.PersistenceLayer.Pdo.PdoToTableMapping.SimpleCrud
 {
     /// <summary>
-    /// Generates standard CRUD SQL commands for items of type <typeparamref name="T"/>.
+    ///     Generates standard CRUD SQL commands for items of type <typeparamref name="T" />.
     /// </summary>
     public class SimpleSqlGenerator<T> : SqlGenerator<T>
     {
-        
         // SQL command cache for each type
-        private static readonly ConcurrentDictionary<string, string> _sqlCache 
+        private static readonly ConcurrentDictionary<string, string> _sqlCache
             = new ConcurrentDictionary<string, string>();
 
-        public SimpleSqlGenerator(ITableLocation tableLocation) : base(tableLocation) {}
-        
+        public SimpleSqlGenerator(ITableLocation tableLocation) : base(tableLocation)
+        {
+        }
+
         /// <summary>
-        /// Generates the INSERT SQL command for a PDO.
+        ///     Generates the INSERT SQL command for a PDO.
         /// </summary>
         public new string GetInsertSql(ILogger logger)
         {
@@ -41,7 +42,7 @@ namespace PStructure.PersistenceLayer.Pdo.PdoToTableMapping.SimpleCrud
         }
 
         /// <summary>
-        /// Generates the READ SQL command by primary key.
+        ///     Generates the READ SQL command by primary key.
         /// </summary>
         public new string GetReadSqlByPrimaryKey(ILogger logger)
         {
@@ -61,7 +62,7 @@ namespace PStructure.PersistenceLayer.Pdo.PdoToTableMapping.SimpleCrud
         }
 
         /// <summary>
-        /// Generates the DELETE SQL command by primary key.
+        ///     Generates the DELETE SQL command by primary key.
         /// </summary>
         public new string GetDeleteSqlByPrimaryKey(ILogger logger)
         {
@@ -81,7 +82,7 @@ namespace PStructure.PersistenceLayer.Pdo.PdoToTableMapping.SimpleCrud
         }
 
         /// <summary>
-        /// Generates the UPDATE SQL command by primary key.
+        ///     Generates the UPDATE SQL command by primary key.
         /// </summary>
         public new string GetUpdateSqlByPrimaryKey(ILogger logger)
         {
@@ -103,14 +104,15 @@ namespace PStructure.PersistenceLayer.Pdo.PdoToTableMapping.SimpleCrud
                     return $"{columnName} = @{columnName}";
                 });
 
-                var sql = $"UPDATE {GetTableLocation()} SET {string.Join(", ", setClauses)} WHERE {string.Join(" AND ", whereClauses)}";
+                var sql =
+                    $"UPDATE {GetTableLocation()} SET {string.Join(", ", setClauses)} WHERE {string.Join(" AND ", whereClauses)}";
                 LogGeneratedSql(logger, sql, "Update");
                 return sql;
             });
         }
 
         /// <summary>
-        /// Generates the SQL command to read all records.
+        ///     Generates the SQL command to read all records.
         /// </summary>
         public new string GetReadAll(ILogger logger)
         {

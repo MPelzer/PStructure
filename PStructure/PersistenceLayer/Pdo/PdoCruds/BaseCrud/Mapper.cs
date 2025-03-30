@@ -1,4 +1,5 @@
-﻿using Dapper;
+﻿using System;
+using Dapper;
 using PStructure.Mapper;
 
 namespace PStructure.PersistenceLayer.ItemManagers.PdoToTableMapping.Cruds.Crud
@@ -7,12 +8,12 @@ namespace PStructure.PersistenceLayer.ItemManagers.PdoToTableMapping.Cruds.Crud
     {
         public void MapPropertiesToParameters(T item, DynamicParameters parameters)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void MapPrimaryKeysToParameters(T item, DynamicParameters parameters)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 }

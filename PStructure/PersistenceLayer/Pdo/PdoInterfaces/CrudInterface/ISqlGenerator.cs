@@ -3,7 +3,7 @@
 namespace PStructure.PersistenceLayer.PdoToTableMapping.SqlGenerator
 {
     /// <summary>
-    /// Interface für den SQLGenerator, welcher die grundlegendsten SQLs für übergebene PDOs generiert.
+    ///     Interface für den SQLGenerator, welcher die grundlegendsten SQLs für übergebene PDOs generiert.
     /// </summary>
     public interface ISqlGenerator<T>
     {

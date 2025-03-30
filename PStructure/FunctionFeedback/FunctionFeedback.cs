@@ -4,10 +4,10 @@ namespace PStructure.FunctionFeedback
 {
     public class FunctionFeedback : IFunctionFeedback
     {
-        private bool _requestAnswer = false;
-        private Exception _requestException = null;
-        private bool _silentThrow = false;
-       
+        private bool _requestAnswer;
+        private Exception _requestException;
+        private bool _silentThrow;
+
         public void SetRequestAnswer(bool value)
         {
             _requestAnswer = value;

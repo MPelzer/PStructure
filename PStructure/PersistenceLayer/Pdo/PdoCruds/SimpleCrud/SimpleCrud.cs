@@ -13,8 +13,8 @@ namespace PStructure.PersistenceLayer.Pdo.PdoToTableMapping.SimpleCrud
 {
     public class SimpleCrud<T> : ClassCore, ICrud<T>
     {
-        private readonly ISqlGenerator<T> _sqlGenerator;
         private readonly IMapper<T> _mapper;
+        private readonly ISqlGenerator<T> _sqlGenerator;
 
         public SimpleCrud(ISqlGenerator<T> sqlGenerator, IMapper<T> mapper)
         {
@@ -33,7 +33,8 @@ namespace PStructure.PersistenceLayer.Pdo.PdoToTableMapping.SimpleCrud
             var result = 0;
             var sql = sqlGeneratorFunc(logger);
 
-            logger?.LogInformation("{location} Executing for {EntityType} with SQL: {Sql}", GetLoggingClassName(), typeof(T).Name, sql);
+            logger?.LogInformation("{location} Executing for {EntityType} with SQL: {Sql}", GetLoggingClassName(),
+                typeof(T).Name, sql);
 
             foreach (var item in items)
             {
@@ -46,7 +47,8 @@ namespace PStructure.PersistenceLayer.Pdo.PdoToTableMapping.SimpleCrud
                 }
                 catch (Exception ex)
                 {
-                    logger?.LogError(ex, "{location} Error executing SQL for item: {Item}", GetLoggingClassName(), item);
+                    logger?.LogError(ex, "{location} Error executing SQL for item: {Item}", GetLoggingClassName(),
+                        item);
                     throw;
                 }
             }
@@ -64,7 +66,8 @@ namespace PStructure.PersistenceLayer.Pdo.PdoToTableMapping.SimpleCrud
             var result = new List<T>();
             var sql = sqlGeneratorFunc(logger);
 
-            logger?.LogInformation("{location} Executing fetching operation for {EntityType} with SQL: {Sql}", GetLoggingClassName(), typeof(T).Name, sql);
+            logger?.LogInformation("{location} Executing fetching operation for {EntityType} with SQL: {Sql}",
+                GetLoggingClassName(), typeof(T).Name, sql);
 
             foreach (var item in items)
             {
@@ -73,11 +76,13 @@ namespace PStructure.PersistenceLayer.Pdo.PdoToTableMapping.SimpleCrud
                 try
                 {
                     logger?.LogDebug("{location} Executing SQL for item: {Item}", GetLoggingClassName(), item);
-                    result.AddRange(dbFeedback.GetDbConnection().Query<T>(sql, parameters, dbFeedback.GetDbTransaction()));
+                    result.AddRange(dbFeedback.GetDbConnection()
+                        .Query<T>(sql, parameters, dbFeedback.GetDbTransaction()));
                 }
                 catch (Exception ex)
                 {
-                    logger?.LogError(ex, "{location} Error executing SQL for item: {Item}", GetLoggingClassName(), item);
+                    logger?.LogError(ex, "{location} Error executing SQL for item: {Item}", GetLoggingClassName(),
+                        item);
                     throw;
                 }
             }

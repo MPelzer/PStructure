@@ -1,16 +1,14 @@
 ﻿using Microsoft.Extensions.Logging;
-using PStructure.PersistenceLayer.PdoToTableMapping.SqlGenerator;
 using PStructure.TableLocation;
 
 namespace PStructure.PersistenceLayer.ItemManagers.PdoToTableMapping.Cruds.Crud
 {
     public class DummySqlGenerator<T> : SqlGenerator<T>
     {
-        
-        DummySqlGenerator(ITableLocation tableLocation) : base(tableLocation)
+        private DummySqlGenerator(ITableLocation tableLocation) : base(tableLocation)
         {
-           
         }
+
         public string GetInsertSql(ILogger logger, string tableLocation)
         {
             var sql = "Dummy";

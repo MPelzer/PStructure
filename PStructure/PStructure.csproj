@@ -6,18 +6,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Dapper" Version="2.1.35" />
-      <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.0-preview.7.24405.7" />
-      <PackageReference Include="NUnit" Version="4.2.2" />
-      <PackageReference Include="Optional" Version="5.0.0-alpha" />
-      <PackageReference Include="System.Text.Json" Version="9.0.0-preview.7.24405.7" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="ApplicationLayer\" />
-      <Folder Include="Factories\" />
-      <Folder Include="Interfaces\" />
-      <Folder Include="PersistenceLayer\Utils\" />
+        <PackageReference Include="Dapper" Version="2.1.35"/>
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.0-preview.7.24405.7"/>
+        <PackageReference Include="NUnit" Version="4.2.2"/>
+        <PackageReference Include="Optional" Version="5.0.0-alpha"/>
+        <PackageReference Include="System.Text.Json" Version="9.0.0-preview.7.24405.7"/>
     </ItemGroup>
 
 </Project>

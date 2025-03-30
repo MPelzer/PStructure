@@ -7,16 +7,6 @@ public class CustomDateHandler_yyyy_MM_dd : SqlMapper.TypeHandler<DateTime>, ICu
 {
     private const string DateFormat = "yyyy-MM-dd";
 
-    public override void SetValue(IDbDataParameter parameter, DateTime value)
-    {
-        parameter.Value = value.ToString(DateFormat);
-    }
-
-    public override DateTime Parse(object value)
-    {
-        return DateTime.ParseExact(value.ToString(), DateFormat, null);
-    }
-
     object ICustomHandler.Format(object value)
     {
         return ((DateTime)value).ToString(DateFormat);
@@ -25,5 +15,15 @@ public class CustomDateHandler_yyyy_MM_dd : SqlMapper.TypeHandler<DateTime>, ICu
     object ICustomHandler.Parse(object value)
     {
         return Parse(value);
+    }
+
+    public override void SetValue(IDbDataParameter parameter, DateTime value)
+    {
+        parameter.Value = value.ToString(DateFormat);
+    }
+
+    public override DateTime Parse(object value)
+    {
+        return DateTime.ParseExact(value.ToString(), DateFormat, null);
     }
 }

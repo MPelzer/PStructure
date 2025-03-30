@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 namespace PStructure.FunctionFeedback
 {
     public delegate void DbAction(ILogger logger, ref DbFeedback dbCom);
+
     public delegate void DbExceptionAction(ref DbFeedback dbCom, Exception ex);
 
     public static class DbFeedbackHandler
@@ -35,11 +36,13 @@ namespace PStructure.FunctionFeedback
             }
         }
 
-        private static void ApplyException(bool transactionStartedHere, Exception exception, ref DbFeedback dbFeedback, ILogger logger)
+        private static void ApplyException(bool transactionStartedHere, Exception exception, ref DbFeedback dbFeedback,
+            ILogger logger)
         {
             dbFeedback.SetRequestAnswer(false);
             dbFeedback.SetRequestException(exception);
-            logger?.LogError(exception, "DbFeedbackHandler.ApplyException: An error occurred during database transaction.");
+            logger?.LogError(exception,
+                "DbFeedbackHandler.ApplyException: An error occurred during database transaction.");
             if (!transactionStartedHere) return;
             dbFeedback.GetDbTransaction()?.Rollback();
             logger?.LogDebug("DbFeedbackHandler.ApplyException: Transaction rolled back.");
@@ -64,6 +67,7 @@ namespace PStructure.FunctionFeedback
                 logger?.LogDebug("DbFeedbackHandler.PrepareDbFeedback: Opening the database connection.");
                 dbFeedback.GetDbConnection().Open();
             }
+
             dbFeedback.SetRequestAnswer(false);
 
             if (dbFeedback.GetDbTransaction() != null)

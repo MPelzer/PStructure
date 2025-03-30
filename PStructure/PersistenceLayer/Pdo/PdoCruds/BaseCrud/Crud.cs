@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
 using Dapper;
 using Microsoft.Extensions.Logging;
 using PStructure.CRUDs;
@@ -10,13 +9,15 @@ namespace PStructure.PersistenceLayer.ItemManagers.PdoToTableMapping.Cruds
 {
     public class Crud<T> : ICrud<T>
     {
-        public int Execute(IEnumerable<T> items, ref DbFeedback dbFeedback, ILogger logger, Func<ILogger, string> sqlGeneratorFunc,
+        public int Execute(IEnumerable<T> items, ref DbFeedback dbFeedback, ILogger logger,
+            Func<ILogger, string> sqlGeneratorFunc,
             Action<T, DynamicParameters> mapParametersFunc)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<T> Query(IEnumerable<T> items, ref DbFeedback dbFeedback, ILogger logger, Func<ILogger, string> sqlGeneratorFunc,
+        public IEnumerable<T> Query(IEnumerable<T> items, ref DbFeedback dbFeedback, ILogger logger,
+            Func<ILogger, string> sqlGeneratorFunc,
             Action<T, DynamicParameters> mapParametersFunc)
         {
             throw new NotImplementedException();

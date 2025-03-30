@@ -3,15 +3,15 @@ using System.Linq;
 using System.Text.Json;
 using PStructure.PersistenceLayer.PdoData;
 
-namespace PStructure.root
+namespace PStructure.PersistenceLayer.Factories
 {
     /// <summary>
-    /// Provides utility methods for creating and handling items of a specified type.
+    ///     Provides utility methods for creating and handling items of a specified type.
     /// </summary>
     public static class ItemFactory<T>
     {
         /// <summary>
-        /// Creates an item with default values by calling the parameterless constructor of T.
+        ///     Creates an item with default values by calling the parameterless constructor of T.
         /// </summary>
         /// <typeparam name="T">The type of item to create.</typeparam>
         /// <returns>A new instance of T with default values.</returns>
@@ -21,7 +21,7 @@ namespace PStructure.root
         }
 
         /// <summary>
-        /// Clones the specified item by creating a new instance and copying all properties.
+        ///     Clones the specified item by creating a new instance and copying all properties.
         /// </summary>
         /// <typeparam name="T">The type of item to clone.</typeparam>
         /// <param name="itemToClone">The item to clone.</param>
@@ -32,18 +32,14 @@ namespace PStructure.root
 
             var clonedItem = new T();
             foreach (var prop in PdoDataCache<T>.Properties)
-            {
                 if (prop.CanWrite)
-                {
                     prop.SetValue(clonedItem, prop.GetValue(itemToClone));
-                }
-            }
 
             return clonedItem;
         }
 
         /// <summary>
-        /// Converts the item to a JSON string representation.
+        ///     Converts the item to a JSON string representation.
         /// </summary>
         /// <typeparam name="T">The type of item to convert to JSON.</typeparam>
         /// <param name="item">The item to serialize to JSON.</param>
@@ -54,7 +50,7 @@ namespace PStructure.root
         }
 
         /// <summary>
-        /// Creates an item from a JSON string.
+        ///     Creates an item from a JSON string.
         /// </summary>
         /// <typeparam name="T">The type of item to create from JSON.</typeparam>
         /// <param name="json">The JSON string to deserialize.</param>
@@ -68,7 +64,7 @@ namespace PStructure.root
         }
 
         /// <summary>
-        /// Provides a string representation of the default object of type T, listing each property and its value.
+        ///     Provides a string representation of the default object of type T, listing each property and its value.
         /// </summary>
         /// <typeparam name="T">The type of item to represent as a string.</typeparam>
         /// <returns>A string representation of the object and its properties.</returns>

@@ -7,7 +7,7 @@ using PStructure.FunctionFeedback;
 namespace PStructure.CRUDs
 {
     /// <summary>
-    /// Basisinterface für grundlegende Datenbanktransaktionen
+    ///     Basisinterface für grundlegende Datenbanktransaktionen
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public interface ICrud<T>
@@ -27,7 +27,7 @@ namespace PStructure.CRUDs
             Action<T, DynamicParameters> mapParametersFunc);
 
         /// <summary>
-        /// Fügt eine Instanz dem Datensatz hinzu.
+        ///     Fügt eine Instanz dem Datensatz hinzu.
         /// </summary>
         /// <param name="items"></param>
         /// <param name="dbFeedback"></param>
@@ -36,7 +36,7 @@ namespace PStructure.CRUDs
         int Create(IEnumerable<T> items, ref DbFeedback dbFeedback, ILogger logger);
 
         /// <summary>
-        /// Liest eine Menge an Datensätzen aus, die auf den gegebenen Primärschlüssel passen.
+        ///     Liest eine Menge an Datensätzen aus, die auf den gegebenen Primärschlüssel passen.
         /// </summary>
         /// <param name="items"></param>
         /// <param name="dbFeedback"></param>
@@ -45,7 +45,7 @@ namespace PStructure.CRUDs
         IEnumerable<T> Read(IEnumerable<T> items, ref DbFeedback dbFeedback, ILogger logger);
 
         /// <summary>
-        /// Liest alle Datensätze der Tabelle aus.
+        ///     Liest alle Datensätze der Tabelle aus.
         /// </summary>
         /// <param name="dbFeedback"></param>
         /// <param name="logger"></param>
@@ -53,7 +53,7 @@ namespace PStructure.CRUDs
         IEnumerable<T> ReadAll(ref DbFeedback dbFeedback, ILogger logger);
 
         /// <summary>
-        /// Aktualisiert einen Datensatz anhand seiner Instanz
+        ///     Aktualisiert einen Datensatz anhand seiner Instanz
         /// </summary>
         /// <param name="items"></param>
         /// <param name="dbFeedback"></param>
@@ -62,7 +62,7 @@ namespace PStructure.CRUDs
         int Update(IEnumerable<T> items, ref DbFeedback dbFeedback, ILogger logger);
 
         /// <summary>
-        /// Löscht einen Datensatz anhand eines Primärschlüssels.
+        ///     Löscht einen Datensatz anhand eines Primärschlüssels.
         /// </summary>
         /// <param name="items"></param>
         /// <param name="dbFeedback"></param>

@@ -8,6 +8,5 @@ namespace PStructure
         {
             return $"{GetType().Name}.{functionName}:";
         }
-        
     }
 }

@@ -4,6 +4,5 @@ namespace PStructure.PersistenceLayer.ItemManagers.PdoToTableMapping.DummyCrud
 {
     public class DummyMapper<T> : Mapper<T>
     {
-         
     }
 }
