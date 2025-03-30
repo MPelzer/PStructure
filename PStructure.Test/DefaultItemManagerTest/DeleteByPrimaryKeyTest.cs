@@ -2,12 +2,11 @@
 using System;
 using MySqlConnector;
 using NUnit.Framework;
-using PStructure.CRUDs;
 using PStructure.FunctionFeedback;
 using PStructure.PersistenceLayer;
 using PStructure.PersistenceLayer.Pdo;
-using PStructure.PersistenceLayer.Pdo.PdoToTableMapping.SimpleCrud;
-using PStructure.TableLocation;
+using PStructure.PersistenceLayer.Pdo.PdoCruds.SimpleCrud;
+using PStructure.PersistenceLayer.PersistenceLayerFeedback;
 using PStructure.Test.DBTestEnvironment;
 using PStructure.Test.Models;
 

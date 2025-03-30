@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
-using PStructure.PersistenceLayer;
-using PStructure.PersistenceLayer.PdoData;
+using PStructure.PersistenceLayer.Pdo.PdoData;
+using PStructure.PersistenceLayer.Pdo.PdoInterfaces.CrudInterface;
 
-namespace PStructure.TableLocation
+namespace PStructure.PersistenceLayer.Pdo.CrudFactory
 {
     /// <summary>
     ///     Factory for retrieving table locations based on the model type and work mode.

@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
-using PStructure.CRUDs;
 using PStructure.FunctionFeedback;
+using PStructure.PersistenceLayer.Pdo.PdoInterfaces.CrudInterface;
+using PStructure.PersistenceLayer.PersistenceLayerFeedback;
 
 namespace PStructure.PersistenceLayer.Pdo
 {

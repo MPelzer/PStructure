@@ -1,14 +1,14 @@
 ﻿using System;
-using PStructure.DapperSqlDateTimeMappers;
-using PStructure.Interfaces.DapperSqlDateTimeMappers;
-using PStructure.PersistenceLayer;
+using PStructure.PersistenceLayer.Pdo.PdoCruds.BaseCrud;
+using PStructure.PersistenceLayer.Pdo.PdoCruds.PropertyConverters;
+using PStructure.PersistenceLayer.Pdo.PdoData;
 using PStructure.PersistenceLayer.Pdo.PdoData.Attributes;
 
 // For the custom date handlers
 
 // For ICustomHandler
 
-namespace PStructure.Models
+namespace PStructure
 {
     [TableLocation(WorkMode.Test, "TestSchema", "TestTable")]
     [TableLocation(WorkMode.Live, "LiveSchema", "LiveTable")]

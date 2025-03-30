@@ -1,10 +1,10 @@
 ﻿using System.Data;
 
-namespace PStructure.FunctionFeedback
+namespace PStructure.PersistenceLayer.PersistenceLayerFeedback
 {
     /// <summary>
     /// </summary>
-    public class DbFeedback : FunctionFeedback
+    public class DbFeedback : FunctionFeedback.FunctionFeedback
     {
         private IDbConnection _dbConnection;
         private IDbTransaction _dbTransaction;

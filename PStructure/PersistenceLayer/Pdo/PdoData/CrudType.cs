@@ -1,7 +1,7 @@
-﻿using PStructure.PersistenceLayer.Pdo.PdoToTableMapping.SimpleCrud;
-using PStructure.PersistenceLayer.Utils;
+﻿using PStructure.PersistenceLayer.Pdo.PdoCruds.SimpleCrud;
+using PStructure.PersistenceLayer.Pdo.PdoData.Attributes;
 
-namespace PStructure.PersistenceLayer.PdoToTableMapping
+namespace PStructure.PersistenceLayer.Pdo.PdoData
 {
     /// <summary>
     ///     Konfiguration, welche Zusammenstellung aus Mappingkomponenten dem PdoManager zur hand gegeben werden.

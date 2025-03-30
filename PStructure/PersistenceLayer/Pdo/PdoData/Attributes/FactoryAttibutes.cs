@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PStructure.PersistenceLayer.Utils
+namespace PStructure.PersistenceLayer.Pdo.PdoData.Attributes
 {
     public class FactoryAttibutes
     {

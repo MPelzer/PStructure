@@ -1,6 +1,6 @@
 ﻿using Dapper;
 
-namespace PStructure.Mapper
+namespace PStructure.PersistenceLayer.Pdo.PdoInterfaces.CrudInterface
 {
     /// <summary>
     ///     Interface, welches Funktionen definiert, um die PDO-Eigenschaften auf die Tabellenspalten abzubilden

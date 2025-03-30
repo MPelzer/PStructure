@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Data;
 using Dapper;
-using PStructure.Interfaces;
 
-namespace PStructure.DapperSqlDateTimeMappers
+namespace PStructure.PersistenceLayer.Pdo.PdoCruds.PropertyConverters
 {
     /// <summary>
     ///     Implementiert einen <see cref="ICustomHandler" />, welcher das idiotische Format hat, bei dem das Jahrtausend

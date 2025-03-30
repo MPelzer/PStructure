@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using PStructure.CRUDs;
-using PStructure.FunctionFeedback;
+using PStructure.PersistenceLayer.Pdo.PdoInterfaces.CrudInterface;
+using PStructure.PersistenceLayer.PersistenceLayerFeedback;
 
-namespace PStructure.PersistenceLayer
+namespace PStructure.PersistenceLayer.Pdo.PdoInterfaces
 {
     public interface IItemManager<T>
     {

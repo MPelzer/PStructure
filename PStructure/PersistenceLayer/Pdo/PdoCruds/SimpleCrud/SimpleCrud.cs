@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using System.Reflection;
 using Dapper;
 using Microsoft.Extensions.Logging;
-using PStructure.CRUDs;
-using PStructure.FunctionFeedback;
-using PStructure.Mapper;
 using PStructure.PersistenceLayer.Pdo.PdoData.Attributes;
-using PStructure.PersistenceLayer.PdoToTableMapping.SqlGenerator;
+using PStructure.PersistenceLayer.Pdo.PdoInterfaces.CrudInterface;
+using PStructure.PersistenceLayer.PersistenceLayerFeedback;
 
-namespace PStructure.PersistenceLayer.Pdo.PdoToTableMapping.SimpleCrud
+namespace PStructure.PersistenceLayer.Pdo.PdoCruds.SimpleCrud
 {
     public class SimpleCrud<T> : ClassCore, ICrud<T>
     {

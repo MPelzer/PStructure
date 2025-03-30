@@ -2,12 +2,12 @@
 using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.Logging;
-using PStructure.PersistenceLayer.ItemManagers.PdoToTableMapping.Cruds.Crud;
+using PStructure.PersistenceLayer.Pdo.PdoCruds.BaseCrud;
+using PStructure.PersistenceLayer.Pdo.PdoData;
 using PStructure.PersistenceLayer.Pdo.PdoData.Attributes;
-using PStructure.PersistenceLayer.PdoData;
-using PStructure.TableLocation;
+using PStructure.PersistenceLayer.Pdo.PdoInterfaces.CrudInterface;
 
-namespace PStructure.PersistenceLayer.Pdo.PdoToTableMapping.SimpleCrud
+namespace PStructure.PersistenceLayer.Pdo.PdoCruds.SimpleCrud
 {
     /// <summary>
     ///     Generates standard CRUD SQL commands for items of type <typeparamref name="T" />.

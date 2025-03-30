@@ -1,8 +1,8 @@
 ﻿using System;
 using Dapper;
-using PStructure.Mapper;
+using PStructure.PersistenceLayer.Pdo.PdoInterfaces.CrudInterface;
 
-namespace PStructure.PersistenceLayer.ItemManagers.PdoToTableMapping.Cruds.Crud
+namespace PStructure.PersistenceLayer.Pdo.PdoCruds.BaseCrud
 {
     public class Mapper<T> : IMapper<T>
     {

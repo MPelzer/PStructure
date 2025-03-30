@@ -1,8 +1,8 @@
 ﻿using System;
-using PStructure.PersistenceLayer;
-using PStructure.TableLocation;
+using PStructure.PersistenceLayer.Pdo.PdoData;
+using PStructure.PersistenceLayer.Pdo.PdoInterfaces.CrudInterface;
 
-namespace PStructure.Models
+namespace PStructure.PersistenceLayer.Pdo.PdoCruds.BaseCrud
 {
     /// <summary>
     ///     Defines the location of a database table for a specific work mode.

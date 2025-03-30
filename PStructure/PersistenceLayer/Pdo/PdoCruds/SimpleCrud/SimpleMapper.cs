@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Reflection;
 using Dapper;
-using PStructure.Mapper;
+using PStructure.PersistenceLayer.Pdo.PdoData;
 using PStructure.PersistenceLayer.Pdo.PdoData.Attributes;
-using PStructure.PersistenceLayer.PdoData;
+using PStructure.PersistenceLayer.Pdo.PdoInterfaces.CrudInterface;
 
-namespace PStructure.PersistenceLayer.Pdo.PdoToTableMapping.SimpleCrud
+namespace PStructure.PersistenceLayer.Pdo.PdoCruds.SimpleCrud
 {
     /// <summary>
     ///     Maps the properties of a PDO object to table columns.

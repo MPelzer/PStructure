@@ -1,4 +1,4 @@
-﻿namespace PStructure.PersistenceLayer
+﻿namespace PStructure.PersistenceLayer.Pdo.PdoData
 {
     /// <summary>
     ///     Konfiguration, für die verschiedenen Verhaltensweisen des PdoManagers.

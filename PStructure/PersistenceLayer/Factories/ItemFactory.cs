@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Text.Json;
-using PStructure.PersistenceLayer.PdoData;
+using PStructure.PersistenceLayer.Pdo.PdoData;
 
 namespace PStructure.PersistenceLayer.Factories
 {

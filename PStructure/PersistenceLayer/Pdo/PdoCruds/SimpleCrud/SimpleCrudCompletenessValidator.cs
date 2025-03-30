@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Linq;
-using PStructure.PersistenceLayer.PdoData;
+using PStructure.PersistenceLayer.Pdo.PdoData;
+using PStructure.PersistenceLayer.Pdo.PdoInterfaces;
 
-namespace PStructure.PersistenceLayer.Pdo.PdoValidation
+namespace PStructure.PersistenceLayer.Pdo.PdoCruds.SimpleCrud
 {
     public class PdoValidator<T> : IValidator<T>
     {

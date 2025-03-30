@@ -1,7 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
-using PStructure.TableLocation;
+using PStructure.PersistenceLayer.Pdo.PdoCruds.BaseCrud;
+using PStructure.PersistenceLayer.Pdo.PdoInterfaces.CrudInterface;
 
-namespace PStructure.PersistenceLayer.ItemManagers.PdoToTableMapping.Cruds.Crud
+namespace PStructure.PersistenceLayer.Pdo.PdoCruds.DummyCrud
 {
     public class DummySqlGenerator<T> : SqlGenerator<T>
     {

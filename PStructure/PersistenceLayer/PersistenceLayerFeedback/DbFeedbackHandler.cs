@@ -2,7 +2,7 @@
 using System.Data;
 using Microsoft.Extensions.Logging;
 
-namespace PStructure.FunctionFeedback
+namespace PStructure.PersistenceLayer.PersistenceLayerFeedback
 {
     public delegate void DbAction(ILogger logger, ref DbFeedback dbCom);
 

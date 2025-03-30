@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Reflection;
-using PStructure.Mapper;
-using PStructure.PersistenceLayer.PdoToTableMapping;
-using PStructure.PersistenceLayer.Utils;
+using PStructure.PersistenceLayer.Pdo.PdoData;
+using PStructure.PersistenceLayer.Pdo.PdoData.Attributes;
+using PStructure.PersistenceLayer.Pdo.PdoInterfaces.CrudInterface;
 
 namespace PStructure.PersistenceLayer.Pdo.CrudFactory
 {

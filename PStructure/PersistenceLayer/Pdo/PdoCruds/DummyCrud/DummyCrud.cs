@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using Dapper;
 using Microsoft.Extensions.Logging;
-using PStructure.CRUDs;
-using PStructure.FunctionFeedback;
+using PStructure.PersistenceLayer.Pdo.PdoInterfaces.CrudInterface;
+using PStructure.PersistenceLayer.PersistenceLayerFeedback;
 
-namespace PStructure.PersistenceLayer.ItemManagers.PdoToTableMapping.Cruds
+namespace PStructure.PersistenceLayer.Pdo.PdoCruds.DummyCrud
 {
     public class DummyCrud<T> : ICrud<T>
     {

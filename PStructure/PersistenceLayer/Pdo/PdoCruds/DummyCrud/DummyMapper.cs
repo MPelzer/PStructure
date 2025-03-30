@@ -1,6 +1,6 @@
-﻿using PStructure.PersistenceLayer.ItemManagers.PdoToTableMapping.Cruds.Crud;
+﻿using PStructure.PersistenceLayer.Pdo.PdoCruds.BaseCrud;
 
-namespace PStructure.PersistenceLayer.ItemManagers.PdoToTableMapping.DummyCrud
+namespace PStructure.PersistenceLayer.Pdo.PdoCruds.DummyCrud
 {
     public class DummyMapper<T> : Mapper<T>
     {

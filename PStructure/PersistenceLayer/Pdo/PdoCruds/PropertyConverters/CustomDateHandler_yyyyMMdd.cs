@@ -2,7 +2,7 @@
 using System.Data;
 using Dapper;
 
-namespace PStructure.Interfaces.DapperSqlDateTimeMappers
+namespace PStructure.PersistenceLayer.Pdo.PdoCruds.PropertyConverters
 {
     public class CustomDateHandler_yyyyMMdd : SqlMapper.TypeHandler<DateTime>, ICustomHandler
     {

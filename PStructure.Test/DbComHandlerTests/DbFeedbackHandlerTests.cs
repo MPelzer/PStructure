@@ -5,6 +5,7 @@ using NUnit.Framework;
 using Moq;
 using PStructure.FunctionFeedback;
 using Microsoft.Extensions.Logging;
+using PStructure.PersistenceLayer.PersistenceLayerFeedback;
 
 namespace PStructure.Test.DbComHandlerTests
 {

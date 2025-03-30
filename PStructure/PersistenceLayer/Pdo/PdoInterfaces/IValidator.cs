@@ -1,4 +1,4 @@
-﻿namespace PStructure.PersistenceLayer.PdoData
+﻿namespace PStructure.PersistenceLayer.Pdo.PdoInterfaces
 {
     public interface IValidator<T>
     {

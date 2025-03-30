@@ -1,4 +1,4 @@
-﻿namespace PStructure.TableLocation
+﻿namespace PStructure.PersistenceLayer.Pdo.PdoInterfaces.CrudInterface
 {
     public interface ITableLocation
     {

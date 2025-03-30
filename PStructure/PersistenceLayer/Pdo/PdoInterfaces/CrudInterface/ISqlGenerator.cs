@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace PStructure.PersistenceLayer.PdoToTableMapping.SqlGenerator
+namespace PStructure.PersistenceLayer.Pdo.PdoInterfaces.CrudInterface
 {
     /// <summary>
     ///     Interface für den SQLGenerator, welcher die grundlegendsten SQLs für übergebene PDOs generiert.

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using Dapper;
 using Microsoft.Extensions.Logging;
-using PStructure.FunctionFeedback;
+using PStructure.PersistenceLayer.PersistenceLayerFeedback;
 
-namespace PStructure.CRUDs
+namespace PStructure.PersistenceLayer.Pdo.PdoInterfaces.CrudInterface
 {
     /// <summary>
     ///     Basisinterface für grundlegende Datenbanktransaktionen

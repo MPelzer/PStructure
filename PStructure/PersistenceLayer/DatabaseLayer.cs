@@ -4,7 +4,8 @@ using System.Collections.Generic;
 using System.Reflection;
 using Microsoft.Extensions.Logging;
 using PStructure.PersistenceLayer.Pdo;
-using PStructure.PersistenceLayer.PdoToTableMapping;
+using PStructure.PersistenceLayer.Pdo.PdoData;
+using PStructure.PersistenceLayer.Pdo.PdoInterfaces;
 
 namespace PStructure.PersistenceLayer
 {

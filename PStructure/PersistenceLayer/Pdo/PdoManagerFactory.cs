@@ -1,8 +1,8 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
 using PStructure.PersistenceLayer.Pdo.CrudFactory;
-using PStructure.PersistenceLayer.PdoToTableMapping;
-using PStructure.TableLocation;
+using PStructure.PersistenceLayer.Pdo.PdoData;
+using PStructure.PersistenceLayer.Pdo.PdoInterfaces;
 
 namespace PStructure.PersistenceLayer.Pdo
 {

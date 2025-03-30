@@ -1,29 +1,31 @@
 ﻿using System;
 using System.Data;
 using Dapper;
-using PStructure.Interfaces;
 
-public class CustomDateHandler_dd_MM_yyyy : SqlMapper.TypeHandler<DateTime>, ICustomHandler
+namespace PStructure.PersistenceLayer.Pdo.PdoCruds.PropertyConverters
 {
-    private const string DateFormat = "dd/MM/yyyy";
-
-    object ICustomHandler.Format(object value)
+    public class CustomDateHandler_dd_MM_yyyy : SqlMapper.TypeHandler<DateTime>, ICustomHandler
     {
-        return ((DateTime)value).ToString(DateFormat);
-    }
+        private const string DateFormat = "dd/MM/yyyy";
 
-    object ICustomHandler.Parse(object value)
-    {
-        return Parse(value);
-    }
+        object ICustomHandler.Format(object value)
+        {
+            return ((DateTime)value).ToString(DateFormat);
+        }
 
-    public override void SetValue(IDbDataParameter parameter, DateTime value)
-    {
-        parameter.Value = value.ToString(DateFormat);
-    }
+        object ICustomHandler.Parse(object value)
+        {
+            return Parse(value);
+        }
 
-    public override DateTime Parse(object value)
-    {
-        return DateTime.ParseExact(value.ToString(), DateFormat, null);
+        public override void SetValue(IDbDataParameter parameter, DateTime value)
+        {
+            parameter.Value = value.ToString(DateFormat);
+        }
+
+        public override DateTime Parse(object value)
+        {
+            return DateTime.ParseExact(value.ToString(), DateFormat, null);
+        }
     }
 }

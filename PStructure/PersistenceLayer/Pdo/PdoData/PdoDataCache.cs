@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using PStructure.PersistenceLayer.Pdo.PdoCruds.BaseCrud;
 using PStructure.PersistenceLayer.Pdo.PdoData.Attributes;
 
-namespace PStructure.PersistenceLayer.PdoData
+namespace PStructure.PersistenceLayer.Pdo.PdoData
 {
     public static class PdoDataCache<T>
     {
         #region Properties
 
-        public static Models.TableLocation[] TableLocationData => _tableLocationData.Value;
+        public static TableLocation[] TableLocationData => _tableLocationData.Value;
         public static PropertyInfo[] Properties => _propertyData.Value;
         public static PropertyInfo[] PrimaryKeyProperties => _primaryKeyData.Value;
 
@@ -29,8 +30,8 @@ namespace PStructure.PersistenceLayer.PdoData
                 .ToArray()
         );
 
-        private static readonly Lazy<Models.TableLocation[]> _tableLocationData = new Lazy<Models.TableLocation[]>(() =>
-            typeof(T).GetCustomAttributes<Models.TableLocation>().ToArray()
+        private static readonly Lazy<TableLocation[]> _tableLocationData = new Lazy<TableLocation[]>(() =>
+            typeof(T).GetCustomAttributes<TableLocation>().ToArray()
         );
 
         #endregion

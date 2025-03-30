@@ -6,7 +6,7 @@ using NUnit.Framework;
 using PStructure.FunctionFeedback;
 using PStructure.PersistenceLayer;
 using PStructure.PersistenceLayer.Pdo;
-using PStructure.TableLocation;
+using PStructure.PersistenceLayer.PersistenceLayerFeedback;
 using PStructure.Test.DBTestEnvironment;
 using PStructure.Test.Models;
 

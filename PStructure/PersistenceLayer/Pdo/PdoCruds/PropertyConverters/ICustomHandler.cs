@@ -1,4 +1,4 @@
-﻿namespace PStructure.Interfaces
+﻿namespace PStructure.PersistenceLayer.Pdo.PdoCruds.PropertyConverters
 {
     public interface ICustomHandler
     {

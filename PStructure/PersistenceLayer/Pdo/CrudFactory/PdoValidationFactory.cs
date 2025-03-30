@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Reflection;
-using PStructure.PersistenceLayer.PdoData;
-using PStructure.PersistenceLayer.PdoToTableMapping;
-using PStructure.PersistenceLayer.Utils;
+using PStructure.PersistenceLayer.Pdo.PdoData;
+using PStructure.PersistenceLayer.Pdo.PdoData.Attributes;
+using PStructure.PersistenceLayer.Pdo.PdoInterfaces;
 
-namespace PStructure.PersistenceLayer.Pdo.PdoToTableMapping.CrudFactory
+namespace PStructure.PersistenceLayer.Pdo.CrudFactory
 {
     public static class PdoValidatorFactory<T>
     {
