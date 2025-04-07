@@ -17,13 +17,17 @@ namespace PStructure.PersistenceLayer.Pdo.CrudFactory
         /// <returns>Configured TableLocation object for the specified work mode.</returns>
         public static ITableLocation CreateTableLocation(WorkMode mode)
         {
-            var tableLocation = PdoDataCache<T>.TableLocationData.FirstOrDefault(attr => attr.Mode == mode);
-
-            if (tableLocation == null)
+            // Attempt to retrieve the TableLocation from the cache or configuration dynamically
+            try
+            {
+                var tableLocation = PdoDataCache<T>.GetTableLocation(mode); // Dynamically loads and caches if needed
+                return tableLocation;
+            }
+            catch (InvalidOperationException)
+            {
                 throw new InvalidOperationException(
-                    $"Table location for WorkMode '{mode}' is not defined on {typeof(T).Name}.");
-
-            return tableLocation;
+                    $"Table location for WorkMode '{mode}' is not defined for {typeof(T).Name}.");
+            }
         }
     }
 }

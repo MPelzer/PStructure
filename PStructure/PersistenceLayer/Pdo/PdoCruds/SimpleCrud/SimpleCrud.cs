@@ -9,11 +9,16 @@ using PStructure.PersistenceLayer.PersistenceLayerFeedback;
 
 namespace PStructure.PersistenceLayer.Pdo.PdoCruds.SimpleCrud
 {
+    /// <summary>
+    /// Implementierung einer CRUD, welche die grundlegenden Abläufe enthält, um Daten abzurufen.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class SimpleCrud<T> : ClassCore, ICrud<T>
     {
         private readonly IMapper<T> _mapper;
         private readonly ISqlGenerator<T> _sqlGenerator;
 
+        
         public SimpleCrud(ISqlGenerator<T> sqlGenerator, IMapper<T> mapper)
         {
             _sqlGenerator = sqlGenerator;
@@ -21,6 +26,15 @@ namespace PStructure.PersistenceLayer.Pdo.PdoCruds.SimpleCrud
             ApplyTypeHandlersForObject();
         }
 
+        /// <summary>
+        /// Verarbeitet einen Ausführbefehl, oder Routine auf der Datenbank aus. 
+        /// </summary>
+        /// <param name="items"></param>
+        /// <param name="dbFeedback"></param>
+        /// <param name="logger"></param>
+        /// <param name="sqlGeneratorFunc"></param>
+        /// <param name="mapParametersFunc"></param>
+        /// <returns></returns>
         public int Execute(
             IEnumerable<T> items,
             ref DbFeedback dbFeedback,
@@ -33,7 +47,7 @@ namespace PStructure.PersistenceLayer.Pdo.PdoCruds.SimpleCrud
 
             logger?.LogInformation("{location} Executing for {EntityType} with SQL: {Sql}", GetLoggingClassName(),
                 typeof(T).Name, sql);
-
+            
             foreach (var item in items)
             {
                 var parameters = new DynamicParameters();
@@ -54,6 +68,15 @@ namespace PStructure.PersistenceLayer.Pdo.PdoCruds.SimpleCrud
             return result;
         }
 
+        /// <summary>
+        /// Verarbeitet eine Anfrage an die Datenbank uns gibt dessen Antwort wieder
+        /// </summary>
+        /// <param name="items"></param>
+        /// <param name="dbFeedback"></param>
+        /// <param name="logger"></param>
+        /// <param name="sqlGeneratorFunc"></param>
+        /// <param name="mapParametersFunc"></param>
+        /// <returns></returns>
         public IEnumerable<T> Query(
             IEnumerable<T> items,
             ref DbFeedback dbFeedback,

@@ -2,6 +2,7 @@
 using System.Linq;
 using PStructure.PersistenceLayer.Pdo.PdoData;
 using PStructure.PersistenceLayer.Pdo.PdoInterfaces;
+using PStructure.PersistenceLayer.Pdo.PdoCruds.BaseCrud;
 
 namespace PStructure.PersistenceLayer.Pdo.PdoCruds.SimpleCrud
 {
@@ -48,15 +49,18 @@ namespace PStructure.PersistenceLayer.Pdo.PdoCruds.SimpleCrud
         private static void ValidateTableLocationMode()
         {
             var workModes = Enum.GetValues(typeof(WorkMode)).Cast<WorkMode>().ToArray();
-
-            if (!PdoDataCache<T>.TableLocationData.Any())
-                throw new InvalidOperationException(
-                    $"Der Typ {typeof(T).Name} muss mindestens einen TableLocation haben.");
-
             foreach (var mode in workModes)
-                if (PdoDataCache<T>.TableLocationData.All(tl => tl.Mode != mode))
+            {
+                try
+                {
+                    PdoDataCache<T>.GetTableLocation(mode);
+                }
+                catch (InvalidOperationException)
+                {
                     throw new InvalidOperationException(
                         $"Der Typ {typeof(T).Name} muss mindestens einen TableLocation für den WorkMode '{mode}' haben.");
+                }
+            }
         }
 
         /// <summary>
@@ -64,7 +68,10 @@ namespace PStructure.PersistenceLayer.Pdo.PdoCruds.SimpleCrud
         /// </summary>
         private static void ValidateSchema()
         {
-            var tableLocations = PdoDataCache<T>.TableLocationData.ToArray();
+            // Ensure that at least one TableLocation exists for the given WorkModes
+            var tableLocations = PdoDataCache<T>.CachedWorkModes
+                .Select(PdoDataCache<T>.GetTableLocation)
+                .ToArray();
 
             if (!tableLocations.Any())
                 throw new InvalidOperationException(
@@ -81,7 +88,10 @@ namespace PStructure.PersistenceLayer.Pdo.PdoCruds.SimpleCrud
         /// </summary>
         private static void ValidateTableName()
         {
-            var tableLocations = PdoDataCache<T>.TableLocationData.ToArray();
+            // Ensure that at least one TableLocation exists for the given WorkModes
+            var tableLocations = PdoDataCache<T>.CachedWorkModes
+                .Select(PdoDataCache<T>.GetTableLocation)
+                .ToArray();
 
             if (!tableLocations.Any())
                 throw new InvalidOperationException(

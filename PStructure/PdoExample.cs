@@ -10,8 +10,6 @@ using PStructure.PersistenceLayer.Pdo.PdoData.Attributes;
 
 namespace PStructure
 {
-    [TableLocation(WorkMode.Test, "TestSchema", "TestTable")]
-    [TableLocation(WorkMode.Live, "LiveSchema", "LiveTable")]
     public class PdoExample
     {
         // Primary key, simple integer

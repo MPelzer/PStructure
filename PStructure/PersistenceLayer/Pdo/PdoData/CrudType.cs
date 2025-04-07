@@ -8,7 +8,7 @@ namespace PStructure.PersistenceLayer.Pdo.PdoData
     ///     Einschränkungen: Auch hier wurde absichtlich ein Enum gewählt, da das Grundverhalten der Persistenzschicht einfach
     ///     und nachvollziehbar bleiben soll.
     ///     Menge an Szenarien:
-    ///     -   Einfache Crud: Erste Generation, die zunächst der Entwicklung dienen soll und somit einfach und transparent
+    ///     -   Simple Crud: Erste Generation, die zunächst der Entwicklung dienen soll und somit einfach und transparent
     ///     sein muss.
     /// </summary>
     public enum CrudType

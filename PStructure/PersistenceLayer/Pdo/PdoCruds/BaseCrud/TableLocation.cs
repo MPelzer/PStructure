@@ -8,7 +8,7 @@ namespace PStructure.PersistenceLayer.Pdo.PdoCruds.BaseCrud
     ///     Defines the location of a database table for a specific work mode.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-    public class TableLocation : Attribute, ITableLocation
+    public class TableLocation : ITableLocation
     {
         public TableLocation(WorkMode mode, string schema, string tableName)
         {
