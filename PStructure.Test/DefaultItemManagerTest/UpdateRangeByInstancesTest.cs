@@ -71,7 +71,7 @@ namespace PStructure.Test.DefaultItemManagerTest
             var tableLocation = new TableLocation.TableLocation("", "TestEntry");
             var itemManager = new SimplePdoManager<TestEntry>(tableLocation, logger);
             
-            var dbCom = new DbFeedback(_dbConnection)
+            var dbCom = new DbContext(_dbConnection)
             {
                 InjectedSql = string.Empty,
                 DbTransaction = null
@@ -122,8 +122,8 @@ namespace PStructure.Test.DefaultItemManagerTest
 
             // Step 3: Validate the updated entries
             var updatedDbEntries = new List<TestEntry>();
-            _dbConnection.Open();
-            using (var command = _dbConnection.CreateCommand())
+            dbCom.GetDbConnection().Open();
+            using (var command = dbCom.GetDbConnection().CreateCommand())
             {
                 command.CommandText = "SELECT * FROM TestEntry";
 

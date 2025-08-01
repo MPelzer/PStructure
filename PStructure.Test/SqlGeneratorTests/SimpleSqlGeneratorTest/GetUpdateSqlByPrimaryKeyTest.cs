@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
 using PStructure.PersistenceLayer.Pdo.PdoCruds.SimpleCrud;
+using PStructure.PersistenceLayer.Pdo.PdoData.Attributes;
 using PStructure.Test.DBTestEnvironment;
 
 namespace PStructure.Test.SqlGeneratorTest
@@ -23,7 +24,7 @@ namespace PStructure.Test.SqlGeneratorTest
             var tableName = "TestTable";
 
             // Act
-            var sql = _generator.GetUpdateSqlByPrimaryKey(null, tableName);
+            var sql = _generator.GetUpdateSqlByPrimaryKey(null);
             var expectedSql = "UPDATE TestTable SET IntegerValue = @IntegerValue, LongValue = @LongValue, ShortValue = @ShortValue, ByteValue = @ByteValue, FloatValue = @FloatValue, DoubleValue = @DoubleValue, DecimalValue = @DecimalValue, BooleanValue = @BooleanValue, CharValue = @CharValue, StringValue = @StringValue, DateTimeValue = @DateTimeValue, ByteArrayValue = @ByteArrayValue WHERE GuidValue = @GuidValue";
 
             // Assert
@@ -37,7 +38,7 @@ namespace PStructure.Test.SqlGeneratorTest
             var tableName = string.Empty;
 
             // Act
-            var sql = _generator.GetUpdateSqlByPrimaryKey(null, tableName);
+            var sql = _generator.GetUpdateSqlByPrimaryKey(null);
             var expectedSql = "UPDATE  SET IntegerValue = @IntegerValue, LongValue = @LongValue, ShortValue = @ShortValue, ByteValue = @ByteValue, FloatValue = @FloatValue, DoubleValue = @DoubleValue, DecimalValue = @DecimalValue, BooleanValue = @BooleanValue, CharValue = @CharValue, StringValue = @StringValue, DateTimeValue = @DateTimeValue, ByteArrayValue = @ByteArrayValue WHERE GuidValue = @GuidValue";
 
             // Assert
@@ -52,7 +53,7 @@ namespace PStructure.Test.SqlGeneratorTest
             var tableName = "TestTable";
 
             // Act & Assert
-            Assert.That(() => generator.GetUpdateSqlByPrimaryKey(null, tableName),
+            Assert.That(() => generator.GetUpdateSqlByPrimaryKey(null),
                         Throws.InvalidOperationException.With.Message.Contain("does not have any properties with [PrimaryKey] attribute"));
         }
 
@@ -63,8 +64,8 @@ namespace PStructure.Test.SqlGeneratorTest
             var tableName = "TestTable";
 
             // Act
-            var sql1 = _generator.GetUpdateSqlByPrimaryKey(null, tableName);
-            var sql2 = _generator.GetUpdateSqlByPrimaryKey(null, tableName);
+            var sql1 = _generator.GetUpdateSqlByPrimaryKey(null);
+            var sql2 = _generator.GetUpdateSqlByPrimaryKey(null);
 
             // Assert
             Assert.That(NormalizeSql(sql1), Is.EqualTo(NormalizeSql(sql2)), "The cached SQL should be used.");
@@ -80,7 +81,7 @@ namespace PStructure.Test.SqlGeneratorTest
 
         public class EntityWithoutPrimaryKey
         {
-            [Column("Column")]
+            [PdoPropertyAttributes.Column("Column")]
             public string Value { get; set; }
         }
 

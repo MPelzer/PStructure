@@ -11,9 +11,9 @@ namespace PStructure.WorkerLayer
         internal IDbTransaction _dbTransaction;
         internal ILogger _logger;
 
-        internal Dictionary<Type, IPersistenceLayer> _persistenceLayers;
+        internal Dictionary<Type, IDomainItemManager> _persistenceLayers;
 
-        public Manager(ILogger logger, IDbTransaction dbTransaction, List<IPersistenceLayer> persistenceLayers)
+        public Manager(ILogger logger, IDbTransaction dbTransaction, List<IDomainItemManager> persistenceLayers)
         {
             _logger = logger;
             _dbTransaction = dbTransaction;
@@ -25,7 +25,7 @@ namespace PStructure.WorkerLayer
             _dbTransaction?.Dispose();
         }
 
-        private void InitializePersistenceLayers(List<IPersistenceLayer> persistenceLayers)
+        private void InitializePersistenceLayers(List<IDomainItemManager> persistenceLayers)
         {
             _logger.LogDebug($"{GetLoggingClassName()}Registrierung der Speicherschichten des Managers");
             foreach (var layer in persistenceLayers)

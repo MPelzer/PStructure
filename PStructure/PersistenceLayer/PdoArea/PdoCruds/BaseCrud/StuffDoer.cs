@@ -13,16 +13,12 @@ namespace PStructure.PersistenceLayer.Pdo.PdoCruds.SimpleCrud
     /// Implementierung einer CRUD, welche die grundlegenden Abläufe enthält, um Daten abzurufen.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class SimpleCrud<T> : ClassCore, ICrud<T>
+    public class StuffDoer<T> : ClassCore
     {
-        private readonly IMapper<T> _mapper;
-        private readonly ISqlGenerator<T> _sqlGenerator;
 
         
-        public SimpleCrud(ISqlGenerator<T> sqlGenerator, IMapper<T> mapper)
+        public StuffDoer()
         {
-            _sqlGenerator = sqlGenerator;
-            _mapper = mapper;
             ApplyTypeHandlersForObject();
         }
 
@@ -30,14 +26,14 @@ namespace PStructure.PersistenceLayer.Pdo.PdoCruds.SimpleCrud
         /// Verarbeitet einen Ausführbefehl, oder Routine auf der Datenbank aus. 
         /// </summary>
         /// <param name="items"></param>
-        /// <param name="dbFeedback"></param>
+        /// <param name="dbContext"></param>
         /// <param name="logger"></param>
         /// <param name="sqlGeneratorFunc"></param>
         /// <param name="mapParametersFunc"></param>
         /// <returns></returns>
         public int Execute(
             IEnumerable<T> items,
-            ref DbFeedback dbFeedback,
+            ref DbContext dbContext,
             ILogger logger,
             Func<ILogger, string> sqlGeneratorFunc,
             Action<T, DynamicParameters> mapParametersFunc)
@@ -55,7 +51,7 @@ namespace PStructure.PersistenceLayer.Pdo.PdoCruds.SimpleCrud
                 try
                 {
                     logger?.LogDebug("{location} Executing SQL for item: {Item}", GetLoggingClassName(), item);
-                    result += dbFeedback.GetDbConnection().Execute(sql, parameters, dbFeedback.GetDbTransaction());
+                    result += dbContext.GetDbConnection().Execute(sql, parameters, dbContext.GetDbTransaction());
                 }
                 catch (Exception ex)
                 {
@@ -72,14 +68,14 @@ namespace PStructure.PersistenceLayer.Pdo.PdoCruds.SimpleCrud
         /// Verarbeitet eine Anfrage an die Datenbank uns gibt dessen Antwort wieder
         /// </summary>
         /// <param name="items"></param>
-        /// <param name="dbFeedback"></param>
+        /// <param name="dbContext"></param>
         /// <param name="logger"></param>
         /// <param name="sqlGeneratorFunc"></param>
         /// <param name="mapParametersFunc"></param>
         /// <returns></returns>
         public IEnumerable<T> Query(
             IEnumerable<T> items,
-            ref DbFeedback dbFeedback,
+            ref DbContext dbContext,
             ILogger logger,
             Func<ILogger, string> sqlGeneratorFunc,
             Action<T, DynamicParameters> mapParametersFunc)
@@ -97,8 +93,8 @@ namespace PStructure.PersistenceLayer.Pdo.PdoCruds.SimpleCrud
                 try
                 {
                     logger?.LogDebug("{location} Executing SQL for item: {Item}", GetLoggingClassName(), item);
-                    result.AddRange(dbFeedback.GetDbConnection()
-                        .Query<T>(sql, parameters, dbFeedback.GetDbTransaction()));
+                    result.AddRange(dbContext.GetDbConnection()
+                        .Query<T>(sql, parameters, dbContext.GetDbTransaction()));
                 }
                 catch (Exception ex)
                 {
@@ -109,68 +105,6 @@ namespace PStructure.PersistenceLayer.Pdo.PdoCruds.SimpleCrud
             }
 
             return result;
-        }
-
-        public int Create(IEnumerable<T> items, ref DbFeedback dbFeedback, ILogger logger)
-        {
-            return Execute(
-                items,
-                ref dbFeedback,
-                logger,
-                _sqlGenerator.GetInsertSql,
-                (item, parameters) => _mapper.MapPropertiesToParameters(item, parameters));
-        }
-
-        public IEnumerable<T> Read(IEnumerable<T> items, ref DbFeedback dbFeedback, ILogger logger)
-        {
-            return Query(
-                items,
-                ref dbFeedback,
-                logger,
-                _sqlGenerator.GetReadSqlByPrimaryKey,
-                (item, parameters) => _mapper.MapPrimaryKeysToParameters(item, parameters));
-        }
-
-        public IEnumerable<T> ReadAll(ref DbFeedback dbFeedback, ILogger logger)
-        {
-            var sql = _sqlGenerator.GetReadAll(logger);
-            logger?.LogInformation("{location} Reading all items with SQL: {Sql}", GetLoggingClassName(), sql);
-
-            try
-            {
-                var result = dbFeedback.GetDbConnection().Query<T>(sql, transaction: dbFeedback.GetDbTransaction());
-                logger?.LogInformation("{location} Read all items successful.", GetLoggingClassName());
-                return result;
-            }
-            catch (Exception ex)
-            {
-                logger?.LogError(ex, "{location} Error reading all items.", GetLoggingClassName());
-                throw;
-            }
-        }
-
-        public int Update(IEnumerable<T> items, ref DbFeedback dbFeedback, ILogger logger)
-        {
-            return Execute(
-                items,
-                ref dbFeedback,
-                logger,
-                _sqlGenerator.GetUpdateSqlByPrimaryKey,
-                (item, parameters) =>
-                {
-                    _mapper.MapPropertiesToParameters(item, parameters);
-                    _mapper.MapPrimaryKeysToParameters(item, parameters);
-                });
-        }
-
-        public int Delete(IEnumerable<T> items, ref DbFeedback dbFeedback, ILogger logger)
-        {
-            return Execute(
-                items,
-                ref dbFeedback,
-                logger,
-                _sqlGenerator.GetDeleteSqlByPrimaryKey,
-                _mapper.MapPrimaryKeysToParameters);
         }
 
         public void ApplyTypeHandlersForObject()

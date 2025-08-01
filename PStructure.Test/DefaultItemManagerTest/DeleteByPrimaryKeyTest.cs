@@ -5,6 +5,7 @@ using NUnit.Framework;
 using PStructure.FunctionFeedback;
 using PStructure.PersistenceLayer;
 using PStructure.PersistenceLayer.Pdo;
+using PStructure.PersistenceLayer.Pdo.PdoCruds.BaseCrud;
 using PStructure.PersistenceLayer.Pdo.PdoCruds.SimpleCrud;
 using PStructure.PersistenceLayer.PersistenceLayerFeedback;
 using PStructure.Test.DBTestEnvironment;
@@ -57,7 +58,7 @@ public class DeleteTests : BasicTest
         var simpleCrud = new SimpleCrud<TestEntry>()
         
         var itemManager = new SimplePdoManager<TestEntry>(tableLocation, logger);
-        var dbCom = new DbFeedback(_dbConnection)
+        var dbCom = new DbContext(_dbConnection)
         {
             InjectedSql = string.Empty,
             DbTransaction = null

@@ -4,12 +4,12 @@ namespace PStructure.PersistenceLayer.PersistenceLayerFeedback
 {
     /// <summary>
     /// </summary>
-    public class DbFeedback : FunctionFeedback.FunctionFeedback
+    public class DbContext : FunctionFeedback.DbResult
     {
         private IDbConnection _dbConnection;
         private IDbTransaction _dbTransaction;
 
-        public DbFeedback(IDbConnection dbConnection)
+        public DbContext(IDbConnection dbConnection)
         {
             _dbConnection = dbConnection;
         }

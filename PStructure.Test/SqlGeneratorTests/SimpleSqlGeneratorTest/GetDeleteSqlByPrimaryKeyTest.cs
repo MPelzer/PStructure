@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using PStructure.PersistenceLayer.Pdo.PdoCruds.SimpleCrud;
+using PStructure.PersistenceLayer.Pdo.PdoData.Attributes;
 
 namespace PStructure.Test.SqlGeneratorTest
 {
@@ -27,7 +28,7 @@ namespace PStructure.Test.SqlGeneratorTest
         public void GetDeleteSqlByPrimaryKey_ShouldReturnCorrectSql()
         {
             var tableName = "TestTable";
-            var sql = _generator.GetDeleteSqlByPrimaryKey(null, tableName);
+            var sql = _generator.GetDeleteSqlByPrimaryKey(null);
 
             var expectedSql = "DELETE FROM TestTable WHERE PrimaryKey = @PrimaryKey";
 
@@ -38,7 +39,7 @@ namespace PStructure.Test.SqlGeneratorTest
         public void GetDeleteSqlByPrimaryKey_MultiplePrimaryKeys_ShouldReturnCorrectSql()
         {
             var tableName = "TestTable";
-            var sql = _generator.GetDeleteSqlByPrimaryKey(null, tableName);
+            var sql = _generator.GetDeleteSqlByPrimaryKey(null);
 
             var expectedSql = "DELETE FROM TestTable WHERE PrimaryKey1 = @PrimaryKey1 AND PrimaryKey2 = @PrimaryKey2";
 
@@ -49,7 +50,7 @@ namespace PStructure.Test.SqlGeneratorTest
         public void GetDeleteSqlByPrimaryKey_ColumnNamesWithSpecialCharacters_ShouldReturnCorrectSql()
         {
             var tableName = "TestTable";
-            var sql = _generator.GetDeleteSqlByPrimaryKey(null, tableName);
+            var sql = _generator.GetDeleteSqlByPrimaryKey(null);
 
             var expectedSql = "DELETE FROM TestTable WHERE [Special Key] = @Special_Key";
 
@@ -60,7 +61,7 @@ namespace PStructure.Test.SqlGeneratorTest
         public void GetDeleteSqlByPrimaryKey_EmptyTableName_ShouldReturnCorrectSql()
         {
             var tableName = string.Empty;
-            var sql = _generator.GetDeleteSqlByPrimaryKey(null, tableName);
+            var sql = _generator.GetDeleteSqlByPrimaryKey(null);
 
             var expectedSql = "DELETE FROM  WHERE PrimaryKey = @PrimaryKey";
 
@@ -73,15 +74,15 @@ namespace PStructure.Test.SqlGeneratorTest
             var typeWithNoPrimaryKey = typeof(EntityWithNoPrimaryKey);
             var tableName = "TestTable";
 
-            Assert.Throws<InvalidOperationException>(() => _generator.GetDeleteSqlByPrimaryKey(null, tableName));
+            Assert.Throws<InvalidOperationException>(() => _generator.GetDeleteSqlByPrimaryKey(null));
         }
 
         [Test]
         public void Caching_DeleteSql_ShouldUseCachedValue()
         {
             var tableName = "TestTable";
-            var sql1 = _generator.GetDeleteSqlByPrimaryKey(null, tableName);
-            var sql2 = _generator.GetDeleteSqlByPrimaryKey(null, tableName);
+            var sql1 = _generator.GetDeleteSqlByPrimaryKey(null);
+            var sql2 = _generator.GetDeleteSqlByPrimaryKey(null);
 
             Assert.That(NormalizeSql(sql1), Is.EqualTo(NormalizeSql(sql2)), "The cached SQL should be used.");
         }
@@ -94,14 +95,14 @@ namespace PStructure.Test.SqlGeneratorTest
         // Test classes for different scenarios
         public class TestEntity
         {
-            [PrimaryKey]
-            [Column("PrimaryKey")]
+            [PdoPropertyAttributes.PrimaryKey]
+            [PdoPropertyAttributes.Column("PrimaryKey")]
             public int Id { get; set; }
         }
 
         public class EntityWithNoPrimaryKey
         {
-            [Column("Column")]
+            [PdoPropertyAttributes.Column("Column")]
             public string Value { get; set; }
         }
     }

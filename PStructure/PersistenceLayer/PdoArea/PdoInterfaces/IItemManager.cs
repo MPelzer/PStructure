@@ -11,42 +11,42 @@ namespace PStructure.PersistenceLayer.Pdo.PdoInterfaces
         /// <summary>
         ///     Inserts an item by instance, updating the database feedback.
         /// </summary>
-        void CreateByInstance(T item, ref DbFeedback dbFeedback);
+        void CreateByInstance(T item, ref DbContext dbContext);
 
         /// <summary>
         ///     Inserts a range of items by instance, updating the database feedback.
         /// </summary>
-        void CreateByInstances(IEnumerable<T> items, ref DbFeedback dbFeedback);
+        void CreateByInstances(IEnumerable<T> items, ref DbContext dbContext);
 
         /// <summary>
         ///     Reads an item by its primary key, updating the database feedback.
         /// </summary>
-        IEnumerable<T> ReadByInstance(T item, ref DbFeedback dbFeedback);
+        IEnumerable<T> ReadByInstance(T item, ref DbContext dbContext);
 
         /// <summary>
         ///     Reads a range of items by instance, updating the database feedback.
         /// </summary>
-        IEnumerable<T> ReadByInstances(IEnumerable<T> items, ref DbFeedback dbFeedback);
+        IEnumerable<T> ReadByInstances(IEnumerable<T> items, ref DbContext dbContext);
 
         /// <summary>
         ///     Updates an item by instance, updating the database feedback.
         /// </summary>
-        void UpdateByInstance(T item, ref DbFeedback dbFeedback);
+        void UpdateByInstance(T item, ref DbContext dbContext);
 
         /// <summary>
         ///     Updates a range of items by instance, updating the database feedback.
         /// </summary>
-        void UpdateByInstances(IEnumerable<T> items, ref DbFeedback dbFeedback);
+        void UpdateByInstances(IEnumerable<T> items, ref DbContext dbContext);
 
         /// <summary>
         ///     Deletes an item by its primary key, updating the database feedback.
         /// </summary>
-        void DeleteByPrimaryKey(T item, ref DbFeedback dbFeedback);
+        void DeleteByPrimaryKey(T item, ref DbContext dbContext);
 
         /// <summary>
         ///     Deletes a range of items by their primary keys, updating the database feedback.
         /// </summary>
-        void DeleteByPrimaryKeys(IEnumerable<T> items, ref DbFeedback dbFeedback);
+        void DeleteByPrimaryKeys(IEnumerable<T> items, ref DbContext dbContext);
 
         /// <summary>
         ///     Outputs a test-friendly string representation of the manager.

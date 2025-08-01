@@ -72,7 +72,7 @@ namespace PStructure.Test.DefaultItemManagerTest
             var tableLocation = new TableLocation.TableLocation("", "TestEntry");
             var itemManager = new SimplePdoManager<TestEntry>(tableLocation, logger);
             
-            var dbCom = new DbFeedback(_dbConnection)
+            var dbCom = new DbContext(_dbConnection)
             {
                 InjectedSql = string.Empty,
                 DbTransaction = null

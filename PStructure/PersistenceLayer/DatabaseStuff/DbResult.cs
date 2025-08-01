@@ -2,12 +2,24 @@
 
 namespace PStructure.FunctionFeedback
 {
-    public class FunctionFeedback : IFunctionFeedback
+    public class DbResult : IFunctionFeedback
     {
         private bool _requestAnswer;
+        private string _request;
         private Exception _requestException;
         private bool _silentThrow;
 
+
+        public void SetRequest(string request)
+        {
+            _request = request;
+        }
+
+        public string GetRequest()
+        {
+            return _request;
+        }
+        
         public void SetRequestAnswer(bool value)
         {
             _requestAnswer = value;

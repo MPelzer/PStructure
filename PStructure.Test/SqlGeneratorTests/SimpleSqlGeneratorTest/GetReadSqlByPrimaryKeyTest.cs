@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
 using PStructure.PersistenceLayer.Pdo.PdoCruds.SimpleCrud;
+using PStructure.PersistenceLayer.Pdo.PdoData.Attributes;
 using PStructure.Test.DBTestEnvironment;
 
 namespace PStructure.Test.SqlGeneratorTest
@@ -23,7 +24,7 @@ namespace PStructure.Test.SqlGeneratorTest
             var tableName = "TestTable";
 
             // Act
-            var sql = _generator.GetReadSqlByPrimaryKey(null, tableName);
+            var sql = _generator.GetReadSqlByPrimaryKey(null);
             var expectedSql = "SELECT * FROM TestTable WHERE GuidValue = @GuidValue";
 
             // Assert
@@ -38,7 +39,7 @@ namespace PStructure.Test.SqlGeneratorTest
             var tableName = "TestTable";
 
             // Act & Assert
-            Assert.That(() => generator.GetReadSqlByPrimaryKey(null, tableName),
+            Assert.That(() => generator.GetReadSqlByPrimaryKey(null),
                         Throws.InvalidOperationException.With.Message.Contains("does not have any properties with [PrimaryKey] attribute"));
         }
 
@@ -49,8 +50,8 @@ namespace PStructure.Test.SqlGeneratorTest
             var tableName = "TestTable";
 
             // Act
-            var sql1 = _generator.GetReadSqlByPrimaryKey(null, tableName);
-            var sql2 = _generator.GetReadSqlByPrimaryKey(null, tableName);
+            var sql1 = _generator.GetReadSqlByPrimaryKey(null);
+            var sql2 = _generator.GetReadSqlByPrimaryKey(null);
 
             // Assert
             Assert.That(NormalizeSql(sql1), Is.EqualTo(NormalizeSql(sql2)), "The cached SQL should be used.");
@@ -64,7 +65,7 @@ namespace PStructure.Test.SqlGeneratorTest
         // Supporting class for the no-primary-key scenario
         public class TestEntryWithoutPrimaryKey
         {
-            [Column("Column")]
+            [PdoPropertyAttributes.Column("Column")]
             public string Value { get; set; }
         }
     }

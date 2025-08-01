@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using PStructure.PersistenceLayer.Pdo.PdoCruds.SimpleCrud;
+using PStructure.PersistenceLayer.Pdo.PdoData.Attributes;
 
 namespace PStructure.Test.SqlGeneratorTest
 {
@@ -20,7 +21,7 @@ namespace PStructure.Test.SqlGeneratorTest
         public void GetInsertSql_ShouldReturnCorrectSql()
         {
             var tableName = "TestTable";
-            var sql = _generator.GetInsertSql(null, tableName);
+            var sql = _generator.GetInsertSql(null);
 
             var expectedSql = "INSERT INTO TestTable (PrimaryKey, Column) VALUES (@PrimaryKey, @Column)";
 
@@ -31,7 +32,7 @@ namespace PStructure.Test.SqlGeneratorTest
         public void GetInsertSql_ColumnNamesWithSpecialCharacters_ShouldReturnCorrectSql()
         {
             var tableName = "TestTable";
-            var sql = _generator.GetInsertSql(null, tableName);
+            var sql = _generator.GetInsertSql(null);
 
             var expectedSql = "INSERT INTO TestTable ([Special Key], [Special Column]) VALUES (@Special_Key, @Special_Column)";
 
@@ -42,7 +43,7 @@ namespace PStructure.Test.SqlGeneratorTest
         public void GetInsertSql_EmptyTableName_ShouldReturnCorrectSql()
         {
             var tableName = string.Empty;
-            var sql = _generator.GetInsertSql(null, tableName);
+            var sql = _generator.GetInsertSql(null);
 
             var expectedSql = "INSERT INTO  (PrimaryKey, Column) VALUES (@PrimaryKey, @Column)";
 
@@ -53,8 +54,8 @@ namespace PStructure.Test.SqlGeneratorTest
         public void Caching_InsertSql_ShouldUseCachedValue()
         {
             var tableName = "TestTable";
-            var sql1 = _generator.GetInsertSql(null, tableName);
-            var sql2 = _generator.GetInsertSql(null, tableName);
+            var sql1 = _generator.GetInsertSql(null);
+            var sql2 = _generator.GetInsertSql(null);
 
             Assert.That(NormalizeSql(sql1), Is.EqualTo(NormalizeSql(sql2)), "The cached SQL should be used.");
         }
@@ -67,21 +68,21 @@ namespace PStructure.Test.SqlGeneratorTest
         // Test classes for different scenarios
         public class TestEntity
         {
-            [PrimaryKey]
-            [Column("PrimaryKey")]
+            [PdoPropertyAttributes.PrimaryKey]
+            [PdoPropertyAttributes.Column("PrimaryKey")]
             public int Id { get; set; }
 
-            [Column("Column")]
+            [PdoPropertyAttributes.Column("Column")]
             public string Value { get; set; }
         }
 
         public class SpecialCharColumnEntity
         {
-            [PrimaryKey]
-            [Column("Special Key")]
+            [PdoPropertyAttributes.PrimaryKey]
+            [PdoPropertyAttributes.Column("Special Key")]
             public int Key { get; set; }
 
-            [Column("Special Column")]
+            [PdoPropertyAttributes.Column("Special Column")]
             public string Value { get; set; }
         }
     }

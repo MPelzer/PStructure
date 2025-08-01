@@ -5,6 +5,7 @@ using NUnit.Framework;
 using Moq;
 using PStructure.FunctionFeedback;
 using Microsoft.Extensions.Logging;
+using PStructure.PersistenceLayer.DatabaseStuff;
 using PStructure.PersistenceLayer.PersistenceLayerFeedback;
 
 namespace PStructure.Test.DbComHandlerTests
@@ -38,9 +39,9 @@ namespace PStructure.Test.DbComHandlerTests
         public void ExecuteWithTransaction_Should_CreateAndCommitTransaction_WhenNoTransactionProvided()
         {
             // Arrange
-            var dbFeedback = new DbFeedback(_dbConnection);
-            DbAction action = (ILogger logger, ref DbFeedback dbFeedbackInstance) => { /* Perform DB operations */ };
-            DbExceptionAction onException = (ref DbFeedback dbFeedbackInstance, Exception ex) => { /* Handle exception */ };
+            var dbFeedback = new DbContext(_dbConnection);
+            DbAction action = (ILogger logger, ref DbContext dbFeedbackInstance) => { /* Perform DB operations */ };
+            DbExceptionAction onException = (ref DbContext dbFeedbackInstance, Exception ex) => { /* Handle exception */ };
 
             // Act
             DbFeedbackHandler.ExecuteWithTransaction(
@@ -59,9 +60,9 @@ namespace PStructure.Test.DbComHandlerTests
         public void ExecuteWithTransaction_Should_NotCommitTransaction_WhenCommitConditionIsFalse()
         {
             // Arrange
-            var dbFeedback = new DbFeedback(_dbConnection);
-            DbAction action = (ILogger logger, ref DbFeedback dbFeedbackInstance) => { /* Perform DB operations */ };
-            DbExceptionAction onException = (ref DbFeedback dbFeedbackInstance, Exception ex) => { /* Handle exception */ };
+            var dbFeedback = new DbContext(_dbConnection);
+            DbAction action = (ILogger logger, ref DbContext dbFeedbackInstance) => { /* Perform DB operations */ };
+            DbExceptionAction onException = (ref DbContext dbFeedbackInstance, Exception ex) => { /* Handle exception */ };
 
             // Act
             DbFeedbackHandler.ExecuteWithTransaction(
@@ -80,12 +81,12 @@ namespace PStructure.Test.DbComHandlerTests
         public void ExecuteWithTransaction_Should_HandleExternalTransaction_WithoutCommittingOrRollingBack()
         {
             // Arrange
-            var dbFeedback = new DbFeedback(_dbConnection);
+            var dbFeedback = new DbContext(_dbConnection);
             var transaction = _dbConnection.BeginTransaction();
             dbFeedback.SetDbTransaction(transaction);
 
-            DbAction action = (ILogger logger, ref DbFeedback dbFeedbackInstance) => { /* Perform DB operations */ };
-            DbExceptionAction onException = (ref DbFeedback dbFeedbackInstance, Exception ex) => { /* Handle exception */ };
+            DbAction action = (ILogger logger, ref DbContext dbFeedbackInstance) => { /* Perform DB operations */ };
+            DbExceptionAction onException = (ref DbContext dbFeedbackInstance, Exception ex) => { /* Handle exception */ };
 
             // Act
             DbFeedbackHandler.ExecuteWithTransaction(
@@ -104,9 +105,9 @@ namespace PStructure.Test.DbComHandlerTests
         public void ExecuteWithTransaction_Should_HandleExceptionAndRollbackTransaction()
         {
             // Arrange
-            var dbFeedback = new DbFeedback(_dbConnection);
-            DbAction action = (ILogger logger, ref DbFeedback dbFeedbackInstance) => throw new InvalidOperationException("Test exception");
-            DbExceptionAction onException = (ref DbFeedback dbFeedbackInstance, Exception ex) => { /* Handle exception */ };
+            var dbFeedback = new DbContext(_dbConnection);
+            DbAction action = (ILogger logger, ref DbContext dbFeedbackInstance) => throw new InvalidOperationException("Test exception");
+            DbExceptionAction onException = (ref DbContext dbFeedbackInstance, Exception ex) => { /* Handle exception */ };
 
             // Act & Assert
             Assert.Throws<InvalidOperationException>(() =>
@@ -128,9 +129,9 @@ namespace PStructure.Test.DbComHandlerTests
         public void ExecuteWithTransaction_Should_NotOpenConnection_WhenAlreadyOpen()
         {
             // Arrange
-            var dbFeedback = new DbFeedback(_dbConnection);
-            DbAction action = (ILogger logger, ref DbFeedback dbFeedbackInstance) => { /* Perform DB operations */ };
-            DbExceptionAction onException = (ref DbFeedback dbFeedbackInstance, Exception ex) => { /* Handle exception */ };
+            var dbFeedback = new DbContext(_dbConnection);
+            DbAction action = (ILogger logger, ref DbContext dbFeedbackInstance) => { /* Perform DB operations */ };
+            DbExceptionAction onException = (ref DbContext dbFeedbackInstance, Exception ex) => { /* Handle exception */ };
 
             // Act
             DbFeedbackHandler.ExecuteWithTransaction(
@@ -148,11 +149,11 @@ namespace PStructure.Test.DbComHandlerTests
         public void ExecuteWithTransaction_Should_CallFinallyAction_AfterExecution()
         {
             // Arrange
-            var dbFeedback = new DbFeedback(_dbConnection);
+            var dbFeedback = new DbContext(_dbConnection);
             bool finallyCalled = false;
 
-            DbAction action = (ILogger logger, ref DbFeedback dbFeedbackInstance) => { /* Perform DB operations */ };
-            DbExceptionAction onException = (ref DbFeedback dbFeedbackInstance, Exception ex) => { /* Handle exception */ };
+            DbAction action = (ILogger logger, ref DbContext dbFeedbackInstance) => { /* Perform DB operations */ };
+            DbExceptionAction onException = (ref DbContext dbFeedbackInstance, Exception ex) => { /* Handle exception */ };
 
             // Act
             DbFeedbackHandler.ExecuteWithTransaction(
@@ -172,9 +173,9 @@ namespace PStructure.Test.DbComHandlerTests
         public void ExecuteWithTransaction_Should_HandleExternalConnection_Correctly()
         {
             // Arrange
-            var dbFeedback = new DbFeedback(_dbConnection);
-            DbAction action = (ILogger logger, ref DbFeedback dbFeedbackInstance) => { /* Perform DB operations */ };
-            DbExceptionAction onException = (ref DbFeedback dbFeedbackInstance, Exception ex) => { /* Handle exception */ };
+            var dbFeedback = new DbContext(_dbConnection);
+            DbAction action = (ILogger logger, ref DbContext dbFeedbackInstance) => { /* Perform DB operations */ };
+            DbExceptionAction onException = (ref DbContext dbFeedbackInstance, Exception ex) => { /* Handle exception */ };
 
             // Act
             DbFeedbackHandler.ExecuteWithTransaction(

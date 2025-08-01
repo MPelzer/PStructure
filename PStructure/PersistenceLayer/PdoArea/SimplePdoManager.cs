@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using PStructure.FunctionFeedback;
+using PStructure.PersistenceLayer.DatabaseStuff;
 using PStructure.PersistenceLayer.Pdo.PdoInterfaces.CrudInterface;
 using PStructure.PersistenceLayer.PersistenceLayerFeedback;
 
@@ -17,22 +18,22 @@ namespace PStructure.PersistenceLayer.Pdo
         /// <summary>
         ///     Inserts a range of items by instance, updating the database feedback.
         /// </summary>
-        public override void CreateByInstance(T item, ref DbFeedback dbFeedback)
+        public override void CreateByInstance(T item, ref DbContext dbContext)
         {
-            CreateByInstances(new List<T> { item }, ref dbFeedback);
+            CreateByInstances(new List<T> { item }, ref dbContext);
         }
 
         /// <summary>
         ///     Inserts an item by instance, handling database feedback by reference.
         /// </summary>
-        public override void CreateByInstances(IEnumerable<T> items, ref DbFeedback dbFeedback)
+        public override void CreateByInstances(IEnumerable<T> items, ref DbContext dbContext)
         {
             LogFunctionStart(ref items, "Create");
             DbFeedbackHandler.ExecuteWithTransaction(
-                ref dbFeedback,
+                ref dbContext,
                 _logger,
-                (ILogger logger, ref DbFeedback db) => _crud.Create(items, ref db, _logger),
-                (ref DbFeedback db, Exception ex) =>
+                (ILogger logger, ref DbContext db) => _crud.Create(items, ref db, _logger),
+                (ref DbContext db, Exception ex) =>
                 {
                     // Optional additional error handling
                 }
@@ -42,22 +43,22 @@ namespace PStructure.PersistenceLayer.Pdo
         /// <summary>
         ///     Reads an item by its primary key, updating the database feedback.
         /// </summary>
-        public override IEnumerable<T> ReadByInstance(T item, ref DbFeedback dbFeedback)
+        public override IEnumerable<T> ReadByInstance(T item, ref DbContext dbContext)
         {
-            return ReadByInstances(new List<T> { item }, ref dbFeedback);
+            return ReadByInstances(new List<T> { item }, ref dbContext);
         }
 
         /// <summary>
         ///     Reads an item by its primary key, updating the database feedback.
         /// </summary>
-        public override IEnumerable<T> ReadByInstances(IEnumerable<T> items, ref DbFeedback dbFeedback)
+        public override IEnumerable<T> ReadByInstances(IEnumerable<T> items, ref DbContext dbContext)
         {
             LogFunctionStart(ref items, "Read");
             DbFeedbackHandler.ExecuteWithTransaction(
-                ref dbFeedback,
+                ref dbContext,
                 _logger,
-                (ILogger logger, ref DbFeedback db) => items = _crud.Read(items, ref db, _logger),
-                (ref DbFeedback db, Exception ex) =>
+                (ILogger logger, ref DbContext db) => items = _crud.Read(items, ref db, _logger),
+                (ref DbContext db, Exception ex) =>
                 {
                     // Handle exception if necessary
                 }
@@ -68,22 +69,22 @@ namespace PStructure.PersistenceLayer.Pdo
         /// <summary>
         ///     Updates an item by instance, updating the database feedback.
         /// </summary>
-        public override void UpdateByInstance(T item, ref DbFeedback dbFeedback)
+        public override void UpdateByInstance(T item, ref DbContext dbContext)
         {
-            UpdateByInstances(new List<T> { item }, ref dbFeedback);
+            UpdateByInstances(new List<T> { item }, ref dbContext);
         }
 
         /// <summary>
         ///     Updates a range of items by instance, updating the database feedback.
         /// </summary>
-        public override void UpdateByInstances(IEnumerable<T> items, ref DbFeedback dbFeedback)
+        public override void UpdateByInstances(IEnumerable<T> items, ref DbContext dbContext)
         {
             LogFunctionStart(ref items, "Update");
             DbFeedbackHandler.ExecuteWithTransaction(
-                ref dbFeedback,
+                ref dbContext,
                 _logger,
-                (ILogger logger, ref DbFeedback db) => _crud.Update(items, ref db, _logger),
-                (ref DbFeedback db, Exception ex) =>
+                (ILogger logger, ref DbContext db) => _crud.Update(items, ref db, _logger),
+                (ref DbContext db, Exception ex) =>
                 {
                     // Handle exception if necessary
                 }
@@ -93,22 +94,22 @@ namespace PStructure.PersistenceLayer.Pdo
         /// <summary>
         ///     Deletes an item by its primary key, updating the database feedback.
         /// </summary>
-        public override void DeleteByPrimaryKey(T item, ref DbFeedback dbFeedback)
+        public override void DeleteByPrimaryKey(T item, ref DbContext dbContext)
         {
-            DeleteByPrimaryKeys(new List<T> { item }, ref dbFeedback);
+            DeleteByPrimaryKeys(new List<T> { item }, ref dbContext);
         }
 
         /// <summary>
         ///     Deletes an item by its primary key, updating the database feedback.
         /// </summary>
-        public override void DeleteByPrimaryKeys(IEnumerable<T> items, ref DbFeedback dbFeedback)
+        public override void DeleteByPrimaryKeys(IEnumerable<T> items, ref DbContext dbContext)
         {
             LogFunctionStart(ref items, "Delete");
             DbFeedbackHandler.ExecuteWithTransaction(
-                ref dbFeedback,
+                ref dbContext,
                 _logger,
-                (ILogger logger, ref DbFeedback db) => _crud.Delete(items, ref db, _logger),
-                (ref DbFeedback db, Exception ex) =>
+                (ILogger logger, ref DbContext db) => _crud.Delete(items, ref db, _logger),
+                (ref DbContext db, Exception ex) =>
                 {
                     // Handle exception if necessary
                 }
