@@ -1,10 +1,10 @@
 ﻿using System;
 using MySqlConnector;
 using NUnit.Framework;
-using PStructure.FunctionFeedback;
 using PStructure.PersistenceLayer;
+using PStructure.PersistenceLayer.DatabaseStuff;
+using PStructure.PersistenceLayer.DatabaseStuff.DatenbankenEigenschaftenEcke;
 using PStructure.PersistenceLayer.Pdo;
-using PStructure.PersistenceLayer.PersistenceLayerFeedback;
 using PStructure.Test.DBTestEnvironment;
 using PStructure.Test.Models;
 

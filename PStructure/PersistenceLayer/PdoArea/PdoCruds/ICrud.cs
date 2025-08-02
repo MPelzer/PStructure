@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using Dapper;
 using Microsoft.Extensions.Logging;
-using PStructure.PersistenceLayer.PersistenceLayerFeedback;
+using PStructure.PersistenceLayer.DatabaseStuff;
+using PStructure.PersistenceLayer.DatabaseStuff.DatenbankenEigenschaftenEcke;
 
 namespace PStructure.PersistenceLayer.Pdo.PdoInterfaces.CrudInterface
 {

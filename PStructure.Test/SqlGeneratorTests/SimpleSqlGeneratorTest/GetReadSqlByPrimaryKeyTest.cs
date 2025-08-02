@@ -1,6 +1,5 @@
 ﻿using NUnit.Framework;
 using System;
-using PStructure.PersistenceLayer.Pdo.PdoCruds.SimpleCrud;
 using PStructure.PersistenceLayer.Pdo.PdoData.Attributes;
 using PStructure.Test.DBTestEnvironment;
 

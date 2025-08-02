@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PStructure.FunctionFeedback
+namespace PStructure.PersistenceLayer.DatabaseStuff.DatenbankHandling
 {
     public interface IFunctionFeedback
     {

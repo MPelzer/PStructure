@@ -1,7 +1,6 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Linq;
-using PStructure.PersistenceLayer.Pdo.PdoCruds.SimpleCrud;
 using PStructure.PersistenceLayer.Pdo.PdoData.Attributes;
 
 namespace PStructure.Test.SqlGeneratorTest

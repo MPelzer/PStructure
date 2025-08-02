@@ -15,4 +15,8 @@
         <PackageReference Include="System.Text.Json" Version="9.0.0-preview.7.24405.7" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="WorkerLayer\" />
+    </ItemGroup>
+
 </Project>

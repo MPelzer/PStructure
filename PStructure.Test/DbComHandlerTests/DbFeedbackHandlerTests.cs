@@ -3,10 +3,10 @@ using System.Data;
 using MySqlConnector;
 using NUnit.Framework;
 using Moq;
-using PStructure.FunctionFeedback;
 using Microsoft.Extensions.Logging;
 using PStructure.PersistenceLayer.DatabaseStuff;
-using PStructure.PersistenceLayer.PersistenceLayerFeedback;
+using PStructure.PersistenceLayer.DatabaseStuff.DatenbankenEigenschaftenEcke;
+using PStructure.PersistenceLayer.DatabaseStuff.DatenbankHandling;
 
 namespace PStructure.Test.DbComHandlerTests
 {
