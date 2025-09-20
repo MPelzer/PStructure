@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Dapper;
 using Microsoft.Extensions.Logging;
 using PStructure.PersistenceLayer.DatabaseStuff.DatenbankenEigenschaftenEcke;
 using PStructure.PersistenceLayer.DatabaseStuff.DatenbankenEigenschaftenEcke.PStructure.PersistenceLayer.DatabaseStuff;
@@ -43,8 +44,8 @@ namespace PStructure.PersistenceLayer.PdoArea.PdoCruds
 
             try
             {
-                return context.DbContext.GetDbConnection()
-                    .Query<T>(sql, transaction: context.DbContext.GetDbTransaction());
+                return context.DbContext.DbConnection
+                    .Query<T>(sql, transaction: context.DbContext.DbTransaction);
             }
             catch (Exception ex)
             {

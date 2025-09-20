@@ -3,94 +3,85 @@ using System.Collections.Generic;
 using System.Linq;
 using Dapper;
 using Microsoft.Extensions.Logging;
-using PStructure.PersistenceLayer.DatabaseStuff;
 using PStructure.PersistenceLayer.DatabaseStuff.DatenbankenEigenschaftenEcke;
-using PStructure.PersistenceLayer.DatabaseStuff.DatenbankenEigenschaftenEcke.PStructure.PersistenceLayer.DatabaseStuff;
-using PStructure.PersistenceLayer.DatabaseStuff.DatenbankHandling;
 using PStructure.PersistenceLayer.DatabaseStuff.SqlUndSo;
 
 namespace PStructure.PersistenceLayer.PdoArea.PdoCruds
 {
     /// <summary>
-    /// Universelle Ausführungsklasse für SQL-Operationen über Items.
-    /// Unterstützt automatische Parameter-Generierung und flexible Kontextausführung.
+    /// Base class providing core execution logic for CRUD operations.
+    /// Relies on SqlContextHandler for SQL/parameter preparation.
     /// </summary>
-    /// <typeparam name="T">Typ des Datenobjekts</typeparam>
-    public class StuffDoer<T> : ClassCore
+    /// <typeparam name="T">PDO type</typeparam>
+    public abstract class StuffDoer<T>
     {
-        private readonly IExecutionContext _context;
-
-        public StuffDoer(IExecutionContext context)
-        {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
-            _context.Validate();
-        }
-
         /// <summary>
-        /// Führt einen SQL-Befehl für ein einzelnes Objekt oder ein Batch aus, basierend auf dem Kontext.
+        /// Executes an INSERT/UPDATE/DELETE command against the database.
         /// </summary>
-        /// <param name="itemOrItems">Einzelobjekt oder Liste von Objekten</param>
-        /// <returns>Anzahl betroffener Zeilen</returns>
-        public int Execute(object itemOrItems)
+        protected int Execute(IEnumerable<T> items, ExecutionContext context)
         {
-            switch (_context.DbContext.ProcessingType)
+            var sql = context.SqlContext.Sql;
+            var conn = context.DbContext.DbConnection;
+            var tran = context.DbContext.DbTransaction;
+
+            context.Logger?.LogDebug("{location} Executing SQL: {Sql}", GetLoggingClassName(), sql);
+
+            try
             {
-                case ProcessingType.Single:
-                    return ExecuteSingle(itemOrItems);
+                if (items == null || !items.Any())
+                {
+                    // No items → just run the SQL without parameters (manual or custom SQL)
+                    return conn.Execute(sql, transaction: tran);
+                }
 
-                case ProcessingType.Bulk:
-                    return ExecuteBatch((IEnumerable<object>)itemOrItems);
+                // Build parameters fresh (no caching, but accessors reused via PdoDataCache)
+                var parameters = SqlContextHandler<T>.BuildParameters(context.SqlContext, items);
 
-                default:
-                    throw new NotSupportedException($"Unsupported processing type: {_context.DbContext.ProcessingType}");
+                return conn.Execute(sql, parameters, transaction: tran);
+            }
+            catch (Exception ex)
+            {
+                context.Logger?.LogError(ex, "{location} Error executing SQL.", GetLoggingClassName());
+                throw;
             }
         }
 
-        private int ExecuteSingle(object item)
+        /// <summary>
+        /// Executes a SELECT query that returns items.
+        /// </summary>
+        protected IEnumerable<T> Query(IEnumerable<T> items, ExecutionContext context)
         {
-            var db = _context.DbContext.DbConnection;
-            var sql = _context.SqlContext.Sql;
-            var transaction = _context.DbContext.DbTransaction;
+            var sql = context.SqlContext.Sql;
+            var conn = context.DbContext.DbConnection;
+            var tran = context.DbContext.DbTransaction;
 
-            var parameters = SqlContextHandler.Generate(item, _context.SqlContext);
+            context.Logger?.LogDebug("{location} Querying SQL: {Sql}", GetLoggingClassName(), sql);
 
-            _context.Logger?.LogDebug("Executing SQL: {Sql} with parameters {Params}", sql, parameters);
-            return db.Execute(sql, parameters, transaction);
-        }
-
-        private int ExecuteBatch(IEnumerable<object> items)
-        {
-            var db = _context.DbContext.DbConnection;
-            var sql = _context.SqlContext.Sql;
-            var transaction = _context.DbContext.DbTransaction;
-
-            var parametersList = SqlContextHandler.GenerateBatch(items, _context.SqlContext);
-
-            _context.Logger?.LogDebug("Executing SQL batch for {Count} items", parametersList.Count());
-
-            int affected = 0;
-            foreach (var parameters in parametersList)
+            try
             {
-                affected += db.Execute(sql, parameters, transaction);
+                if (items == null || !items.Any())
+                {
+                    // No items → just run raw SQL (custom/manual query)
+                    return conn.Query<T>(sql, transaction: tran);
+                }
+
+                var parameters = SqlContextHandler<T>.BuildParameters(context.SqlContext, items);
+
+                return conn.Query<T>(sql, parameters, transaction: tran);
             }
-
-            return affected;
+            catch (Exception ex)
+            {
+                context.Logger?.LogError(ex, "{location} Error querying SQL.", GetLoggingClassName());
+                throw;
+            }
         }
 
         /// <summary>
-        /// Optionaler Shortcut für direkte Ausführung mit Typed-T
+        /// Helper for consistent logging.
         /// </summary>
-        public int ExecuteTyped(T item)
+        protected string GetLoggingClassName()
         {
-            return Execute(item);
-        }
-
-        /// <summary>
-        /// Optionaler Shortcut für Bulk-Ausführung mit Typed-T
-        /// </summary>
-        public int ExecuteTypedBatch(IEnumerable<T> items)
-        {
-            return Execute(items.Cast<object>());
+            return $"[StuffDoer<{typeof(T).Name}>]";
         }
     }
 }

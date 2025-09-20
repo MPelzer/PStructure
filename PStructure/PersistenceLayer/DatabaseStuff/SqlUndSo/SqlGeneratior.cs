@@ -5,9 +5,9 @@ using Microsoft.Extensions.Logging;
 using PStructure.PersistenceLayer.Pdo.PdoData;
 using PStructure.PersistenceLayer.Pdo.PdoData.Attributes;
 
-namespace PStructure.PersistenceLayer.DatabaseStuff.SqlUndSo;
-
-public interface ISqlGenerator<T>
+namespace PStructure.PersistenceLayer.DatabaseStuff.SqlUndSo
+{
+    public interface ISqlGenerator<T>
     {
         string GetInsertSql(ILogger logger = null);
         string GetUpdateSqlByPrimaryKey(ILogger logger = null);
@@ -89,3 +89,4 @@ public interface ISqlGenerator<T>
             return sql;
         }
     }
+}
