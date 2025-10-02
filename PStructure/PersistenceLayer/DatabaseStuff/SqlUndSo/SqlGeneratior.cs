@@ -1,19 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using Microsoft.Extensions.Logging;
 using PStructure.PersistenceLayer.Pdo.PdoData;
-using PStructure.PersistenceLayer.Pdo.PdoData.Attributes;
 
 namespace PStructure.PersistenceLayer.DatabaseStuff.SqlUndSo
 {
     public interface ISqlGenerator<T>
     {
-        string GetInsertSql(ILogger logger = null);
-        string GetUpdateSqlByPrimaryKey(ILogger logger = null);
-        string GetDeleteSqlByPrimaryKey(ILogger logger = null);
-        string GetReadSqlByPrimaryKey(ILogger logger = null);
-        string GetReadAll(ILogger logger = null);
+        (string Sql, Func<IEnumerable<object>, object> ParameterFactory) GetInsert();
+        (string Sql, Func<IEnumerable<object>, object> ParameterFactory) GetUpdate();
+        (string Sql, Func<IEnumerable<object>, object> ParameterFactory) GetDelete();
+        (string Sql, Func<IEnumerable<object>, object> ParameterFactory) GetReadByPk();
+        string GetReadAll();
     }
 
     public class DefaultSqlGenerator<T> : ISqlGenerator<T>
@@ -22,71 +20,68 @@ namespace PStructure.PersistenceLayer.DatabaseStuff.SqlUndSo
 
         public DefaultSqlGenerator()
         {
-            _tableName = typeof(T).Name; // optionally: infer via attribute or naming policy
+            // Default: class name = table name
+            // You could add a [Table("...")] attribute later if needed
+            _tableName = typeof(T).Name;
         }
 
-        public string GetInsertSql(ILogger logger = null)
+        public (string, Func<IEnumerable<object>, object>) GetInsert()
         {
             var cols = PdoDataCache<T>.ColumnNames;
-            var columnList = string.Join(", ", cols);
-            var valueList = string.Join(", ", cols.Select(c => "@" + c));
+            var sql = $"INSERT INTO {_tableName} ({string.Join(", ", cols)}) VALUES ({string.Join(", ", cols.Select(c => "@" + c))});";
 
-            var sql = $"INSERT INTO {_tableName} ({columnList}) VALUES ({valueList});";
-            logger?.LogDebug("[SqlGenerator] Insert SQL: {sql}", sql);
-            return sql;
+            return (sql, items => items); // Dapper can take IEnumerable<T>
         }
 
-        public string GetUpdateSqlByPrimaryKey(ILogger logger = null)
+        public (string, Func<IEnumerable<object>, object>) GetUpdate()
         {
             var cols = PdoDataCache<T>.ColumnNames;
-            var pkCols = PdoDataCache<T>.PrimaryKeyProperties.Select(p => p.GetCustomAttribute<PdoPropertyAttributes.Column>()?.ColumnName).ToArray();
+            var pkCols = PdoDataCache<T>.PrimaryKeyNames;
 
-            if (!pkCols.Any()) throw new InvalidOperationException($"No primary key defined on {typeof(T).Name}");
+            if (!pkCols.Any())
+                throw new InvalidOperationException($"No primary key defined on {typeof(T).Name}");
 
             var setClause = string.Join(", ", cols.Where(c => !pkCols.Contains(c)).Select(c => $"{c} = @{c}"));
             var whereClause = string.Join(" AND ", pkCols.Select(c => $"{c} = @{c}"));
 
             var sql = $"UPDATE {_tableName} SET {setClause} WHERE {whereClause};";
-            logger?.LogDebug("[SqlGenerator] Update SQL: {sql}", sql);
-            return sql;
+
+            return (sql, items => items);
         }
 
-        public string GetDeleteSqlByPrimaryKey(ILogger logger = null)
+        public (string, Func<IEnumerable<object>, object>) GetDelete()
         {
-            var pkCols = PdoDataCache<T>.PrimaryKeyProperties.Select(p => p.GetCustomAttribute<PdoPropertyAttributes.Column>()?.ColumnName).ToArray();
+            var pkCols = PdoDataCache<T>.PrimaryKeyNames;
 
-            if (!pkCols.Any()) throw new InvalidOperationException($"No primary key defined on {typeof(T).Name}");
+            if (!pkCols.Any())
+                throw new InvalidOperationException($"No primary key defined on {typeof(T).Name}");
 
             var whereClause = string.Join(" AND ", pkCols.Select(c => $"{c} = @{c}"));
             var sql = $"DELETE FROM {_tableName} WHERE {whereClause};";
 
-            logger?.LogDebug("[SqlGenerator] Delete SQL: {sql}", sql);
-            return sql;
+            return (sql, items => items);
         }
 
-        public string GetReadSqlByPrimaryKey(ILogger logger = null)
+        public (string, Func<IEnumerable<object>, object>) GetReadByPk()
         {
-            var pkCols = PdoDataCache<T>.PrimaryKeyProperties.Select(p => p.GetCustomAttribute<PdoPropertyAttributes.Column>()?.ColumnName).ToArray();
+            var pkCols = PdoDataCache<T>.PrimaryKeyNames;
             var cols = PdoDataCache<T>.ColumnNames;
 
-            if (!pkCols.Any()) throw new InvalidOperationException($"No primary key defined on {typeof(T).Name}");
+            if (!pkCols.Any())
+                throw new InvalidOperationException($"No primary key defined on {typeof(T).Name}");
 
             var selectCols = string.Join(", ", cols);
             var whereClause = string.Join(" AND ", pkCols.Select(c => $"{c} = @{c}"));
 
             var sql = $"SELECT {selectCols} FROM {_tableName} WHERE {whereClause};";
-            logger?.LogDebug("[SqlGenerator] ReadByPK SQL: {sql}", sql);
-            return sql;
+
+            return (sql, items => items);
         }
 
-        public string GetReadAll(ILogger logger = null)
+        public string GetReadAll()
         {
             var cols = PdoDataCache<T>.ColumnNames;
-            var selectCols = string.Join(", ", cols);
-
-            var sql = $"SELECT {selectCols} FROM {_tableName};";
-            logger?.LogDebug("[SqlGenerator] ReadAll SQL: {sql}", sql);
-            return sql;
+            return $"SELECT {string.Join(", ", cols)} FROM {_tableName};";
         }
     }
 }

@@ -8,7 +8,7 @@ namespace PStructure.PersistenceLayer.DatabaseStuff.DatenbankenEigenschaftenEcke
 public class ExecutionContext : IExecutionContext
 {
     public DbContext DbContext { get; set; }
-    public SqlContext SqlContext { get; set; } = new();
+    public RequestContext RequestContext { get; set; } = new();
     public ILogger Logger { get; set; }
     public List<Exception> ValidationExceptions { get; } = new();
 
@@ -32,7 +32,7 @@ public class ExecutionContext : IExecutionContext
         if (Logger == null)
             AddValidationError("Logger must not be null.");
 
-        if (SqlContext == null || string.IsNullOrWhiteSpace(SqlContext.Sql))
+        if (RequestContext == null || string.IsNullOrWhiteSpace(RequestContext.Sql))
             AddValidationError("SqlContext must be set and contain SQL.");
 
         if (HasErrors)

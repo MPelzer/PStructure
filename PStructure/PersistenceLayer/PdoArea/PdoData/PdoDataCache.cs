@@ -61,6 +61,11 @@ namespace PStructure.PersistenceLayer.Pdo.PdoData
         /// </summary>
         public static Dictionary<string, Func<T, object>> ColumnAccessors => _columnAccessors.Value;
 
+        public static string[] PrimaryKeyNames => PrimaryKeyProperties
+            .Select(p => p.GetCustomAttribute<PdoPropertyAttributes.Column>()?.ColumnName)
+            .Where(name => !string.IsNullOrWhiteSpace(name))
+            .ToArray();
+        
         /// <summary>
         /// Erstellt Zugriffsfunktionen (Lambdas) für alle Spalten, um Werte aus Objekten effizient auszulesen.
         /// </summary>

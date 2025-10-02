@@ -11,7 +11,7 @@ namespace PStructure.PersistenceLayer.DatabaseStuff.DatenbankHandling
     /// <summary>
     /// Führt eine DB-Operation im Transaktionskontext aus und verwaltet Feedback.
     /// </summary>
-    public static class DbFeedbackHandler
+    public static class DbContextHandler
     {
         public static void ExecuteWithTransaction(
             IExecutionContext context,

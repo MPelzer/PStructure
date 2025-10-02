@@ -29,7 +29,7 @@ namespace PStructure.PersistenceLayer.DatabaseStuff.DatenbankenEigenschaftenEcke
     public interface IExecutionContext
     {
         DbContext DbContext { get; set; }
-        SqlContext SqlContext { get; set; }
+        RequestContext RequestContext { get; set; }
         ILogger Logger { get; set; }
 
         void Validate();

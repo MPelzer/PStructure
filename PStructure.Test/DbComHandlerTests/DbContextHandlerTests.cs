@@ -11,7 +11,7 @@ using PStructure.PersistenceLayer.DatabaseStuff.DatenbankHandling;
 namespace PStructure.Test.DbComHandlerTests
 {
     [TestFixture]
-    public class DbFeedbackHandlerTests
+    public class DbContextHandlerTests
     {
         private const string ConnectionString = "Server=localhost;Port=3306;Database=testdb;User=testuser;Password=testpassword;";
         private MySqlConnection _dbConnection;
@@ -44,7 +44,7 @@ namespace PStructure.Test.DbComHandlerTests
             DbExceptionAction onException = (ref DbContext dbFeedbackInstance, Exception ex) => { /* Handle exception */ };
 
             // Act
-            DbFeedbackHandler.ExecuteWithTransaction(
+            DbContextHandler.ExecuteWithTransaction(
                 ref dbFeedback,
                 _loggerMock.Object,
                 action: action,
@@ -65,7 +65,7 @@ namespace PStructure.Test.DbComHandlerTests
             DbExceptionAction onException = (ref DbContext dbFeedbackInstance, Exception ex) => { /* Handle exception */ };
 
             // Act
-            DbFeedbackHandler.ExecuteWithTransaction(
+            DbContextHandler.ExecuteWithTransaction(
                 ref dbFeedback,
                 _loggerMock.Object,
                 action: action,
@@ -89,7 +89,7 @@ namespace PStructure.Test.DbComHandlerTests
             DbExceptionAction onException = (ref DbContext dbFeedbackInstance, Exception ex) => { /* Handle exception */ };
 
             // Act
-            DbFeedbackHandler.ExecuteWithTransaction(
+            DbContextHandler.ExecuteWithTransaction(
                 ref dbFeedback,
                 _loggerMock.Object,
                 action: action,
@@ -112,7 +112,7 @@ namespace PStructure.Test.DbComHandlerTests
             // Act & Assert
             Assert.Throws<InvalidOperationException>(() =>
             {
-                DbFeedbackHandler.ExecuteWithTransaction(
+                DbContextHandler.ExecuteWithTransaction(
                     ref dbFeedback,
                     _loggerMock.Object,
                     action: action,
@@ -134,7 +134,7 @@ namespace PStructure.Test.DbComHandlerTests
             DbExceptionAction onException = (ref DbContext dbFeedbackInstance, Exception ex) => { /* Handle exception */ };
 
             // Act
-            DbFeedbackHandler.ExecuteWithTransaction(
+            DbContextHandler.ExecuteWithTransaction(
                 ref dbFeedback,
                 _loggerMock.Object,
                 action: action,
@@ -156,7 +156,7 @@ namespace PStructure.Test.DbComHandlerTests
             DbExceptionAction onException = (ref DbContext dbFeedbackInstance, Exception ex) => { /* Handle exception */ };
 
             // Act
-            DbFeedbackHandler.ExecuteWithTransaction(
+            DbContextHandler.ExecuteWithTransaction(
                 ref dbFeedback,
                 _loggerMock.Object,
                 action: action,
@@ -178,7 +178,7 @@ namespace PStructure.Test.DbComHandlerTests
             DbExceptionAction onException = (ref DbContext dbFeedbackInstance, Exception ex) => { /* Handle exception */ };
 
             // Act
-            DbFeedbackHandler.ExecuteWithTransaction(
+            DbContextHandler.ExecuteWithTransaction(
                 ref dbFeedback,
                 _loggerMock.Object,
                 action: action,

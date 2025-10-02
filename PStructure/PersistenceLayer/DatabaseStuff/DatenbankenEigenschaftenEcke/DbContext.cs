@@ -13,8 +13,6 @@ namespace PStructure.PersistenceLayer.DatabaseStuff.DatenbankenEigenschaftenEcke
 
         public IDbTransaction DbTransaction { get; set; }
 
-        public ProcessingType ProcessingType { get; set; } = ProcessingType.Single;
-
         public DbContext(IDbConnection dbConnection)
         {
             DbConnection = dbConnection;
