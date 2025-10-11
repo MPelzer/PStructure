@@ -6,7 +6,7 @@ using Moq;
 using Microsoft.Extensions.Logging;
 using PStructure.PersistenceLayer.DatabaseStuff;
 using PStructure.PersistenceLayer.DatabaseStuff.DatenbankenEigenschaftenEcke;
-using PStructure.PersistenceLayer.DatabaseStuff.DatenbankHandling;
+using PStructure.PersistenceLayer.DatabaseStuff.Handler;
 
 namespace PStructure.Test.DbComHandlerTests
 {

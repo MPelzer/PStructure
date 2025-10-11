@@ -1,60 +1,42 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
-using PStructure.PersistenceLayer.DatabaseStuff.DatenbankenEigenschaftenEcke;
-using PStructure.PersistenceLayer.DatabaseStuff.DatenbankHandling;
-using PStructure.PersistenceLayer.DatabaseStuff.SqlUndSo;
+using PStructure.PersistenceLayer.DatabaseStuff.Handler;
+
+namespace PStructure.PersistenceLayer.DatabaseStuff.DatenbankenEigenschaftenEcke;
 
 public static class DbExecutor
 {
-    public static int RunExecute<T>(
-        ExecutionContext context,
-        ILogger logger,
-        IExecutionHandler<T> handler)
+    public static int RunExecute<TRequest, TResult>(
+        ExecutionContext<TRequest> context,
+        IExecutionHandler<TRequest, TResult> handler,
+        ILogger logger)
+        where TRequest : RequestContext
     {
         int result = 0;
 
         DbContextHandler.ExecuteWithTransaction(
             context,
-            logger,
-            (log, ctx) =>
-            {
-                handler.PrepareStatement(ctx);
-                handler.PrepareParameters(ctx);
-                handler.Validate(ctx);
-                result = handler.Execute(ctx);
-            },
-            (ctx, ex) =>
-            {
-                logger?.LogError(ex, "DbExecutor: Execute failed.");
-                throw;
-            });
+            (log, ctx) => result = handler.Execute(ctx),
+            (ctx, ex) => logger?.LogError(ex, "DbExecutor: Execute failed."),
+            logger);
 
         return result;
     }
 
-    public static IEnumerable<T> RunQuery<T>(
-        ExecutionContext context,
-        ILogger logger,
-        IExecutionHandler<T> handler)
+    public static IEnumerable<TResult> RunQuery<TRequest, TResult>(
+        ExecutionContext<TRequest> context,
+        IExecutionHandler<TRequest, TResult> handler,
+        ILogger logger)
+        where TRequest : RequestContext
     {
-        IEnumerable<T> result = Enumerable.Empty<T>();
+        IEnumerable<TResult> result = Enumerable.Empty<TResult>();
 
         DbContextHandler.ExecuteWithTransaction(
             context,
-            logger,
-            (log, ctx) =>
-            {
-                handler.PrepareStatement(ctx);
-                handler.PrepareParameters(ctx);
-                handler.Validate(ctx);
-                result = handler.Query(ctx);
-            },
-            (ctx, ex) =>
-            {
-                logger?.LogError(ex, "DbExecutor: Query failed.");
-                throw;
-            });
+            (log, ctx) => result = handler.Query(ctx),
+            (ctx, ex) => logger?.LogError(ex, "DbExecutor: Query failed."),
+            logger);
 
         return result;
     }
