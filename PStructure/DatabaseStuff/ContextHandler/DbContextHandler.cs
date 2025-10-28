@@ -33,7 +33,7 @@ namespace PStructure.PersistenceLayer.DatabaseStuff.Handler
             Action? onFinally = null)
             where TRequest : RequestContext
         {
-            bool transactionStartedHere = true;
+            var transactionStartedHere = true;
 
             try
             {

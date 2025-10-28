@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.Options;
 
 public abstract class RequestContext
 {
@@ -12,4 +13,6 @@ public abstract class RequestContext
     /// Optional function for building parameter objects from items (used mainly by dynamic contexts).
     /// </summary>
     public Func<IEnumerable<object>, object>? ParameterFactory { get; set; }
+    
+    public int NumberOfParallelExecutions { get; set; }
 }

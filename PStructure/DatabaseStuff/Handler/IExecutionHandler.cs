@@ -1,21 +1,15 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace PStructure.PersistenceLayer.DatabaseStuff.Handler
+namespace PStructure.DatabaseStuff.Handler;
+
+public interface IExecutionHandler<TRequest, TResult>
+    where TRequest : RequestContext
 {
-    /// <summary>
-    /// A handler that executes database operations against a given execution context.
-    /// </summary>
-    public interface IExecutionHandler<TRequest, TResult>
-        where TRequest : RequestContext
-    {
-        /// <summary>
-        /// Executes a non-query operation (INSERT/UPDATE/DELETE).
-        /// </summary>
-        int Execute(ExecutionContext<TRequest> context);
+    int Execute(ExecutionContext<TRequest> context);
+    IEnumerable<TResult> Query(ExecutionContext<TRequest> context);
 
-        /// <summary>
-        /// Executes a query operation (SELECT).
-        /// </summary>
-        IEnumerable<TResult> Query(ExecutionContext<TRequest> context);
-    }
+    Task<int> ExecuteAsync(ExecutionContext<TRequest> context, CancellationToken cancellationToken = default);
+    Task<IEnumerable<TResult>> QueryAsync(ExecutionContext<TRequest> context, CancellationToken cancellationToken = default);
 }
